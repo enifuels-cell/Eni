@@ -1,0 +1,111 @@
+<?php
+
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    // Check if the user is authenticated
+    if (auth()->check()) {
+        // If authenticated, redirect immediately to the dashboard
+        return redirect()->route('dashboard');
+    }
+
+    // If not authenticated, show the splash screen
+    return view('splash-screen');
+})->name('splash');
+
+// Test route for debugging
+Route::get('/test', function () {
+    return view('test');
+});
+
+// Debug route to check packages
+Route::get('/debug-packages', function () {
+    $packages = \App\Models\InvestmentPackage::all();
+    return response()->json($packages->toArray());
+});
+
+// Test packages page without authentication
+Route::get('/test-packages', function () {
+    $packages = \App\Models\InvestmentPackage::where('active', true)->get();
+    $accountBalance = 1000; // Mock account balance
+    return view('user.packages', compact('packages', 'accountBalance'));
+});
+
+// Demo route to force splash screen view
+Route::get('/demo-splash', function () {
+    return view('splash-screen');
+})->name('demo.splash');
+
+// Redirect /dashboard to user dashboard
+Route::get('/dashboard', [UserDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
+// Dashboard action routes
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard/investments', [UserDashboardController::class, 'investments'])->name('dashboard.investments');
+    Route::get('/dashboard/transactions', [UserDashboardController::class, 'transactions'])->name('dashboard.transactions');
+    Route::get('/dashboard/referrals', [UserDashboardController::class, 'referrals'])->name('dashboard.referrals');
+    Route::get('/dashboard/packages', [UserDashboardController::class, 'packages'])->name('dashboard.packages');
+    Route::get('/dashboard/deposit', [UserDashboardController::class, 'deposit'])->name('dashboard.deposit');
+    Route::post('/dashboard/deposit', [UserDashboardController::class, 'processDeposit'])->name('dashboard.deposit.process');
+    Route::get('/dashboard/withdraw', [UserDashboardController::class, 'withdraw'])->name('dashboard.withdraw');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// User Routes (Protected)
+Route::middleware(['auth', 'verified'])->group(function () {
+    // User Dashboard
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/investments', [UserDashboardController::class, 'investments'])->name('investments');
+        Route::get('/transactions', [UserDashboardController::class, 'transactions'])->name('transactions');
+        Route::get('/referrals', [UserDashboardController::class, 'referrals'])->name('referrals');
+        
+        // Investment Packages
+        Route::get('/packages', [UserDashboardController::class, 'packages'])->name('packages');
+        
+        // Deposit & Withdrawal
+        Route::get('/deposit', [UserDashboardController::class, 'deposit'])->name('deposit');
+        Route::post('/deposit', [UserDashboardController::class, 'processDeposit'])->name('deposit.process');
+        Route::get('/withdraw', [UserDashboardController::class, 'withdraw'])->name('withdraw');
+        Route::post('/withdraw', [UserDashboardController::class, 'processWithdraw'])->name('withdraw.process');
+        
+        // Franchise Applications
+        Route::get('/franchise', [UserDashboardController::class, 'franchise'])->name('franchise');
+        Route::post('/franchise', [UserDashboardController::class, 'processFranchise'])->name('franchise.process');
+    });
+
+    // Investment Routes
+    Route::prefix('investments')->name('investments.')->group(function () {
+        Route::get('/', [InvestmentController::class, 'index'])->name('index');
+        Route::post('/', [InvestmentController::class, 'store'])->name('store');
+        Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
+    });
+});
+
+// Admin Routes (Protected with admin middleware)
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/investments', [AdminDashboardController::class, 'investments'])->name('investments');
+    Route::get('/transactions', [AdminDashboardController::class, 'transactions'])->name('transactions');
+    Route::get('/analytics', [AdminDashboardController::class, 'analytics'])->name('analytics');
+    
+    // Transaction Management
+    Route::patch('/transactions/{transaction}/approve', [AdminDashboardController::class, 'approveTransaction'])->name('transactions.approve');
+    Route::patch('/transactions/{transaction}/reject', [AdminDashboardController::class, 'rejectTransaction'])->name('transactions.reject');
+    
+    // Franchise Management
+    Route::get('/franchise-applications', [AdminDashboardController::class, 'franchiseApplications'])->name('franchise.index');
+    Route::patch('/franchise-applications/{application}/approve', [AdminDashboardController::class, 'approveFranchise'])->name('franchise.approve');
+    Route::patch('/franchise-applications/{application}/reject', [AdminDashboardController::class, 'rejectFranchise'])->name('franchise.reject');
+});
+
+require __DIR__.'/auth.php';
