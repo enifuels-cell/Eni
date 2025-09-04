@@ -125,6 +125,27 @@ class AdminDashboardController extends Controller
             // Add to user balance
             $transaction->user->increment('account_balance', $transaction->amount);
 
+            // Check if this is a package investment deposit and activate associated investments
+            if (str_contains($transaction->description, 'Investment in') && str_contains($transaction->description, 'package')) {
+                // Find and activate investments created around the same time as this transaction
+                // for the same user and amount
+                $investments = $transaction->user->investments()
+                    ->where('active', false)
+                    ->where('amount', $transaction->amount)
+                    ->whereBetween('created_at', [
+                        $transaction->created_at->subMinutes(5),
+                        $transaction->created_at->addMinutes(5)
+                    ])
+                    ->get();
+
+                foreach ($investments as $investment) {
+                    $investment->update([
+                        'active' => true,
+                        'started_at' => now()
+                    ]);
+                }
+            }
+
             // Log admin action
             $this->logAdminAction('approve_deposit', $transaction);
         });
@@ -291,12 +312,23 @@ class AdminDashboardController extends Controller
     public function manageUsers()
     {
         $users = User::where('role', '!=', 'admin')
+            ->with(['referralReceived.referrer'])
             ->withSum('transactions as total_deposits', 'amount')
-            ->withCount('referrals')
+            ->withCount(['referrals as referrals_count'])
             ->latest()
             ->paginate(20);
 
-        return view('admin.users.manage', compact('users'));
+        // Calculate referral statistics
+        $totalUsers = User::where('role', '!=', 'admin')->count();
+        $referredUsers = User::where('role', '!=', 'admin')
+            ->whereHas('referralReceived')
+            ->count();
+        $activeReferrers = User::where('role', '!=', 'admin')
+            ->whereHas('referrals')
+            ->count();
+        $referralRate = $totalUsers > 0 ? ($referredUsers / $totalUsers) * 100 : 0;
+
+        return view('admin.users.manage', compact('users', 'totalUsers', 'referredUsers', 'activeReferrers', 'referralRate'));
     }
 
     /**
@@ -506,6 +538,56 @@ class AdminDashboardController extends Controller
 
         return back()->with('success', 'Franchise application rejected.');
     }
+
+    /**
+     * Verify a user's email
+     */
+    public function verifyUser(User $user)
+    {
+        if ($user->email_verified_at) {
+            return back()->with('error', 'User is already verified.');
+        }
+
+        $user->update([
+            'email_verified_at' => now()
+        ]);
+
+        $this->logAdminAction('verify_user', null, "Manually verified user: {$user->email}");
+
+        return back()->with('success', 'User has been verified successfully.');
+    }
+
+    /**
+     * Suspend or unsuspend a user
+     */
+    public function suspendUser(User $user)
+    {
+        if ($user->role === 'admin') {
+            return back()->with('error', 'Cannot suspend admin users.');
+        }
+
+        // Toggle suspension status
+        $isSuspended = $user->suspended_at !== null;
+        
+        if ($isSuspended) {
+            // Unsuspend user
+            $user->update(['suspended_at' => null]);
+            $action = 'unsuspend_user';
+            $message = 'User has been unsuspended successfully.';
+            $logMessage = "Unsuspended user: {$user->email}";
+        } else {
+            // Suspend user
+            $user->update(['suspended_at' => now()]);
+            $action = 'suspend_user';
+            $message = 'User has been suspended successfully.';
+            $logMessage = "Suspended user: {$user->email}";
+        }
+
+        $this->logAdminAction($action, null, $logMessage);
+
+        return back()->with('success', $message);
+    }
+
     private function logAdminAction($action, $transaction = null, $notes = null)
     {
         \Log::info('Admin Action', [

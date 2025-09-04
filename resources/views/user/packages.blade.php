@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Investment Packages - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,11 +50,11 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
-            <a href="{{ route('dashboard') }}" class="text-white/70 hover:text-white text-sm">← Back to Dashboard</a>
-            <form method="POST" action="{{ route('logout') }}" class="inline">
-                @csrf
-                <button type="submit" class="text-white/70 hover:text-white text-sm">Logout</button>
-            </form>
+            <a href="{{ route('dashboard') }}" class="text-white/70 hover:text-white transition-colors" title="Back to Dashboard">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </a>
         </div>
     </header>
 
@@ -87,22 +88,10 @@
                      onclick="openPaymentForm({{ $package->id }}, '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
                     <div class="text-center">
-                        @php
-                            $imageName = '';
-                            if(str_contains(strtolower($package->name), 'capital')) {
-                                $imageName = 'Capital.png';
-                            } elseif(str_contains(strtolower($package->name), 'energy')) {
-                                $imageName = 'Energy.png';
-                            } elseif(str_contains(strtolower($package->name), 'growth')) {
-                                $imageName = 'Growth.png';
-                            } else {
-                                $imageName = 'Capital.png'; // Default fallback
-                            }
-                        @endphp
-                        <img src="{{ asset($imageName) }}" 
+                        <img src="{{ asset($package->image) }}" 
                              alt="{{ $package->name }} Investment Package" 
                              class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300"
-                             onerror="console.log('Failed to load image: {{ $imageName }}')">
+                             onerror="console.log('Failed to load image: {{ $package->image }}')">
                     </div>
                 </div>
                 @endforeach
@@ -125,7 +114,7 @@
                 <p class="text-white/60 text-sm">Available for instant investment</p>
             </div>
             
-            <form method="POST" action="{{ route('dashboard.deposit') }}" enctype="multipart/form-data">
+            <form id="investment-form-element" method="POST" action="{{ route('dashboard.deposit.process') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="package_id" id="selected_package_id">
                 
@@ -144,7 +133,7 @@
                 <!-- Payment Method -->
                 <div class="mb-6">
                     <label class="block text-white/80 font-semibold mb-3">Payment Method</label>
-                    <select name="payment_method" required
+                    <select name="payment_method" id="paymentMethod" required onchange="handlePaymentMethodChange()"
                             class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white focus:ring-2 focus:ring-eni-yellow focus:border-transparent">
                         <option value="" class="bg-eni-dark">Select payment method</option>
                         <option value="account_balance" class="bg-eni-dark">💰 Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</option>
@@ -153,6 +142,38 @@
                         <option value="paypal" class="bg-eni-dark">🅿️ PayPal</option>
                         <option value="cryptocurrency" class="bg-eni-dark">₿ Cryptocurrency</option>
                     </select>
+                </div>
+
+                <!-- Bank Selection (Hidden by default) -->
+                <div id="bankSelection" class="mb-6 hidden">
+                    <label class="block text-white/80 font-semibold mb-3">Select Bank</label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bank-option bg-white/10 border border-white/20 rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+                             onclick="selectBank('landbank')">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🏦</div>
+                                <div class="text-white font-semibold">LandBank</div>
+                                <div class="text-white/60 text-sm">Land Bank of the Philippines</div>
+                            </div>
+                        </div>
+                        <div class="bank-option bg-white/10 border border-white/20 rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+                             onclick="selectBank('bpi')">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🏛️</div>
+                                <div class="text-white font-semibold">BPI</div>
+                                <div class="text-white/60 text-sm">Bank of the Philippine Islands</div>
+                            </div>
+                        </div>
+                        <div class="bank-option bg-white/10 border border-white/20 rounded-lg p-4 cursor-pointer hover:bg-white/20 transition-colors"
+                             onclick="selectBank('rcbc')">
+                            <div class="text-center">
+                                <div class="text-2xl mb-2">🏪</div>
+                                <div class="text-white font-semibold">RCBC</div>
+                                <div class="text-white/60 text-sm">Rizal Commercial Banking Corporation</div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="selected_bank" id="selectedBank">
                 </div>
 
                 <!-- Submit Button -->
@@ -1364,7 +1385,323 @@
         </div>
     </div>
 
+    <!-- Bank QR Code Modal -->
+    <div id="qrModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10">
+                <div class="text-center">
+                    <h3 class="text-xl font-bold mb-6 text-eni-yellow">Bank Transfer Payment</h3>
+                    
+                    <div id="qrContent">
+                        <!-- QR Code will be displayed here -->
+                    </div>
+                    
+                    <div class="mt-6">
+                        <p class="text-white/80 text-sm mb-4">
+                            Scan the QR code above or use your banking app to transfer the investment amount.
+                        </p>
+                        <p class="text-white/60 text-xs mb-6">
+                            After completing the transfer, upload your payment receipt below.
+                        </p>
+                        
+                        <!-- Receipt Upload Section -->
+                        <div class="mb-6">
+                            <label class="block text-white/80 text-sm font-medium mb-2">Upload Payment Receipt</label>
+                            <input type="file" id="receiptInput" name="receipt" 
+                                   accept=".jpg,.jpeg,.png,.pdf"
+                                   class="w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-eni-yellow file:text-eni-dark hover:file:bg-yellow-400 bg-white/10 border border-white/20 rounded-lg">
+                            <p class="text-white/50 text-xs mt-1">Accepted formats: JPG, PNG, PDF (Max 2MB)</p>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button type="button" onclick="uploadReceipt()" 
+                                    class="flex-1 bg-white/10 text-white py-3 rounded-lg hover:bg-white/20 transition-colors">
+                                Upload Receipt
+                            </button>
+                            <button type="button" onclick="confirmBankTransfer()" 
+                                    class="flex-1 bg-eni-yellow text-eni-dark font-bold py-3 rounded-lg hover:bg-yellow-400 transition-colors">
+                                Complete Investment
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Receipt Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-lg w-full">
+                
+                <!-- Modal Header -->
+                <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
+                    <h2 class="text-xl font-bold text-eni-yellow flex items-center gap-2">
+                        ✅ Investment Submitted Successfully
+                    </h2>
+                    <button onclick="closeReceiptModal()" class="text-white/60 hover:text-white text-2xl">×</button>
+                </div>
+                
+                <!-- Modal Content -->
+                <div class="p-6 space-y-4">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Transaction Receipt</h3>
+                        <p class="text-white/70">Your investment has been submitted and is pending approval.</p>
+                    </div>
+                    
+                    <div class="bg-eni-dark/50 rounded-lg p-4 space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-white/60">Package:</span>
+                            <span class="text-white font-medium" id="receipt-package">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/60">Amount:</span>
+                            <span class="text-white font-medium" id="receipt-amount">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/60">Payment Method:</span>
+                            <span class="text-white font-medium" id="receipt-payment">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/60">Status:</span>
+                            <span class="text-yellow-400 font-medium">
+                                <span class="inline-flex items-center gap-1">
+                                    <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
+                                    Pending Approval
+                                </span>
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-white/60">Date:</span>
+                            <span class="text-white font-medium" id="receipt-date">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="text-blue-400 font-medium mb-1">What's Next?</h4>
+                                <p class="text-white/70 text-sm">
+                                    Our admin team will verify your payment and approve your investment. 
+                                    You'll receive a notification once approved and your investment starts earning interest.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal Footer -->
+                <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex gap-3">
+                    <button onclick="goToDashboard()" class="flex-1 bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
+                        Go to Dashboard
+                    </button>
+                    <button onclick="closeReceiptModal()" class="px-6 py-2 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-colors">
+                        Close
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Bank transfer functionality
+        function handlePaymentMethodChange() {
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const bankSelection = document.getElementById('bankSelection');
+            
+            if (paymentMethod === 'bank_transfer') {
+                bankSelection.classList.remove('hidden');
+            } else {
+                bankSelection.classList.add('hidden');
+                // Clear bank selection
+                document.getElementById('selectedBank').value = '';
+                clearBankSelection();
+            }
+        }
+
+        function selectBank(bankName) {
+            // Clear previous selections
+            clearBankSelection();
+            
+            // Mark selected bank
+            const bankOptions = document.querySelectorAll('.bank-option');
+            bankOptions.forEach(option => {
+                if (option.onclick.toString().includes(bankName)) {
+                    option.classList.add('ring-2', 'ring-eni-yellow', 'bg-white/20');
+                }
+            });
+            
+            // Set hidden input value
+            document.getElementById('selectedBank').value = bankName;
+        }
+
+        function clearBankSelection() {
+            const bankOptions = document.querySelectorAll('.bank-option');
+            bankOptions.forEach(option => {
+                option.classList.remove('ring-2', 'ring-eni-yellow', 'bg-white/20');
+            });
+        }
+
+        function showQrCode(bankName) {
+            const qrContent = document.getElementById('qrContent');
+            let qrImagePath = '';
+            let bankDisplayName = '';
+            
+            switch(bankName) {
+                case 'landbank':
+                    qrImagePath = '/landbank_qr_with_logo.png';
+                    bankDisplayName = 'LandBank of the Philippines';
+                    break;
+                case 'bpi':
+                    qrImagePath = '/bpi_qr_with_logo.png';
+                    bankDisplayName = 'Bank of the Philippine Islands';
+                    break;
+                case 'rcbc':
+                    qrImagePath = '/rcbc_qr_with_logo.png';
+                    bankDisplayName = 'RCBC';
+                    break;
+            }
+            
+            qrContent.innerHTML = `
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold text-white mb-2">${bankDisplayName}</h4>
+                    <img src="${qrImagePath}" alt="${bankDisplayName} QR Code with Eni Logo" 
+                         class="mx-auto max-w-full h-64 object-contain border border-white/20 rounded-lg">
+                    <p class="text-sm text-gray-300 mt-2 text-center">
+                        Scan this QR code to transfer to ${bankDisplayName}
+                    </p>
+                </div>
+            `;
+            
+            document.getElementById('qrModal').classList.remove('hidden');
+        }
+
+        function closeQrModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        function confirmBankTransfer() {
+            const receiptInput = document.getElementById('receiptInput');
+            
+            if (!receiptInput.files.length) {
+                alert('Please upload your payment receipt before completing the investment.');
+                return;
+            }
+            
+            // Submit the form with the uploaded receipt
+            submitInvestmentWithReceipt();
+        }
+
+        function uploadReceipt() {
+            // Trigger file input click
+            document.getElementById('receiptInput').click();
+        }
+
+        function submitInvestmentWithReceipt() {
+            const form = document.getElementById('investment-form-element');
+            const receiptInput = document.getElementById('receiptInput');
+            
+            // Get form data for receipt
+            const packageId = document.getElementById('selected_package_id').value;
+            const amount = document.getElementById('investment_amount').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            const selectedBank = document.getElementById('selectedBank')?.value;
+            
+            // Get package name from the form
+            const packageInfo = document.getElementById('package-info').textContent;
+            const packageName = packageInfo.split('\n')[0] || 'Investment Package';
+            
+            // Create FormData to handle file upload
+            const formData = new FormData(form);
+            
+            // Add the receipt file if selected
+            if (receiptInput.files.length > 0) {
+                formData.set('receipt', receiptInput.files[0]);
+            }
+            
+            // Submit via fetch with redirect handling
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                redirect: 'follow' // Follow redirects automatically
+            })
+            .then(response => {
+                // Check if we ended up on the dashboard (successful submission)
+                if (response.url.includes('/dashboard') || response.ok) {
+                    // Close QR modal first
+                    closeQrModal();
+                    
+                    // Show receipt modal instead of redirecting
+                    showReceiptModal(packageName, amount, paymentMethod, selectedBank);
+                } else {
+                    // Log the response for debugging
+                    console.error('Unexpected response:', response.status, response.url);
+                    return response.text().then(text => {
+                        console.error('Response body:', text);
+                        alert('Error submitting investment. Please try again.');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Network error:', error);
+                alert('Error submitting investment. Please try again.');
+            });
+        }
+
+        // Modify form submission to handle bank transfer
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('investment-form-element');
+            const receiptInput = document.getElementById('receiptInput');
+            
+            // Add file change listener for visual feedback
+            if (receiptInput) {
+                receiptInput.addEventListener('change', function() {
+                    const uploadBtn = document.querySelector('button[onclick="uploadReceipt()"]');
+                    if (this.files.length > 0) {
+                        uploadBtn.textContent = '✓ Receipt Selected';
+                        uploadBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                        uploadBtn.classList.remove('bg-white/10', 'hover:bg-white/20');
+                    } else {
+                        uploadBtn.textContent = 'Upload Receipt';
+                        uploadBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        uploadBtn.classList.add('bg-white/10', 'hover:bg-white/20');
+                    }
+                });
+            }
+            
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const paymentMethod = document.getElementById('paymentMethod').value;
+                    
+                    if (paymentMethod === 'bank_transfer') {
+                        const selectedBank = document.getElementById('selectedBank').value;
+                        
+                        if (!selectedBank) {
+                            e.preventDefault();
+                            alert('Please select a bank for transfer.');
+                            return;
+                        }
+                        
+                        // Show QR code instead of submitting immediately
+                        e.preventDefault();
+                        showQrCode(selectedBank);
+                    }
+                });
+            }
+        });
+
         function openPaymentForm(packageId, packageName, minAmount, maxAmount, dailyRate) {
             // Update form with package details
             document.getElementById('selected_package_id').value = packageId;
@@ -1499,6 +1836,48 @@
             }
         });
 
+        // Receipt modal functions
+        function showReceiptModal(packageName, amount, paymentMethod, selectedBank = null) {
+            // Populate receipt details
+            document.getElementById('receipt-package').textContent = packageName;
+            document.getElementById('receipt-amount').textContent = '$' + parseFloat(amount).toLocaleString();
+            
+            let paymentText = paymentMethod === 'bank_transfer' ? 'Bank Transfer' : paymentMethod;
+            if (selectedBank && paymentMethod === 'bank_transfer') {
+                const bankNames = {
+                    'landbank': 'LandBank',
+                    'bpi': 'BPI', 
+                    'rcbc': 'RCBC'
+                };
+                paymentText += ' (' + bankNames[selectedBank] + ')';
+            }
+            document.getElementById('receipt-payment').textContent = paymentText;
+            
+            // Set current date
+            const now = new Date();
+            document.getElementById('receipt-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            
+            // Show modal
+            document.getElementById('receiptModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function goToDashboard() {
+            window.location.href = '/user/dashboard';
+        }
+
+        // Add click outside to close for receipt modal
+        document.getElementById('receiptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReceiptModal();
+            }
+        });
+
         // Close modals with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -1509,6 +1888,7 @@
                 closeGuidelinesModal();
                 closeAboutModal();
                 closeSupportModal();
+                closeReceiptModal();
             }
         });
     </script>

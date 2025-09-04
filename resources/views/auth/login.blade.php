@@ -269,19 +269,19 @@
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 
-                <!-- Email Address -->
+                <!-- Email or Username -->
                 <div class="form-group">
-                    <label for="email" class="form-label">Email Address</label>
+                    <label for="email" class="form-label">Email or Username</label>
                     <input 
                         id="email" 
                         class="form-input" 
-                        type="email" 
+                        type="text" 
                         name="email" 
                         value="{{ old('email') }}" 
                         required 
                         autofocus 
                         autocomplete="username"
-                        placeholder="Enter your email"
+                        placeholder="Enter your email or username"
                     />
                     @error('email')
                         <div class="error-message">{{ $message }}</div>

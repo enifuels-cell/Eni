@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('admin')->name('admin.')->middleware(['admin', 'admin.session'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin', 'admin.session'])->group(function () {
     
     // Dashboard Overview
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -32,6 +32,8 @@ Route::prefix('admin')->name('admin.')->middleware(['admin', 'admin.session'])->
     
     // User Management
     Route::get('/manage-users', [AdminDashboardController::class, 'manageUsers'])->name('users.manage');
+    Route::patch('/users/{user}/verify', [AdminDashboardController::class, 'verifyUser'])->name('users.verify');
+    Route::patch('/users/{user}/suspend', [AdminDashboardController::class, 'suspendUser'])->name('users.suspend');
     Route::delete('/users/{user}', [AdminDashboardController::class, 'deleteUser'])->name('users.delete');
     
     // Transfer Fund Monitoring (placeholder)

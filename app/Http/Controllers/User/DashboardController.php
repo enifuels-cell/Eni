@@ -8,7 +8,9 @@ use App\Models\InvestmentPackage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Services\QrCodeService;
 
 class DashboardController extends Controller
 {
@@ -21,7 +23,7 @@ class DashboardController extends Controller
         $total_invested = $user->totalInvestedAmount();
         $total_interest = $user->totalInterestEarned();
         $total_referral_bonus = $user->totalReferralBonuses();
-        $account_balance = $user->accountBalance();
+        $account_balance = $user->account_balance ?? 0;
 
         // Count active investments
         $active_investments = $user->investments()->active()->count();
@@ -106,9 +108,9 @@ class DashboardController extends Controller
             ->orderBy('min_amount')
             ->get();
 
-        // Generate referral QR code
+        // Generate referral QR code with Eni logo
         $referralLink = route('register', ['ref' => $user->id]);
-        $qrCode = QrCode::size(200)->generate($referralLink);
+        $qrCode = QrCodeService::generateWithLogo($referralLink, 200);
 
         return view('user.referrals', compact('referrals', 'qrCode', 'referralLink', 'packages'));
     }
@@ -131,7 +133,8 @@ class DashboardController extends Controller
             'amount' => 'required|numeric|min:10',
             'payment_method' => 'required|string',
             'package_id' => 'nullable|exists:investment_packages,id',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048'
+            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'selected_bank' => 'nullable|string|in:landbank,bpi,rcbc'
         ]);
 
         $user = Auth::user();
@@ -153,6 +156,17 @@ class DashboardController extends Controller
             $receiptPath = $request->file('receipt')->store('receipts', 'public');
         }
 
+        // Build reference string with bank info if bank transfer
+        $reference = 'Deposit via ' . $request->payment_method;
+        if ($request->payment_method === 'bank_transfer' && $request->selected_bank) {
+            $bankNames = [
+                'landbank' => 'LandBank',
+                'bpi' => 'BPI',
+                'rcbc' => 'RCBC'
+            ];
+            $reference .= ' (' . $bankNames[$request->selected_bank] . ')';
+        }
+
         $description = $request->package_id 
             ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
             : 'Deposit request - awaiting approval';
@@ -161,19 +175,25 @@ class DashboardController extends Controller
         $transaction = $user->transactions()->create([
             'type' => 'deposit',
             'amount' => $request->amount,
-            'reference' => 'Deposit via ' . $request->payment_method,
+            'reference' => $reference,
             'status' => 'pending',
             'description' => $description,
+            'receipt_path' => $receiptPath,
         ]);
 
         // If this is a package investment, create the investment record
         if ($request->package_id) {
+            $package = InvestmentPackage::find($request->package_id);
+            
             $user->investments()->create([
                 'investment_package_id' => $request->package_id,
                 'amount' => $request->amount,
-                'status' => 'pending', // Will be activated when deposit is approved
-                'start_date' => now(),
-                'end_date' => now()->addDays(InvestmentPackage::find($request->package_id)->duration_days),
+                'daily_shares_rate' => $package->daily_shares_rate,
+                'remaining_days' => $package->effective_days,
+                'total_interest_earned' => 0,
+                'active' => false, // Will be activated when deposit is approved
+                'started_at' => now(),
+                'ended_at' => null,
             ]);
             
             return redirect()->route('user.dashboard')
@@ -252,5 +272,138 @@ class DashboardController extends Controller
 
         return redirect()->route('user.franchise')
             ->with('success', 'Franchise application submitted successfully!');
+    }
+
+    public function transfer()
+    {
+        $user = Auth::user();
+        $accountBalance = $user->account_balance ?? 0;
+        
+        return view('user.transfer', compact('accountBalance'));
+    }
+
+    public function processTransfer(Request $request)
+    {
+        \Log::info('Transfer attempt started', [
+            'user' => Auth::user()->email,
+            'recipient_email' => $request->recipient_email,
+            'amount' => $request->amount,
+            'package_id' => $request->package_id
+        ]);
+
+        $request->validate([
+            'recipient_email' => 'required|email|exists:users,email',
+            'amount' => 'required|numeric|min:1',
+            'package_id' => 'nullable|exists:investment_packages,id',
+            'description' => 'nullable|string|max:255'
+        ]);
+
+        $user = Auth::user();
+        $amount = $request->amount;
+
+        // Check if user has sufficient balance
+        if ($user->account_balance < $amount) {
+            return back()->withErrors([
+                'amount' => 'Insufficient account balance. Your current balance is $' . number_format($user->account_balance, 2)
+            ])->withInput();
+        }
+
+        // Get recipient user
+        $recipient = User::where('email', $request->recipient_email)->first();
+        
+        if (!$recipient) {
+            return back()->withErrors([
+                'recipient_email' => 'Recipient not found.'
+            ])->withInput();
+        }
+
+        // Prevent self-transfer
+        if ($recipient->id === $user->id) {
+            return back()->withErrors([
+                'recipient_email' => 'You cannot transfer funds to yourself.'
+            ])->withInput();
+        }
+
+        try {
+            \DB::transaction(function () use ($user, $recipient, $amount, $request) {
+                // Deduct from sender
+                $user->decrement('account_balance', $amount);
+                
+                // Add to recipient
+                $recipient->increment('account_balance', $amount);
+
+                // Record sender transaction
+                $user->transactions()->create([
+                    'type' => 'transfer',
+                    'amount' => -$amount, // Negative for outgoing transfer
+                    'status' => 'completed',
+                    'description' => 'Transfer to ' . $recipient->email . ($request->description ? ': ' . $request->description : ''),
+                    'reference' => 'TXN' . time() . rand(1000, 9999)
+                ]);
+
+                // Record recipient transaction
+                $recipient->transactions()->create([
+                    'type' => 'transfer',
+                    'amount' => $amount, // Positive for incoming transfer
+                    'status' => 'completed',
+                    'description' => 'Transfer from ' . $user->email . ($request->description ? ': ' . $request->description : ''),
+                    'reference' => 'TXN' . time() . rand(1000, 9999)
+                ]);
+
+                // If package_id is provided, create investment automatically
+                if ($request->package_id) {
+                    $package = InvestmentPackage::findOrFail($request->package_id);
+                    
+                    // Validate investment amount against package limits
+                    if ($amount >= $package->min_amount && $amount <= $package->max_amount) {
+                        // Create investment for recipient (automatically active since paid from transfer)
+                        $investment = $recipient->investments()->create([
+                            'investment_package_id' => $package->id,
+                            'amount' => $amount,
+                            'daily_shares_rate' => $package->daily_shares_rate,
+                            'remaining_days' => $package->effective_days,
+                            'total_interest_earned' => 0,
+                            'active' => true, // Auto-activate when paid via transfer
+                            'started_at' => now(),
+                            'ended_at' => null,
+                        ]);
+
+                        // Create investment transaction record for recipient
+                        $recipient->transactions()->create([
+                            'type' => 'other',
+                            'amount' => -$amount, // Negative because it's deducted from their balance
+                            'status' => 'completed',
+                            'description' => 'Investment in ' . $package->name . ' (funded by transfer from ' . $user->email . ')',
+                            'reference' => 'INV' . time() . rand(1000, 9999)
+                        ]);
+
+                        // Deduct investment amount from recipient's balance
+                        $recipient->decrement('account_balance', $amount);
+                        
+                        // Update package slots if applicable
+                        if ($package->available_slots !== null) {
+                            $package->decrement('available_slots');
+                        }
+                    }
+                }
+            });
+
+            return redirect()->route('dashboard.transfer')
+                ->with('success', 'Transfer completed successfully!' . 
+                    ($request->package_id ? ' Investment has been automatically activated.' : ''));
+
+        } catch (\Exception $e) {
+            \Log::error('Transfer failed', [
+                'user' => Auth::user()->email,
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()->withErrors([
+                'transfer' => 'Transfer failed. Please try again. Error: ' . $e->getMessage()
+            ])->withInput();
+        }
     }
 }

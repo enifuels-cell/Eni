@@ -45,7 +45,7 @@ class InvestmentController extends Controller
 
         // Check user balance
         $user = Auth::user();
-        if ($user->accountBalance() < $request->amount) {
+        if ($user->account_balance < $request->amount) {
             return back()->withErrors(['amount' => 'Insufficient account balance.']);
         }
 
@@ -57,13 +57,18 @@ class InvestmentController extends Controller
                 'amount' => $request->amount,
                 'daily_shares_rate' => $package->daily_shares_rate,
                 'remaining_days' => $package->effective_days,
+                'total_interest_earned' => 0,
+                'active' => true,
                 'started_at' => now(),
+                'ended_at' => null,
             ]);
 
             // Deduct from user balance
+            $user->decrement('account_balance', $request->amount);
+            
             Transaction::create([
                 'user_id' => $user->id,
-                'type' => 'investment',
+                'type' => 'other',
                 'amount' => -$request->amount,
                 'reference' => "Investment #" . $investment->id,
                 'status' => 'completed',

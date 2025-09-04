@@ -46,20 +46,72 @@
         <span class="absolute top-1 right-1 w-2 h-2 bg-eni-yellow rounded-full"></span>
       </button>
       <div class="relative">
-        <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow"/>
-        <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
+        <button onclick="toggleProfileMenu()" class="block hover:opacity-80 transition-opacity relative">
+          <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
+          <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
+        </button>
+        
+        <!-- Profile Dropdown Menu -->
+        <div id="profileMenu" class="absolute right-0 top-full mt-2 w-64 bg-eni-dark border border-white/20 rounded-lg shadow-lg z-50 hidden">
+          <div class="p-4 border-b border-white/10">
+            <p class="font-semibold">{{ Auth::user()->name }}</p>
+            <p class="text-sm text-white/60">{{ Auth::user()->email }}</p>
+          </div>
+          <div class="py-2">
+            <a href="{{ route('profile.edit') }}#personal" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Personal Information
+              </div>
+            </a>
+            <a href="{{ route('profile.edit') }}#bank" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                Bank Details for Withdrawals
+              </div>
+            </a>
+            <a href="{{ route('profile.edit') }}#account" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Account Information
+              </div>
+            </a>
+            <a href="{{ route('profile.edit') }}#password" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+                Change Password
+              </div>
+            </a>
+          </div>
+          <div class="border-t border-white/10 py-2">
+            <form method="POST" action="{{ route('logout') }}" class="block">
+              @csrf
+              <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors text-red-400">
+                <div class="flex items-center gap-3">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                  </svg>
+                  Logout
+                </div>
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
-      <!-- Logout Button -->
-      <form method="POST" action="{{ route('logout') }}" class="inline">
-        @csrf
-        <button type="submit" class="text-white/70 hover:text-white text-sm">Logout</button>
-      </form>
     </div>
   </header>
 
   <!-- Hero Balance -->
   <section class="bg-gradient-to-br from-eni-yellow to-yellow-400 text-eni-dark rounded-b-3xl p-6 shadow-glow">
-    <h2 class="text-sm uppercase font-bold tracking-wide">Portfolio Value</h2>
+    <h2 class="text-sm uppercase font-bold tracking-wide">Account Balance</h2>
     <p class="text-4xl font-extrabold mt-1">${{ number_format($account_balance ?? 0, 2) }}</p>
     <p class="text-sm text-eni-dark/70">
       @if(($total_interest ?? 0) > 0)
@@ -137,6 +189,7 @@
       <a href="{{ route('dashboard') }}" class="text-eni-yellow">Dashboard</a>
       <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white">Invest</a>
       <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white">Referrals</a>
+      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white">Transfer</a>
       <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white">History</a>
     </div>
   </nav>
@@ -193,6 +246,11 @@
       panel.classList.toggle('hidden');
     }
 
+    function toggleProfileMenu() {
+      const menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    }
+
     // Close notifications when clicking outside
     document.addEventListener('click', function(event) {
       const panel = document.getElementById('notificationsPanel');
@@ -200,6 +258,16 @@
       
       if (!panel.contains(event.target) && !button) {
         panel.classList.add('hidden');
+      }
+    });
+    
+    // Close profile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('profileMenu');
+      const button = event.target.closest('button[onclick="toggleProfileMenu()"]');
+      
+      if (!button && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
       }
     });
   </script>

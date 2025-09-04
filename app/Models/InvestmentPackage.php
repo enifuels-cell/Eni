@@ -46,6 +46,7 @@ class InvestmentPackage extends Model
 {
     protected $fillable = [
         'name',
+        'image',
         'min_amount',
         'max_amount',
         'daily_shares_rate',

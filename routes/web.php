@@ -22,6 +22,18 @@ Route::get('/test', function () {
     return view('test');
 });
 
+// Session and CSRF test route
+Route::get('/session-test', function () {
+    session(['test_key' => 'Session is working!']);
+    $csrfToken = csrf_token();
+    return response()->json([
+        'session_works' => session('test_key'),
+        'csrf_token' => $csrfToken,
+        'session_id' => session()->getId(),
+        'config_url' => config('app.url')
+    ]);
+});
+
 // Demo route to force splash screen view
 Route::get('/demo-splash', function () {
     return view('splash-screen');
@@ -39,6 +51,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/deposit', [UserDashboardController::class, 'deposit'])->name('dashboard.deposit');
     Route::post('/dashboard/deposit', [UserDashboardController::class, 'processDeposit'])->name('dashboard.deposit.process');
     Route::get('/dashboard/withdraw', [UserDashboardController::class, 'withdraw'])->name('dashboard.withdraw');
+    Route::get('/dashboard/transfer', [UserDashboardController::class, 'transfer'])->name('dashboard.transfer');
+    Route::post('/dashboard/transfer', [UserDashboardController::class, 'processTransfer'])->name('dashboard.transfer.process');
 });
 
 Route::middleware('auth')->group(function () {
@@ -78,22 +92,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// Admin Routes (Protected with admin middleware)
-Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/investments', [AdminDashboardController::class, 'investments'])->name('investments');
-    Route::get('/transactions', [AdminDashboardController::class, 'transactions'])->name('transactions');
-    Route::get('/analytics', [AdminDashboardController::class, 'analytics'])->name('analytics');
-    
-    // Transaction Management
-    Route::patch('/transactions/{transaction}/approve', [AdminDashboardController::class, 'approveTransaction'])->name('transactions.approve');
-    Route::patch('/transactions/{transaction}/reject', [AdminDashboardController::class, 'rejectTransaction'])->name('transactions.reject');
-    
-    // Franchise Management
-    Route::get('/franchise-applications', [AdminDashboardController::class, 'franchiseApplications'])->name('franchise.index');
-    Route::patch('/franchise-applications/{application}/approve', [AdminDashboardController::class, 'approveFranchise'])->name('franchise.approve');
-    Route::patch('/franchise-applications/{application}/reject', [AdminDashboardController::class, 'rejectFranchise'])->name('franchise.reject');
-});
+// Admin Routes (Protected with admin middleware) - Moved to admin.php
+// Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+//     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+//     Route::get('/investments', [AdminDashboardController::class, 'investments'])->name('investments');
+//     Route::get('/transactions', [AdminDashboardController::class, 'transactions'])->name('transactions');
+//     Route::get('/analytics', [AdminDashboardController::class, 'analytics'])->name('analytics');
+//     
+//     // Transaction Management
+//     Route::patch('/transactions/{transaction}/approve', [AdminDashboardController::class, 'approveTransaction'])->name('transactions.approve');
+//     Route::patch('/transactions/{transaction}/reject', [AdminDashboardController::class, 'rejectTransaction'])->name('transactions.reject');
+//     
+//     // Franchise Management
+//     Route::get('/franchise-applications', [AdminDashboardController::class, 'franchiseApplications'])->name('franchise.index');
+//     Route::patch('/franchise-applications/{application}/approve', [AdminDashboardController::class, 'approveFranchise'])->name('franchise.approve');
+//     Route::patch('/franchise-applications/{application}/reject', [AdminDashboardController::class, 'rejectFranchise'])->name('franchise.reject');
+// });
 
 require __DIR__.'/auth.php';
 

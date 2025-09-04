@@ -15,54 +15,37 @@ class InvestmentPackageSeeder extends Seeder
     {
         $packages = [
             [
-                'name' => 'Starter Package',
-                'min_amount' => 100.00,
-                'max_amount' => 999.99,
-                'daily_shares_rate' => 1.5, // 1.5% daily
-                'effective_days' => 30,
+                'name' => 'Energy Saver',
+                'min_amount' => 200.00,
+                'max_amount' => 899.99,
+                'daily_shares_rate' => 0.5, // 0.5% daily
+                'effective_days' => 180,
                 'available_slots' => 100,
-                'referral_bonus_rate' => 5.0, // 5% referral bonus
+                'referral_bonus_rate' => 5.0, // 5% commission
                 'active' => true,
+                'image' => 'Energy.png',
             ],
             [
-                'name' => 'Professional Package',
-                'min_amount' => 1000.00,
-                'max_amount' => 4999.99,
-                'daily_shares_rate' => 2.0, // 2% daily
-                'effective_days' => 45,
-                'available_slots' => 75,
-                'referral_bonus_rate' => 7.5, // 7.5% referral bonus
-                'active' => true,
-            ],
-            [
-                'name' => 'Premium Package',
-                'min_amount' => 5000.00,
-                'max_amount' => 9999.99,
-                'daily_shares_rate' => 2.5, // 2.5% daily
-                'effective_days' => 60,
+                'name' => 'Growth Power',
+                'min_amount' => 900.00,
+                'max_amount' => 6999.99,
+                'daily_shares_rate' => 0.7, // 0.7% daily
+                'effective_days' => 180,
                 'available_slots' => 50,
-                'referral_bonus_rate' => 10.0, // 10% referral bonus
+                'referral_bonus_rate' => 5.0, // 5% commission (default)
                 'active' => true,
+                'image' => 'Growth.png',
             ],
             [
-                'name' => 'Elite Package',
-                'min_amount' => 10000.00,
-                'max_amount' => 24999.99,
-                'daily_shares_rate' => 3.0, // 3% daily
-                'effective_days' => 90,
-                'available_slots' => 25,
-                'referral_bonus_rate' => 12.5, // 12.5% referral bonus
-                'active' => true,
-            ],
-            [
-                'name' => 'VIP Package',
-                'min_amount' => 25000.00,
+                'name' => 'Capital Prime',
+                'min_amount' => 7000.00,
                 'max_amount' => 50000.00,
-                'daily_shares_rate' => 3.5, // 3.5% daily
-                'effective_days' => 120,
-                'available_slots' => 10,
-                'referral_bonus_rate' => 15.0, // 15% referral bonus
+                'daily_shares_rate' => 0.9, // 0.9% daily
+                'effective_days' => 180,
+                'available_slots' => 25,
+                'referral_bonus_rate' => 5.0, // 5% commission (default)
                 'active' => true,
+                'image' => 'Capital.png',
             ],
         ];
 

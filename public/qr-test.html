@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Codes with Eni Logo - Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        .qr-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .qr-card h3 {
+            margin-top: 0;
+            color: #fff;
+            font-size: 18px;
+        }
+        
+        .qr-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            background: white;
+            padding: 10px;
+        }
+        
+        .qr-card p {
+            margin-bottom: 0;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔳 QR Codes with Eni Logo</h1>
+            <p>All QR codes now feature the Eni logo in the center for brand recognition</p>
+        </div>
+        
+        <div class="qr-grid">
+            <div class="qr-card">
+                <h3>LandBank of the Philippines</h3>
+                <img src="/landbank_qr_with_logo.png" alt="LandBank QR with Eni Logo" />
+                <p>Bank transfer QR code with Eni logo overlay</p>
+            </div>
+            
+            <div class="qr-card">
+                <h3>Bank of the Philippine Islands (BPI)</h3>
+                <img src="/bpi_qr_with_logo.png" alt="BPI QR with Eni Logo" />
+                <p>Bank transfer QR code with Eni logo overlay</p>
+            </div>
+            
+            <div class="qr-card">
+                <h3>RCBC (Rizal Commercial Banking Corp)</h3>
+                <img src="/rcbc_qr_with_logo.png" alt="RCBC QR with Eni Logo" />
+                <p>Bank transfer QR code with Eni logo overlay</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+            <h3>✅ QR Code Enhancement Complete</h3>
+            <p><strong>What's been implemented:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>✅ Created QrCodeService for generating QR codes with Eni logo</li>
+                <li>✅ Updated referral QR code to include Eni logo</li>
+                <li>✅ Generated bank transfer QR codes with Eni logo overlay</li>
+                <li>✅ Updated packages page to use new QR codes</li>
+                <li>✅ Maintained QR code functionality while adding branding</li>
+            </ul>
+            <p><strong>Benefits:</strong></p>
+            <ul style="text-align: left; display: inline-block;">
+                <li>🎯 Enhanced brand recognition</li>
+                <li>🔒 Professional appearance</li>
+                <li>📱 QR codes remain fully scannable</li>
+                <li>🎨 Consistent branding across all QR codes</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

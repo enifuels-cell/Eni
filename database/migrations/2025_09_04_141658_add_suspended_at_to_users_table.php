@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('role')->default('user')->after('email');
-            $table->decimal('account_balance', 15, 2)->default(0.00)->after('role');
-            $table->timestamp('last_login_at')->nullable()->after('account_balance');
+            $table->timestamp('suspended_at')->nullable()->after('email_verified_at');
+            $table->timestamp('last_login_at')->nullable()->after('suspended_at');
         });
     }
 
@@ -24,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'account_balance', 'last_login_at']);
+            $table->dropColumn(['suspended_at', 'last_login_at']);
         });
     }
 };

@@ -90,6 +90,9 @@ class UpdateTotalInterest extends Command
                         'description' => "Daily interest payment - {$today->toDateString()}",
                         'processed_at' => now(),
                     ]);
+
+                    // Update user's account balance
+                    $investment->user->increment('account_balance', $dailyInterest);
                 }
 
                 $this->line("Investment #{$investment->id} - User: {$investment->user->name} - Interest: $" . number_format($dailyInterest, 2));

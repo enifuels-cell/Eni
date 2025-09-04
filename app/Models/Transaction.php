@@ -44,6 +44,7 @@ class Transaction extends Model
         'reference',
         'status',
         'description',
+        'receipt_path',
         'processed_at'
     ];
 

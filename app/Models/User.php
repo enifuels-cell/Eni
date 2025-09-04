@@ -60,10 +60,20 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'username',
         'password',
         'role',
         'account_balance',
         'last_login_at',
+        'suspended_at',
+        'email_verified_at',
+        'bank_name',
+        'account_number',
+        'account_holder_name',
+        'routing_number',
+        'swift_code',
+        'phone',
+        'address',
     ];
 
     /**
@@ -85,6 +95,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'suspended_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -128,12 +140,12 @@ class User extends Authenticatable
     // Helper methods for investment platform
     public function totalInvestedAmount(): float
     {
-        return $this->investments()->sum('amount');
+        return $this->investments()->active()->sum('amount');
     }
 
     public function totalInterestEarned(): float
     {
-        return $this->investments()->sum('total_interest_earned');
+        return $this->investments()->active()->sum('total_interest_earned');
     }
 
     public function totalReferralBonuses(): float
@@ -150,11 +162,16 @@ class User extends Authenticatable
             ->where('status', 'completed')
             ->sum('amount');
 
-        $debits = $this->transactions()
-            ->whereIn('type', ['withdrawal', 'transfer'])
+        $transfers = $this->transactions()
+            ->where('type', 'transfer')
             ->where('status', 'completed')
             ->sum('amount');
 
-        return $credits - $debits;
+        $withdrawals = $this->transactions()
+            ->where('type', 'withdrawal')
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        return $credits + $transfers - $withdrawals;
     }
 }

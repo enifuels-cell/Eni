@@ -22,7 +22,6 @@ class AdminUserSeeder extends Seeder
                 'email' => $adminEmail,
                 'password' => Hash::make('admin123'),
                 'role' => 'admin',
-                'account_balance' => 0.00,
                 'email_verified_at' => now(),
             ]);
             
@@ -31,6 +30,25 @@ class AdminUserSeeder extends Seeder
             $this->command->info('Password: admin123');
         } else {
             $this->command->info('Admin user already exists.');
+        }
+
+        // Create test client user
+        $clientEmail = 'user@test.com';
+        
+        if (!User::where('email', $clientEmail)->exists()) {
+            User::create([
+                'name' => 'Test Client',
+                'email' => $clientEmail,
+                'password' => Hash::make('password123'),
+                'role' => 'client',
+                'email_verified_at' => now(),
+            ]);
+            
+            $this->command->info('Test client user created successfully!');
+            $this->command->info('Email: ' . $clientEmail);
+            $this->command->info('Password: password123');
+        } else {
+            $this->command->info('Test client user already exists.');
         }
     }
 }
