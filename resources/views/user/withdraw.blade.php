@@ -364,18 +364,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const paymentDetails = document.getElementById('payment_details');
     const bankDetails = document.getElementById('bank_details');
     const walletDetails = document.getElementById('wallet_details');
-
+    if (!paymentMethodSelect || !paymentDetails || !bankDetails || !walletDetails) return;
     paymentMethodSelect.addEventListener('change', function() {
         const method = this.value;
-        
         if (method) {
             paymentDetails.classList.remove('hidden');
-            
-            // Hide all detail sections first
             bankDetails.classList.add('hidden');
             walletDetails.classList.add('hidden');
-            
-            // Show relevant section
             if (method === 'bank_transfer') {
                 bankDetails.classList.remove('hidden');
             } else if (['paypal', 'bitcoin', 'ethereum', 'usdt'].includes(method)) {
@@ -387,5 +382,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-</body>
-</html>
+@endsection

@@ -172,18 +172,29 @@
 
     <script>
         function openInvestModal(packageId, packageName, minAmount, maxAmount) {
-            document.getElementById('investModal').classList.remove('hidden');
-            document.getElementById('investModal').classList.add('flex');
-            document.getElementById('modalTitle').textContent = 'Invest in ' + packageName;
-            document.getElementById('packageId').value = packageId;
-            document.getElementById('investAmount').min = minAmount;
-            document.getElementById('investAmount').max = maxAmount;
-            document.getElementById('amountRange').textContent = `Min: $${minAmount.toLocaleString()} - Max: $${maxAmount.toLocaleString()}`;
+            const modal = document.getElementById('investModal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const title = document.getElementById('modalTitle');
+            if (title) title.textContent = 'Invest in ' + packageName;
+            const pkgId = document.getElementById('packageId');
+            if (pkgId) pkgId.value = packageId;
+            const investAmount = document.getElementById('investAmount');
+            if (investAmount) {
+                investAmount.min = minAmount;
+                investAmount.max = maxAmount;
+            }
+            const amountRange = document.getElementById('amountRange');
+            if (amountRange) {
+                amountRange.textContent = `Min: $${Number(minAmount).toLocaleString()} - Max: $${Number(maxAmount).toLocaleString()}`;
+            }
         }
-
         function closeInvestModal() {
-            document.getElementById('investModal').classList.add('hidden');
-            document.getElementById('investModal').classList.remove('flex');
+            const modal = document.getElementById('investModal');
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
         }
     </script>
 </body>

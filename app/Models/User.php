@@ -61,6 +61,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'account_balance',
+        'last_login_at',
     ];
 
     /**
@@ -97,6 +100,11 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class);
     }
 
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(Referral::class, 'referrer_id');
+    }
+
     public function referralsGiven(): HasMany
     {
         return $this->hasMany(Referral::class, 'referrer_id');
@@ -110,6 +118,11 @@ class User extends Authenticatable
     public function franchiseApplications(): HasMany
     {
         return $this->hasMany(FranchiseApplication::class);
+    }
+
+    public function dailyInterestLogs(): HasMany
+    {
+        return $this->hasMany(DailyInterestLog::class);
     }
 
     // Helper methods for investment platform

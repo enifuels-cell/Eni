@@ -1,172 +1,238 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Admin Dashboard') }}
-        </h2>
-    </x-slot>
+@extends('admin.layout')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-blue-600">{{ number_format($stats['total_users']) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Total Users</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-green-600">${{ number_format($stats['total_investments'], 2) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Total Investments</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-purple-600">{{ number_format($stats['active_investments']) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Active Investments</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-yellow-600">${{ number_format($stats['total_interest_paid'], 2) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Interest Paid</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-red-600">{{ number_format($stats['pending_transactions']) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Pending Transactions</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-2xl font-bold text-indigo-600">{{ number_format($stats['pending_franchises']) }}</div>
-                        <div class="text-sm font-medium text-gray-500">Pending Franchises</div>
-                    </div>
-                </div>
-            </div>
+@section('title', 'Admin Dashboard')
 
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <a href="{{ route('admin.transactions') }}" class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                    <h3 class="text-lg font-semibold mb-2">Manage Transactions</h3>
-                    <p class="text-blue-100">Review and approve pending deposits & withdrawals</p>
-                </a>
-                
-                <a href="{{ route('admin.investments') }}" class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                    <h3 class="text-lg font-semibold mb-2">View Investments</h3>
-                    <p class="text-green-100">Monitor all user investments and performance</p>
-                </a>
-                
-                <a href="{{ route('admin.franchise.index') }}" class="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                    <h3 class="text-lg font-semibold mb-2">Franchise Applications</h3>
-                    <p class="text-purple-100">Review and process franchise requests</p>
-                </a>
-                
-                <a href="{{ route('admin.analytics') }}" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                    <h3 class="text-lg font-semibold mb-2">Analytics</h3>
-                    <p class="text-orange-100">View detailed reports and statistics</p>
-                </a>
-            </div>
+@section('content')
+<div class="px-4 py-6 sm:px-0">
+    <!-- Page Header -->
+    <div class="border-b border-gray-200 pb-4 mb-6">
+        <h1 class="text-3xl font-bold leading-tight text-gray-900">Admin Dashboard</h1>
+        <p class="mt-2 text-sm text-gray-600">Real-time platform overview and management</p>
+    </div>
 
-            <!-- Recent Investments -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-8">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Recent Investments</h3>
-                        <a href="{{ route('admin.investments') }}" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
-                    </div>
-                    
-                    @if($recentInvestments->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($recentInvestments as $investment)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm font-medium text-gray-900">{{ $investment->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $investment->user->email }}</div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $investment->investmentPackage->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">${{ number_format($investment->amount, 2) }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $investment->active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                                                {{ $investment->active ? 'Active' : 'Completed' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $investment->created_at->format('M d, Y') }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+    <!-- Key Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Users -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                            <i class="fas fa-users text-white text-sm"></i>
                         </div>
-                    @else
-                        <p class="text-gray-500">No investments yet.</p>
-                    @endif
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Users</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ number_format($totalUsers ?? 0) }}</dd>
+                        </dl>
+                    </div>
                 </div>
             </div>
+            <div class="bg-gray-50 px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-green-600 font-medium">+{{ $newSignupsToday ?? 0 }}</span>
+                    <span class="text-gray-500">new today</span>
+                </div>
+            </div>
+        </div>
 
-            <!-- Pending Transactions -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Pending Transactions</h3>
-                        <a href="{{ route('admin.transactions') }}" class="text-blue-600 hover:text-blue-800 text-sm">View All</a>
-                    </div>
-                    
-                    @if($pendingTransactions->count() > 0)
-                        <div class="space-y-3">
-                            @foreach($pendingTransactions as $transaction)
-                            <div class="flex justify-between items-center p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <div class="font-medium text-gray-900">{{ $transaction->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $transaction->user->email }}</div>
-                                            <div class="text-sm text-gray-600 mt-1">{{ ucfirst($transaction->type) }} - ${{ number_format($transaction->amount, 2) }}</div>
-                                            <div class="text-xs text-gray-500">{{ $transaction->created_at->format('M d, Y - H:i') }}</div>
-                                        </div>
-                                        <div class="flex space-x-2">
-                                            <form action="{{ route('admin.transactions.approve', $transaction) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
-                                                    Approve
-                                                </button>
-                                            </form>
-                                            <form action="{{ route('admin.transactions.reject', $transaction) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
-                                                    Reject
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
+        <!-- Total Funds -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-white text-sm"></i>
                         </div>
-                    @else
-                        <p class="text-gray-500">No pending transactions.</p>
-                    @endif
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Total Funds</dt>
+                            <dd class="text-lg font-medium text-gray-900">${{ number_format($totalFunds ?? 0, 2) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-blue-600 font-medium">${{ number_format($totalRevenue ?? 0, 2) }}</span>
+                    <span class="text-gray-500">revenue</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Reviews -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+                            <i class="fas fa-clock text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Pending Reviews</dt>
+                            <dd class="text-lg font-medium text-gray-900">{{ ($pendingDeposits ?? 0) + ($pendingWithdrawals ?? 0) + ($pendingRequestFunds ?? 0) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-orange-600 font-medium">{{ $pendingDeposits ?? 0 }}</span>
+                    <span class="text-gray-500">deposits</span>
+                    <span class="mx-1">•</span>
+                    <span class="text-red-600 font-medium">{{ $pendingWithdrawals ?? 0 }}</span>
+                    <span class="text-gray-500">withdrawals</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Daily Interest -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                            <i class="fas fa-chart-line text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-500 truncate">Interest Today</dt>
+                            <dd class="text-lg font-medium text-gray-900">${{ number_format($dailyInterestToday ?? 0, 2) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-purple-600 font-medium">{{ $activeUsersToday ?? 0 }}</span>
+                    <span class="text-gray-500">active users</span>
                 </div>
             </div>
         </div>
     </div>
-</x-app-layout>
+
+    <!-- Action Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Quick Actions -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    <i class="fas fa-bolt text-admin-accent mr-2"></i>Quick Actions
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{{ route('admin.deposits.pending') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700">
+                        <i class="fas fa-clock mr-2"></i>Review Deposits
+                        @if(($pendingDeposits ?? 0) > 0)
+                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {{ $pendingDeposits }}
+                            </span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('admin.withdrawals.pending') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700">
+                        <i class="fas fa-arrow-up mr-2"></i>Review Withdrawals
+                        @if(($pendingWithdrawals ?? 0) > 0)
+                            <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {{ $pendingWithdrawals }}
+                            </span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('admin.users.manage') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                        <i class="fas fa-users mr-2"></i>Manage Users
+                    </a>
+                    
+                    <a href="{{ route('admin.interest.daily') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700">
+                        <i class="fas fa-chart-line mr-2"></i>Interest Log
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Alerts -->
+        <div class="bg-white overflow-hidden shadow rounded-lg">
+            <div class="px-4 py-5 sm:p-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                    <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>System Alerts
+                </h3>
+                @if(isset($usersWithMultiplePending) && $usersWithMultiplePending->count() > 0)
+                    <div class="space-y-2">
+                        @foreach($usersWithMultiplePending->take(5) as $user)
+                            <div class="flex items-center justify-between p-2 bg-yellow-50 rounded">
+                                <span class="text-sm">{{ $user->name }} has {{ $user->pending_count }} pending requests</span>
+                                <a href="{{ route('admin.users.manage') }}" class="text-sm text-blue-600 hover:text-blue-800">View</a>
+                            </div>
+                        @endforeach
+                        @if($usersWithMultiplePending->count() > 5)
+                            <p class="text-xs text-gray-500">{{ $usersWithMultiplePending->count() - 5 }} more users...</p>
+                        @endif
+                    </div>
+                @else
+                    <p class="text-sm text-gray-500">No system alerts at this time.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                <i class="fas fa-history text-gray-500 mr-2"></i>Recent Activity
+            </h3>
+            <div class="flow-root">
+                @if(isset($recentTransactions) && $recentTransactions->count() > 0)
+                    <ul class="-mb-8">
+                        @foreach($recentTransactions as $transaction)
+                            <li>
+                                <div class="relative pb-8">
+                                    @if(!$loop->last)
+                                        <span class="absolute top-4 left-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                    @endif
+                                    <div class="relative flex space-x-3">
+                                        <div>
+                                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white
+                                                @if($transaction->type === 'deposit') bg-green-500
+                                                @elseif($transaction->type === 'withdrawal') bg-red-500  
+                                                @else bg-blue-500
+                                                @endif">
+                                                <i class="fas fa-{{ $transaction->type === 'deposit' ? 'arrow-down' : ($transaction->type === 'withdrawal' ? 'arrow-up' : 'exchange-alt') }} text-white text-xs"></i>
+                                            </span>
+                                        </div>
+                                        <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                                            <div>
+                                                <p class="text-sm text-gray-500">
+                                                    {{ $transaction->user->name }} - 
+                                                    <span class="font-medium text-gray-900">{{ ucfirst($transaction->type) }}</span>
+                                                    of ${{ number_format($transaction->amount, 2) }}
+                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                                        @if($transaction->status === 'pending') bg-yellow-100 text-yellow-800
+                                                        @elseif($transaction->status === 'approved') bg-green-100 text-green-800
+                                                        @else bg-red-100 text-red-800
+                                                        @endif">
+                                                        {{ ucfirst($transaction->status) }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                            <div class="text-right text-sm whitespace-nowrap text-gray-500">
+                                                {{ $transaction->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-sm text-gray-500">No recent activity.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

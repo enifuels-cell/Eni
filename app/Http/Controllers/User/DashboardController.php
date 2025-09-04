@@ -51,7 +51,7 @@ class DashboardController extends Controller
             ->paginate(10);
 
         // Get available investment packages
-        $investmentPackages = InvestmentPackage::where('is_active', true)->get();
+        $investmentPackages = InvestmentPackage::active()->get();
 
         return view('user.investments', compact('investments', 'investmentPackages'));
     }
@@ -101,18 +101,22 @@ class DashboardController extends Controller
             ->latest()
             ->get();
 
+        // Get investment packages for commission rate display
+        $packages = InvestmentPackage::active()
+            ->orderBy('min_amount')
+            ->get();
+
         // Generate referral QR code
         $referralLink = route('register', ['ref' => $user->id]);
         $qrCode = QrCode::size(200)->generate($referralLink);
 
-        return view('user.referrals', compact('referrals', 'qrCode', 'referralLink'));
+        return view('user.referrals', compact('referrals', 'qrCode', 'referralLink', 'packages'));
     }
 
     public function packages()
     {
-        $user = Auth::user();
-        $packages = InvestmentPackage::where('is_active', true)->get();
-        $accountBalance = $user->accountBalance();
+        $packages = InvestmentPackage::active()->get();
+        $accountBalance = Auth::user()->account_balance ?? 0;
         return view('user.packages', compact('packages', 'accountBalance'));
     }
 
@@ -132,23 +136,13 @@ class DashboardController extends Controller
 
         $user = Auth::user();
         
-        // Check if using account balance and validate sufficient funds
-        if ($request->payment_method === 'account_balance') {
-            $availableBalance = $user->accountBalance();
-            if ($request->amount > $availableBalance) {
-                return back()->withErrors([
-                    'amount' => "Insufficient account balance. Available: $" . number_format($availableBalance, 2)
-                ]);
-            }
-        }
-        
         // If package_id is provided, validate investment amount against package limits
         if ($request->package_id) {
             $package = InvestmentPackage::findOrFail($request->package_id);
             
-            if ($request->amount < $package->minimum_investment || $request->amount > $package->maximum_investment) {
+            if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
                 return back()->withErrors([
-                    'amount' => "Investment amount must be between $" . number_format($package->minimum_investment) . " and $" . number_format($package->maximum_investment) . " for this package."
+                    'amount' => "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package."
                 ]);
             }
         }
@@ -163,55 +157,31 @@ class DashboardController extends Controller
             ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
             : 'Deposit request - awaiting approval';
 
-        // Determine transaction status based on payment method
-        $transactionStatus = ($request->payment_method === 'account_balance') ? 'completed' : 'pending';
-
-        // Create transaction
+        // Create pending transaction
         $transaction = $user->transactions()->create([
             'type' => 'deposit',
             'amount' => $request->amount,
             'reference' => 'Deposit via ' . $request->payment_method,
-            'status' => $transactionStatus,
+            'status' => 'pending',
             'description' => $description,
         ]);
 
-        // If using account balance, deduct the amount immediately
-        if ($request->payment_method === 'account_balance') {
-            $user->transactions()->create([
-                'type' => 'debit',
-                'amount' => $request->amount,
-                'reference' => 'Investment deduction',
-                'status' => 'completed',
-                'description' => 'Account balance used for ' . $description,
-            ]);
-        }
-
         // If this is a package investment, create the investment record
         if ($request->package_id) {
-            $investmentStatus = ($request->payment_method === 'account_balance') ? 'active' : 'pending';
-            
             $user->investments()->create([
                 'investment_package_id' => $request->package_id,
                 'amount' => $request->amount,
-                'status' => $investmentStatus,
+                'status' => 'pending', // Will be activated when deposit is approved
                 'start_date' => now(),
                 'end_date' => now()->addDays(InvestmentPackage::find($request->package_id)->duration_days),
             ]);
             
-            $successMessage = ($request->payment_method === 'account_balance') 
-                ? 'Investment activated successfully! Your investment is now earning daily returns.'
-                : 'Investment submitted successfully! Your investment will be activated once payment is confirmed.';
-                
             return redirect()->route('user.dashboard')
-                ->with('success', $successMessage);
+                ->with('success', 'Investment submitted successfully! Your investment will be activated once payment is confirmed.');
         }
 
-        $successMessage = ($request->payment_method === 'account_balance')
-            ? 'Deposit completed successfully from your account balance!'
-            : 'Deposit request submitted successfully! It will be processed shortly.';
-
         return redirect()->route('user.dashboard')
-            ->with('success', $successMessage);
+            ->with('success', 'Deposit request submitted successfully! It will be processed shortly.');
     }
 
     public function withdraw()

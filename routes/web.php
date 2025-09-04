@@ -22,19 +22,6 @@ Route::get('/test', function () {
     return view('test');
 });
 
-// Debug route to check packages
-Route::get('/debug-packages', function () {
-    $packages = \App\Models\InvestmentPackage::all();
-    return response()->json($packages->toArray());
-});
-
-// Test packages page without authentication
-Route::get('/test-packages', function () {
-    $packages = \App\Models\InvestmentPackage::where('active', true)->get();
-    $accountBalance = 1000; // Mock account balance
-    return view('user.packages', compact('packages', 'accountBalance'));
-});
-
 // Demo route to force splash screen view
 Route::get('/demo-splash', function () {
     return view('splash-screen');
@@ -109,3 +96,12 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.'
 });
 
 require __DIR__.'/auth.php';
+
+// Admin routes
+require __DIR__.'/admin.php';
+
+// Debug route
+Route::get('/debug/packages', function() {
+    $packages = App\Models\InvestmentPackage::active()->get();
+    return view('debug.packages', compact('packages'));
+});

@@ -28,6 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Update last login timestamp
+        Auth::user()->update(['last_login_at' => now()]);
+
+        // Redirect admin users to admin dashboard
+        if (Auth::user()->role === 'admin') {
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

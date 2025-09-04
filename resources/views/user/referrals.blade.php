@@ -46,49 +46,40 @@
     </header>
 
     <div class="container mx-auto px-6 py-8">
-        <!-- Referral Overview -->
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10">
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-eni-yellow rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-eni-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-lg font-semibold text-eni-yellow">Total Referrals</h3>
-                    <p class="text-2xl font-bold">{{ count($referrals ?? []) }}</p>
-                </div>
-            </div>
+        <!-- How Referral Program Works -->
+        <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10 mb-8">
+            <h2 class="text-xl font-bold text-eni-yellow mb-3">How the Referral Program Works</h2>
+            <ul class="list-disc ml-6 text-white/80 text-sm space-y-1">
+                <li>Share your unique referral link or QR code with friends, family, or colleagues.</li>
+                <li>When someone registers using your link and makes a valid investment, you earn a <span class="text-eni-yellow font-semibold">commission based on their investment package</span> (5% to 15% depending on package tier).</li>
+                <li>Your rewards are credited automatically once their investment is confirmed.</li>
+                <li>You can track your referrals and earnings below.</li>
+            </ul>
+        </div>
 
-            <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10">
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                        </svg>
+        <!-- Commission Rate Breakdown -->
+        <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10 mb-8">
+            <h2 class="text-xl font-bold text-eni-yellow mb-4">Commission Rate Structure</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @if(isset($packages) && $packages->count() > 0)
+                    @foreach($packages as $package)
+                    <div class="bg-white/5 rounded-lg p-4 border border-white/10">
+                        <h3 class="font-semibold text-white mb-2">{{ $package->name }}</h3>
+                        <p class="text-white/70 text-sm mb-1">${{ number_format($package->min_amount) }} - ${{ number_format($package->max_amount) }}</p>
+                        <p class="text-eni-yellow font-bold text-lg">{{ $package->referral_bonus_rate }}% Commission</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-green-400">Total Earned</h3>
-                    <p class="text-2xl font-bold">${{ number_format(Auth::user()->totalReferralBonuses() ?? 0, 2) }}</p>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10">
-                <div class="text-center">
-                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                    @endforeach
+                @else
+                    <div class="col-span-full text-center text-white/70">
+                        <p>Commission rates: 5% (Starter) to 15% (VIP) based on investment package</p>
                     </div>
-                    <h3 class="text-lg font-semibold text-blue-400">Commission Rate</h3>
-                    <p class="text-2xl font-bold">10%</p>
-                </div>
+                @endif
             </div>
         </div>
 
-        <!-- Share Your Link -->
+        <!-- Share Your Link (always visible) -->
         <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-8 border border-white/10 mb-8">
             <h2 class="text-2xl font-bold text-eni-yellow mb-6">Share Your Referral Link</h2>
-            
             <div class="grid md:grid-cols-2 gap-8">
                 <!-- Referral Link -->
                 <div>
@@ -98,14 +89,13 @@
                                value="{{ $referralLink ?? route('register', ['ref' => Auth::id()]) }}" 
                                class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow" 
                                readonly>
-                        <button onclick="copyReferralLink()" 
+                        <button type="button" onclick="copyReferralLink(event)" 
                                 class="bg-eni-yellow text-eni-dark px-6 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
                             Copy
                         </button>
                     </div>
-                    <p class="text-white/60 text-sm mt-2">Share this link to earn 10% commission on all investments made by your referrals</p>
+                    <p class="text-white/60 text-sm mt-2">Share this link to earn variable commission (5%-15%) based on investment packages made by your referrals</p>
                 </div>
-
                 <!-- QR Code -->
                 <div class="text-center">
                     <label class="block text-white/80 font-semibold mb-3">QR Code</label>
@@ -145,7 +135,7 @@
                     </div>
                     <h3 class="text-lg font-semibold text-white/70 mb-2">No referrals yet</h3>
                     <p class="text-white/50 mb-4">Start sharing your referral link to earn commissions!</p>
-                    <button onclick="copyReferralLink()" 
+                    <button type="button" onclick="copyReferralLink(event)" 
                             class="bg-eni-yellow text-eni-dark px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Copy Referral Link
                     </button>
@@ -155,19 +145,34 @@
     </div>
 
     <script>
-        function copyReferralLink() {
+        function copyReferralLink(e) {
             const linkInput = document.getElementById('referralLink');
-            linkInput.select();
-            linkInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(linkInput.value);
-            
-            // Show feedback
-            const button = event.target;
+            if (!linkInput) return;
+            // Try clipboard API first
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(linkInput.value).then(function() {
+                    showCopyFeedback(e);
+                }, function() {
+                    fallbackCopy(linkInput, e);
+                });
+            } else {
+                fallbackCopy(linkInput, e);
+            }
+        }
+        function fallbackCopy(input, e) {
+            input.select();
+            input.setSelectionRange(0, 99999);
+            document.execCommand('copy');
+            showCopyFeedback(e);
+        }
+        function showCopyFeedback(e) {
+            if (!e) return;
+            const button = e.target;
+            if (!button) return;
             const originalText = button.textContent;
             button.textContent = 'Copied!';
             button.classList.add('bg-green-500');
             button.classList.remove('bg-eni-yellow');
-            
             setTimeout(() => {
                 button.textContent = originalText;
                 button.classList.remove('bg-green-500');
@@ -177,167 +182,3 @@
     </script>
 </body>
 </html>
-                                <div class="flex">
-                                    <input type="text" value="{{ auth()->id() }}" id="referralCode" readonly
-                                           class="flex-1 rounded-l-md border-gray-300 bg-gray-50 text-gray-600">
-                                    <button onclick="copyCode()" 
-                                            class="bg-green-600 text-white px-4 py-2 rounded-r-md hover:bg-green-700">
-                                        Copy
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-900 mb-4">QR Code</h3>
-                        
-                        <div class="text-center">
-                            <div class="inline-block p-4 bg-white border-2 border-gray-200 rounded-lg">
-                                {!! $qrCode !!}
-                            </div>
-                            <p class="text-sm text-gray-500 mt-2">Share this QR code for easy referrals</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Referral Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-3xl font-bold text-blue-600">{{ $referrals->count() }}</div>
-                        <div class="text-sm font-medium text-gray-500">Total Referrals</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-3xl font-bold text-green-600">
-                            ${{ number_format($referrals->sum(function($referral) { return $referral->totalBonusEarned(); }), 2) }}
-                        </div>
-                        <div class="text-sm font-medium text-gray-500">Total Earned</div>
-                    </div>
-                </div>
-                
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-center">
-                        <div class="text-3xl font-bold text-purple-600">
-                            {{ $referrals->flatMap->referralBonuses->where('paid', true)->count() }}
-                        </div>
-                        <div class="text-sm font-medium text-gray-500">Paid Bonuses</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- How It Works -->
-            <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg p-6 mb-8">
-                <h3 class="text-xl font-bold mb-4">How Referral Program Works</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">🔗</div>
-                        <h4 class="font-semibold mb-2">1. Share Your Link</h4>
-                        <p class="text-blue-100 text-sm">Share your unique referral link or QR code with friends and family</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">💰</div>
-                        <h4 class="font-semibold mb-2">2. They Invest</h4>
-                        <p class="text-blue-100 text-sm">When they sign up and make their first investment using your code</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl mb-2">🎉</div>
-                        <h4 class="font-semibold mb-2">3. You Earn</h4>
-                        <p class="text-blue-100 text-sm">Receive bonus percentages from their investment amounts instantly</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Referral List -->
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Your Referrals</h3>
-                    
-                    @if($referrals->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Referred User</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Bonuses</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($referrals as $referral)
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="flex-shrink-0 h-10 w-10">
-                                                    <div class="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                                        <span class="text-sm font-medium text-gray-700">
-                                                            {{ substr($referral->referee->name, 0, 2) }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">{{ $referral->referee->name }}</div>
-                                                    <div class="text-sm text-gray-500">{{ $referral->referee->email }}</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ $referral->created_at->format('M d, Y') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">
-                                            ${{ number_format($referral->totalBonusEarned(), 2) }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                Active
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <div class="text-center py-8">
-                            <div class="text-6xl mb-4">👥</div>
-                            <h4 class="text-lg font-medium text-gray-900 mb-2">No referrals yet</h4>
-                            <p class="text-gray-500 mb-4">Start sharing your referral link to earn bonuses from your referrals' investments!</p>
-                            <button onclick="copyToClipboard()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                                Copy Referral Link
-                            </button>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function copyToClipboard() {
-            const referralLink = document.getElementById('referralLink');
-            referralLink.select();
-            referralLink.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-            
-            // Show success message
-            alert('Referral link copied to clipboard!');
-        }
-
-        function copyCode() {
-            const referralCode = document.getElementById('referralCode');
-            referralCode.select();
-            referralCode.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-            
-            // Show success message
-            alert('Referral code copied to clipboard!');
-        }
-    </script>
-</x-app-layout>

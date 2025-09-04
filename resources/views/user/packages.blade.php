@@ -83,10 +83,10 @@
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                 
                 @foreach($packages as $package)
-                <div class="package-card bg-white/5 rounded-2xl p-6 backdrop-blur border border-white/10 cursor-pointer hover:border-eni-yellow transition-all duration-300" 
+                <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
                      onclick="openPaymentForm({{ $package->id }}, '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
-                    <div class="text-center mb-4">
+                    <div class="text-center">
                         @php
                             $imageName = '';
                             if(str_contains(strtolower($package->name), 'capital')) {
@@ -101,14 +101,8 @@
                         @endphp
                         <img src="{{ asset($imageName) }}" 
                              alt="{{ $package->name }} Investment Package" 
-                             class="w-full max-w-xs mx-auto rounded-lg object-contain hover:scale-105 transition-transform duration-300">
-                    </div>
-                    
-                    <div class="text-center">
-                        <h3 class="text-lg font-bold text-eni-yellow mb-2">{{ $package->name }}</h3>
-                        <p class="text-white/70 text-sm">Min: ${{ number_format($package->min_amount) }} - Max: ${{ number_format($package->max_amount) }}</p>
-                        <p class="text-eni-yellow text-xs">{{ $package->daily_shares_rate }}% Daily Returns</p>
-                        <p class="text-white/50 text-xs mt-2">Click to invest</p>
+                             class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300"
+                             onerror="console.log('Failed to load image: {{ $imageName }}')">
                     </div>
                 </div>
                 @endforeach
@@ -241,7 +235,7 @@
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">5. Referral & Incentive Program</h3>
                                 <ul class="space-y-2 text-white/80 ml-4">
-                                    <li>• Referral incentives (e.g., 5% commission) apply only to verified and compliant accounts.</li>
+                                    <li>• Referral incentives (5%-15% commission based on package tier) apply only to verified and compliant accounts.</li>
                                     <li>• Abuse of the referral system, including fraudulent registrations or self-referrals, will result in forfeiture of benefits and potential account suspension.</li>
                                 </ul>
                             </div>
@@ -1201,7 +1195,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <p class="text-white font-semibold mb-1">How does the referral program work?</p>
-                                    <p class="text-white/80 text-sm">→ Invite new verified clients using your referral code. Earn 5% incentives on qualifying referrals.</p>
+                                    <p class="text-white/80 text-sm">→ Invite new verified clients using your referral code. Earn variable commission rates (5%-15%) based on investment package tiers.</p>
                                 </div>
                                 <div>
                                     <p class="text-white font-semibold mb-1">When will I receive referral rewards?</p>
