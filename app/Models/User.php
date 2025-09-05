@@ -65,8 +65,9 @@ class User extends Authenticatable
         'role',
         'account_balance',
         'last_login_at',
-        'suspended_at',
-        'email_verified_at',
+        'last_login_ip',
+        'pin_hash',
+        'pin_set_at',
         'bank_name',
         'account_number',
         'account_holder_name',
@@ -84,6 +85,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'pin_hash',
     ];
 
     /**
@@ -95,8 +97,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'suspended_at' => 'datetime',
             'last_login_at' => 'datetime',
+            'pin_set_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -159,7 +161,7 @@ class User extends Authenticatable
     {
         $credits = $this->transactions()
             ->whereIn('type', ['deposit', 'interest', 'referral_bonus'])
-            ->where('status', 'completed')
+            ->whereIn('status', ['completed', 'approved']) // Include approved deposits
             ->sum('amount');
 
         $transfers = $this->transactions()
@@ -172,6 +174,11 @@ class User extends Authenticatable
             ->where('status', 'completed')
             ->sum('amount');
 
-        return $credits + $transfers - $withdrawals;
+        $other = $this->transactions()
+            ->where('type', 'other')
+            ->where('status', 'completed')
+            ->sum('amount');
+
+        return $credits + $transfers + $other - $withdrawals;
     }
 }

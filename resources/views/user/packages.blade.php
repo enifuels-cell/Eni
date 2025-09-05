@@ -87,11 +87,27 @@
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
                      onclick="openPaymentForm({{ $package->id }}, '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
-                    <div class="text-center">
+                    <div class="text-center relative min-h-[400px]">
+                        <!-- Elevated loading placeholder -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md rounded-2xl border-2 border-eni-yellow/40 shadow-2xl flex items-center justify-center z-10" id="placeholder-{{ $package->id }}">
+                            <div class="text-center p-12 bg-eni-dark/60 rounded-xl border border-eni-yellow/30">
+                                <div class="w-20 h-20 bg-gradient-to-br from-eni-yellow to-eni-yellow/60 rounded-full mb-6 mx-auto flex items-center justify-center shadow-xl">
+                                    <div class="animate-pulse w-12 h-12 bg-white/30 rounded-full"></div>
+                                </div>
+                                <div class="text-eni-yellow font-bold text-lg">Investment Package</div>
+                                <div class="text-white/80 text-sm mt-2">Loading your options...</div>
+                                <div class="mt-4 px-6 py-2 bg-eni-yellow/20 rounded-full border border-eni-yellow/50">
+                                    <span class="text-eni-yellow text-xs font-semibold">ENI Platform</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Direct image from database with no text overlay -->
                         <img src="{{ asset($package->image) }}" 
                              alt="{{ $package->name }} Investment Package" 
-                             class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300"
-                             onerror="console.log('Failed to load image: {{ $package->image }}')">
+                             class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300 relative z-20"
+                             onload="setTimeout(() => document.getElementById('placeholder-{{ $package->id }}').style.display='none', 1000)"
+                             onerror="document.getElementById('placeholder-{{ $package->id }}').innerHTML='<div class=\'text-center p-12 bg-eni-dark/60 rounded-xl border border-eni-yellow/30\'><div class=\'w-20 h-20 bg-gradient-to-br from-eni-yellow/30 to-eni-yellow/10 rounded-xl mx-auto mb-6 flex items-center justify-center shadow-lg border border-eni-yellow/30\'><div class=\'w-8 h-8 bg-eni-yellow/60 rounded-lg\'></div></div><div class=\'text-eni-yellow font-bold text-lg\'>Investment Package</div><div class=\'text-white/60 text-sm mt-2\'>Preview unavailable</div></div>'">
                     </div>
                 </div>
                 @endforeach
@@ -100,6 +116,24 @@
         </div>        <!-- Investment Form -->
         <div id="investment-form" class="bg-white/5 rounded-2xl p-8 backdrop-blur" style="display: none;">
             <h3 class="text-2xl font-bold text-eni-yellow mb-6">Complete Your Investment</h3>
+            
+            <!-- Error Messages -->
+            @if ($errors->any())
+                <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
+                    <h4 class="font-semibold text-red-400 mb-2">Please fix the following errors:</h4>
+                    <ul class="list-disc list-inside text-red-300 text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
+                    <p class="text-red-300">{{ session('error') }}</p>
+                </div>
+            @endif
             
             <!-- Selected Package Info -->
             <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-6">
@@ -114,7 +148,7 @@
                 <p class="text-white/60 text-sm">Available for instant investment</p>
             </div>
             
-            <form id="investment-form-element" method="POST" action="{{ route('dashboard.deposit.process') }}" enctype="multipart/form-data">
+            <form id="investment-form-element" method="POST" action="{{ route('user.deposit.process') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="package_id" id="selected_package_id">
                 
@@ -1429,89 +1463,6 @@
         </div>
     </div>
 
-    <!-- Transaction Receipt Modal -->
-    <div id="receiptModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-lg w-full">
-                
-                <!-- Modal Header -->
-                <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-eni-yellow flex items-center gap-2">
-                        ✅ Investment Submitted Successfully
-                    </h2>
-                    <button onclick="closeReceiptModal()" class="text-white/60 hover:text-white text-2xl">×</button>
-                </div>
-                
-                <!-- Modal Content -->
-                <div class="p-6 space-y-4">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-white mb-2">Transaction Receipt</h3>
-                        <p class="text-white/70">Your investment has been submitted and is pending approval.</p>
-                    </div>
-                    
-                    <div class="bg-eni-dark/50 rounded-lg p-4 space-y-3">
-                        <div class="flex justify-between">
-                            <span class="text-white/60">Package:</span>
-                            <span class="text-white font-medium" id="receipt-package">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-white/60">Amount:</span>
-                            <span class="text-white font-medium" id="receipt-amount">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-white/60">Payment Method:</span>
-                            <span class="text-white font-medium" id="receipt-payment">-</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-white/60">Status:</span>
-                            <span class="text-yellow-400 font-medium">
-                                <span class="inline-flex items-center gap-1">
-                                    <span class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>
-                                    Pending Approval
-                                </span>
-                            </span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-white/60">Date:</span>
-                            <span class="text-white font-medium" id="receipt-date">-</span>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <div>
-                                <h4 class="text-blue-400 font-medium mb-1">What's Next?</h4>
-                                <p class="text-white/70 text-sm">
-                                    Our admin team will verify your payment and approve your investment. 
-                                    You'll receive a notification once approved and your investment starts earning interest.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Modal Footer -->
-                <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex gap-3">
-                    <button onclick="goToDashboard()" class="flex-1 bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
-                        Go to Dashboard
-                    </button>
-                    <button onclick="closeReceiptModal()" class="px-6 py-2 border border-white/20 text-white rounded-lg hover:bg-white/10 transition-colors">
-                        Close
-                    </button>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-
     <script>
         // Bank transfer functionality
         function handlePaymentMethodChange() {
@@ -1610,16 +1561,6 @@
             const form = document.getElementById('investment-form-element');
             const receiptInput = document.getElementById('receiptInput');
             
-            // Get form data for receipt
-            const packageId = document.getElementById('selected_package_id').value;
-            const amount = document.getElementById('investment_amount').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
-            const selectedBank = document.getElementById('selectedBank')?.value;
-            
-            // Get package name from the form
-            const packageInfo = document.getElementById('package-info').textContent;
-            const packageName = packageInfo.split('\n')[0] || 'Investment Package';
-            
             // Create FormData to handle file upload
             const formData = new FormData(form);
             
@@ -1628,34 +1569,23 @@
                 formData.set('receipt', receiptInput.files[0]);
             }
             
-            // Submit via fetch with redirect handling
+            // Submit via fetch
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                redirect: 'follow' // Follow redirects automatically
+                }
             })
             .then(response => {
-                // Check if we ended up on the dashboard (successful submission)
-                if (response.url.includes('/dashboard') || response.ok) {
-                    // Close QR modal first
-                    closeQrModal();
-                    
-                    // Show receipt modal instead of redirecting
-                    showReceiptModal(packageName, amount, paymentMethod, selectedBank);
+                if (response.ok) {
+                    window.location.href = '/user/dashboard';
                 } else {
-                    // Log the response for debugging
-                    console.error('Unexpected response:', response.status, response.url);
-                    return response.text().then(text => {
-                        console.error('Response body:', text);
-                        alert('Error submitting investment. Please try again.');
-                    });
+                    alert('Error submitting investment. Please try again.');
                 }
             })
             .catch(error => {
-                console.error('Network error:', error);
+                console.error('Error:', error);
                 alert('Error submitting investment. Please try again.');
             });
         }
@@ -1836,48 +1766,6 @@
             }
         });
 
-        // Receipt modal functions
-        function showReceiptModal(packageName, amount, paymentMethod, selectedBank = null) {
-            // Populate receipt details
-            document.getElementById('receipt-package').textContent = packageName;
-            document.getElementById('receipt-amount').textContent = '$' + parseFloat(amount).toLocaleString();
-            
-            let paymentText = paymentMethod === 'bank_transfer' ? 'Bank Transfer' : paymentMethod;
-            if (selectedBank && paymentMethod === 'bank_transfer') {
-                const bankNames = {
-                    'landbank': 'LandBank',
-                    'bpi': 'BPI', 
-                    'rcbc': 'RCBC'
-                };
-                paymentText += ' (' + bankNames[selectedBank] + ')';
-            }
-            document.getElementById('receipt-payment').textContent = paymentText;
-            
-            // Set current date
-            const now = new Date();
-            document.getElementById('receipt-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-            
-            // Show modal
-            document.getElementById('receiptModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeReceiptModal() {
-            document.getElementById('receiptModal').classList.add('hidden');
-            document.body.style.overflow = 'auto';
-        }
-
-        function goToDashboard() {
-            window.location.href = '/user/dashboard';
-        }
-
-        // Add click outside to close for receipt modal
-        document.getElementById('receiptModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeReceiptModal();
-            }
-        });
-
         // Close modals with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
@@ -1888,82 +1776,37 @@
                 closeGuidelinesModal();
                 closeAboutModal();
                 closeSupportModal();
-                closeReceiptModal();
             }
+        });
+        
+        // Debug form submission
+        document.getElementById('investment-form-element').addEventListener('submit', function(e) {
+            console.log('Form submission attempted');
+            console.log('Form action:', this.action);
+            console.log('Package ID:', document.getElementById('selected_package_id').value);
+            console.log('Amount:', document.getElementById('investment_amount').value);
+            console.log('Payment Method:', document.getElementById('paymentMethod').value);
+            
+            // Check if required fields are filled
+            const packageId = document.getElementById('selected_package_id').value;
+            const amount = document.getElementById('investment_amount').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+            
+            if (!packageId || !amount || !paymentMethod) {
+                console.error('Missing required fields');
+                e.preventDefault();
+                alert('Please fill in all required fields');
+                return false;
+            }
+            
+            console.log('Form validation passed, submitting...');
         });
     </script>
 
-    <!-- Footer -->
-    <footer class="bg-eni-dark border-t border-white/10 mt-16">
-        <div class="container mx-auto px-6 py-8">
-            <div class="grid md:grid-cols-3 gap-8">
-                
-                <!-- Legal & Compliance -->
-                <div class="text-center md:text-left">
-                    <h4 class="text-eni-yellow font-bold text-lg mb-4">Legal & Compliance</h4>
-                    <ul class="space-y-2 text-white/70 text-sm">
-                        <li><a href="#" onclick="openTermsModal()" class="hover:text-eni-yellow transition-colors">Terms of Service</a></li>
-                        <li><a href="#" onclick="openPrivacyModal()" class="hover:text-eni-yellow transition-colors">Privacy Policy</a></li>
-                        <li><a href="#" onclick="openRiskModal()" class="hover:text-eni-yellow transition-colors">Risk Disclosure</a></li>
-                        <li><a href="#" onclick="openAmlModal()" class="hover:text-eni-yellow transition-colors">Anti-Money Laundering</a></li>
-                        <li><a href="#" onclick="openGuidelinesModal()" class="hover:text-eni-yellow transition-colors">Investment Guidelines</a></li>
-                    </ul>
-                </div>
+    <!-- Global Footer -->
+    @include('components.footer')
 
-                <!-- Company & Support -->
-                <div class="text-center md:text-left">
-                    <h4 class="text-eni-yellow font-bold text-lg mb-4">Company & Support</h4>
-                    <ul class="space-y-2 text-white/70 text-sm">
-                        <li><a href="#" onclick="openAboutModal()" class="hover:text-eni-yellow transition-colors">About ENI</a></li>
-                        <li><a href="#" onclick="openSupportModal()" class="hover:text-eni-yellow transition-colors">Contact Support</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Help Center</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Investment FAQ</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Security Center</a></li>
-                    </ul>
-                </div>
-
-                <!-- Regulatory Info -->
-                <div class="text-center md:text-left">
-                    <h4 class="text-eni-yellow font-bold text-lg mb-4">Regulatory Info</h4>
-                    <ul class="space-y-2 text-white/70 text-sm">
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">License Information</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Regulatory Compliance</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Audit Reports</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Financial Disclosures</a></li>
-                        <li><a href="#" class="hover:text-eni-yellow transition-colors">Investor Protection</a></li>
-                    </ul>
-                </div>
-                
-            </div>
-            
-            <!-- Bottom Footer -->
-            <div class="border-t border-white/10 mt-8 pt-6 text-center">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <div class="text-white/60 text-sm mb-4 md:mb-0">
-                        © {{ date('Y') }} ENI Investment Platform. All rights reserved.
-                    </div>
-                    <div class="flex items-center gap-4 text-white/60 text-sm">
-                        <span>Regulated Investment Platform</span>
-                        <span>•</span>
-                        <span>Secure & Compliant</span>
-                        <span>•</span>
-                        <span>Licensed & Insured</span>
-                    </div>
-                </div>
-                
-                <!-- Disclaimer -->
-                <div class="text-white/50 text-xs mt-4 max-w-4xl mx-auto">
-                    <p class="mb-2">
-                        <strong>Risk Warning:</strong> Investment involves risk. Past performance is not indicative of future results. 
-                        The value of investments may go up or down and investors may not get back the amount originally invested.
-                    </p>
-                    <p>
-                        ENI is regulated by financial authorities and complies with international investment standards. 
-                        All investments are subject to our terms and conditions and regulatory oversight.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Footer Modals -->
+    @include('components.footer-modals')
 </body>
 </html>

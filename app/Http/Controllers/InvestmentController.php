@@ -43,10 +43,11 @@ class InvestmentController extends Controller
             return back()->withErrors(['package' => 'This package is currently full.']);
         }
 
-        // Check user balance
+        // Check user balance (available balance excluding locked investments)
         $user = Auth::user();
-        if ($user->account_balance < $request->amount) {
-            return back()->withErrors(['amount' => 'Insufficient account balance.']);
+        $availableBalance = $user->accountBalance();
+        if ($availableBalance < $request->amount) {
+            return back()->withErrors(['amount' => 'Insufficient available balance. You have $' . number_format($availableBalance, 2) . ' available for investment.']);
         }
 
         DB::transaction(function () use ($request, $package, $user) {

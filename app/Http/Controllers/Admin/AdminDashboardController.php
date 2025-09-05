@@ -143,6 +143,19 @@ class AdminDashboardController extends Controller
                         'active' => true,
                         'started_at' => now()
                     ]);
+
+                    // Deduct investment amount from user's account balance since investments are locked
+                    // The user already received the deposit amount above, but now it should be locked in investment
+                    $transaction->user->decrement('account_balance', $investment->amount);
+
+                    // Create a transaction record for the investment deduction
+                    $transaction->user->transactions()->create([
+                        'type' => 'other',
+                        'amount' => -$investment->amount,
+                        'status' => 'completed',
+                        'description' => 'Investment activated - funds locked for ' . $investment->investmentPackage->effective_days . ' days (Investment #' . $investment->id . ')',
+                        'reference' => 'LOCK' . time() . rand(1000, 9999)
+                    ]);
                 }
             }
 

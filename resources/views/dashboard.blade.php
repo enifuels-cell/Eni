@@ -90,6 +90,14 @@
                 Change Password
               </div>
             </a>
+            <a href="/pin-setup" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
+              <div class="flex items-center gap-3">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+                PIN Settings
+              </div>
+            </a>
           </div>
           <div class="border-t border-white/10 py-2">
             <form method="POST" action="{{ route('logout') }}" class="block">
@@ -159,6 +167,22 @@
     </div>
   </section>
 
+  <!-- Franchise Opportunity -->
+  <section class="px-6 mt-6">
+    <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-gray-800 to-eni-dark border border-eni-yellow/20 text-white shadow-md">
+      <div class="p-6">
+        <div class="flex items-center mb-2">
+          <i class="fas fa-gas-pump text-2xl mr-3 text-eni-yellow"></i>
+          <h3 class="font-bold text-lg">ENI Fuel Station Franchise</h3>
+        </div>
+        <p class="text-sm mt-1 text-white/80">Open your own ENI fuel station. Join our network of service stations with proven business model and ongoing support.</p>
+        <div class="mt-4">
+          <button onclick="window.location.href='{{ route('dashboard.franchise') }}'" class="bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">Learn More</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Activity Timeline -->
   <section class="px-6 mt-6 flex-1 overflow-y-auto mb-20">
     <h4 class="font-bold text-lg mb-3">Recent Activity</h4>
@@ -184,13 +208,32 @@
   </section>
 
   <!-- Floating Navigation -->
-  <nav class="fixed bottom-4 inset-x-0 flex justify-center">
-    <div class="bg-eni-dark/90 backdrop-blur px-6 py-3 rounded-2xl flex gap-8 text-sm font-medium">
-      <a href="{{ route('dashboard') }}" class="text-eni-yellow">Dashboard</a>
-      <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white">Invest</a>
-      <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white">Referrals</a>
-      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white">Transfer</a>
-      <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white">History</a>
+  <nav id="floatingNav" class="fixed bottom-4 inset-x-0 flex justify-center z-40 transform transition-transform duration-300 ease-in-out">
+    <div class="bg-eni-dark/95 backdrop-blur border border-eni-yellow/20 shadow-lg shadow-black/25 px-6 py-3 rounded-2xl flex gap-6 text-sm font-medium">
+      <a href="{{ route('dashboard') }}" class="text-eni-yellow flex items-center gap-1 hover:text-yellow-300 transition-colors">
+        <i class="fas fa-home text-xs"></i>
+        Dashboard
+      </a>
+      <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+        <i class="fas fa-chart-line text-xs"></i>
+        Invest
+      </a>
+      <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+        <i class="fas fa-users text-xs"></i>
+        Referrals
+      </a>
+      <a href="{{ route('dashboard.franchise') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+        <i class="fas fa-gas-pump text-xs"></i>
+        Franchise
+      </a>
+      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+        <i class="fas fa-exchange-alt text-xs"></i>
+        Transfer
+      </a>
+      <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+        <i class="fas fa-history text-xs"></i>
+        History
+      </a>
     </div>
   </nav>
 
@@ -269,6 +312,51 @@
       if (!button && !menu.contains(event.target)) {
         menu.classList.add('hidden');
       }
+    });
+
+    // Auto-hide floating navigation on scroll
+    let lastScrollTop = 0;
+    let scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+    let isScrolling = false;
+    
+    window.addEventListener('scroll', function() {
+      if (!isScrolling) {
+        window.requestAnimationFrame(function() {
+          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+          const floatingNav = document.getElementById('floatingNav');
+          
+          // Only react to significant scroll movements
+          if (Math.abs(currentScroll - lastScrollTop) > scrollThreshold) {
+            if (currentScroll > lastScrollTop && currentScroll > 100) {
+              // Scrolling down & past initial viewport - hide nav
+              floatingNav.style.transform = 'translateY(120%)';
+            } else {
+              // Scrolling up or near top - show nav
+              floatingNav.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = currentScroll;
+          }
+          
+          isScrolling = false;
+        });
+      }
+      isScrolling = true;
+    });
+
+    // Show navigation when user stops scrolling for a moment
+    let scrollTimer = null;
+    window.addEventListener('scroll', function() {
+      const floatingNav = document.getElementById('floatingNav');
+      
+      // Clear the timer if it exists
+      if (scrollTimer !== null) {
+        clearTimeout(scrollTimer);
+      }
+      
+      // Set a timer to show nav after scrolling stops
+      scrollTimer = setTimeout(function() {
+        floatingNav.style.transform = 'translateY(0)';
+      }, 1500); // Show nav 1.5 seconds after scrolling stops
     });
   </script>
 </body>

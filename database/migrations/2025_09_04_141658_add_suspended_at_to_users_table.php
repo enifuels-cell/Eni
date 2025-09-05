@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('suspended_at')->nullable()->after('email_verified_at');
-            $table->timestamp('last_login_at')->nullable()->after('suspended_at');
+            //
         });
     }
 
@@ -23,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['suspended_at', 'last_login_at']);
+            //
         });
     }
 };

@@ -30,6 +30,7 @@
             border-radius: 15px;
             padding: 20px;
             text-align: center;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
@@ -69,6 +70,19 @@
             font-size: 1.2em;
             opacity: 0.9;
         }
+        
+        .summary-box {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .feature-list {
+            text-align: left;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -98,10 +112,10 @@
             </div>
         </div>
         
-        <div style="margin-top: 40px; text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+        <div class="summary-box">
             <h3>✅ QR Code Enhancement Complete</h3>
             <p><strong>What's been implemented:</strong></p>
-            <ul style="text-align: left; display: inline-block;">
+            <ul class="feature-list">
                 <li>✅ Created QrCodeService for generating QR codes with Eni logo</li>
                 <li>✅ Updated referral QR code to include Eni logo</li>
                 <li>✅ Generated bank transfer QR codes with Eni logo overlay</li>
@@ -109,7 +123,7 @@
                 <li>✅ Maintained QR code functionality while adding branding</li>
             </ul>
             <p><strong>Benefits:</strong></p>
-            <ul style="text-align: left; display: inline-block;">
+            <ul class="feature-list">
                 <li>🎯 Enhanced brand recognition</li>
                 <li>🔒 Professional appearance</li>
                 <li>📱 QR codes remain fully scannable</li>

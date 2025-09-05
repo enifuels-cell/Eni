@@ -46,14 +46,14 @@ class InvestmentPackage extends Model
 {
     protected $fillable = [
         'name',
-        'image',
         'min_amount',
         'max_amount',
         'daily_shares_rate',
         'effective_days',
         'available_slots',
         'referral_bonus_rate',
-        'active'
+        'active',
+        'image'
     ];
 
     protected $casts = [

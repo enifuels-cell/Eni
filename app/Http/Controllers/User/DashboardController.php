@@ -23,7 +23,7 @@ class DashboardController extends Controller
         $total_invested = $user->totalInvestedAmount();
         $total_interest = $user->totalInterestEarned();
         $total_referral_bonus = $user->totalReferralBonuses();
-        $account_balance = $user->account_balance ?? 0;
+        $account_balance = $user->accountBalance(); // Use calculated balance that excludes locked investments
 
         // Count active investments
         $active_investments = $user->investments()->active()->count();
@@ -118,7 +118,7 @@ class DashboardController extends Controller
     public function packages()
     {
         $packages = InvestmentPackage::active()->get();
-        $accountBalance = Auth::user()->account_balance ?? 0;
+        $accountBalance = Auth::user()->accountBalance(); // Use calculated balance that excludes locked investments
         return view('user.packages', compact('packages', 'accountBalance'));
     }
 
@@ -129,79 +129,120 @@ class DashboardController extends Controller
 
     public function processDeposit(Request $request)
     {
-        $request->validate([
-            'amount' => 'required|numeric|min:10',
-            'payment_method' => 'required|string',
-            'package_id' => 'nullable|exists:investment_packages,id',
-            'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'selected_bank' => 'nullable|string|in:landbank,bpi,rcbc'
-        ]);
+        try {
+            \Log::info('Processing deposit', ['request_data' => $request->all()]);
+            
+            $request->validate([
+                'amount' => 'required|numeric|min:10',
+                'payment_method' => 'required|string',
+                'package_id' => 'nullable|exists:investment_packages,id',
+                'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'selected_bank' => 'nullable|string|in:landbank,bpi,rcbc'
+            ]);
 
+            $user = Auth::user();
+            
+            // If package_id is provided, validate investment amount against package limits
+            if ($request->package_id) {
+                $package = InvestmentPackage::findOrFail($request->package_id);
+                
+                if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
+                    return back()->withErrors([
+                        'amount' => "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package."
+                    ]);
+                }
+            }
+            
+            // Handle receipt upload if provided
+            $receiptPath = null;
+            if ($request->hasFile('receipt')) {
+                $receiptPath = $request->file('receipt')->store('receipts', 'public');
+            }
+
+            // Build reference string with bank info if bank transfer
+            $reference = 'Deposit via ' . $request->payment_method;
+            if ($request->payment_method === 'bank_transfer' && $request->selected_bank) {
+                $bankNames = [
+                    'landbank' => 'LandBank',
+                    'bpi' => 'BPI',
+                    'rcbc' => 'RCBC'
+                ];
+                $reference .= ' (' . $bankNames[$request->selected_bank] . ')';
+            }
+
+            $description = $request->package_id 
+                ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
+                : 'Deposit request - awaiting approval';
+
+            // Create pending transaction
+            $transaction = $user->transactions()->create([
+                'type' => 'deposit',
+                'amount' => $request->amount,
+                'reference' => $reference,
+                'status' => 'pending',
+                'description' => $description,
+                'receipt_path' => $receiptPath,
+            ]);
+
+            \Log::info('Transaction created', ['transaction_id' => $transaction->id]);
+
+            // If this is a package investment, create the investment record
+            if ($request->package_id) {
+                $package = InvestmentPackage::find($request->package_id);
+                
+                $investment = $user->investments()->create([
+                    'investment_package_id' => $request->package_id,
+                    'amount' => $request->amount,
+                    'daily_shares_rate' => $package->daily_shares_rate,
+                    'remaining_days' => $package->effective_days,
+                    'total_interest_earned' => 0,
+                    'active' => false, // Will be activated when deposit is approved
+                    'started_at' => now(),
+                    'ended_at' => null,
+                ]);
+                
+                \Log::info('Investment created', ['investment_id' => $investment->id]);
+                
+                // Test simpler redirect first
+                \Log::info('Attempting redirect to receipt', ['transaction_id' => $transaction->id]);
+                
+                // Try direct redirect to dashboard first to test
+                return redirect()->route('user.dashboard')
+                    ->with('success', 'Investment submitted successfully! Transaction ID: ' . $transaction->id);
+            }
+
+            // For regular deposits (non-investment)
+            return redirect()->route('user.dashboard')
+                ->with('success', 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id);
+                
+        } catch (\Exception $e) {
+            \Log::error('Deposit processing error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            
+            return back()->withErrors([
+                'general' => 'Error submitting investment. Please try again. Error: ' . $e->getMessage()
+            ])->withInput();
+        }
+    }
+
+    public function investmentReceipt($transactionId)
+    {
         $user = Auth::user();
         
-        // If package_id is provided, validate investment amount against package limits
-        if ($request->package_id) {
-            $package = InvestmentPackage::findOrFail($request->package_id);
-            
-            if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
-                return back()->withErrors([
-                    'amount' => "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package."
-                ]);
-            }
+        // Get the transaction and ensure it belongs to the authenticated user
+        $transaction = $user->transactions()->findOrFail($transactionId);
+        
+        // Get the associated investment if this was an investment transaction
+        $investment = null;
+        if ($transaction->description && str_contains($transaction->description, 'Investment in')) {
+            $investment = $user->investments()
+                ->where('amount', $transaction->amount)
+                ->where('created_at', '>=', $transaction->created_at->subMinutes(5))
+                ->where('created_at', '<=', $transaction->created_at->addMinutes(5))
+                ->with('package')
+                ->first();
         }
         
-        // Handle receipt upload if provided
-        $receiptPath = null;
-        if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('receipts', 'public');
-        }
-
-        // Build reference string with bank info if bank transfer
-        $reference = 'Deposit via ' . $request->payment_method;
-        if ($request->payment_method === 'bank_transfer' && $request->selected_bank) {
-            $bankNames = [
-                'landbank' => 'LandBank',
-                'bpi' => 'BPI',
-                'rcbc' => 'RCBC'
-            ];
-            $reference .= ' (' . $bankNames[$request->selected_bank] . ')';
-        }
-
-        $description = $request->package_id 
-            ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
-            : 'Deposit request - awaiting approval';
-
-        // Create pending transaction
-        $transaction = $user->transactions()->create([
-            'type' => 'deposit',
-            'amount' => $request->amount,
-            'reference' => $reference,
-            'status' => 'pending',
-            'description' => $description,
-            'receipt_path' => $receiptPath,
-        ]);
-
-        // If this is a package investment, create the investment record
-        if ($request->package_id) {
-            $package = InvestmentPackage::find($request->package_id);
-            
-            $user->investments()->create([
-                'investment_package_id' => $request->package_id,
-                'amount' => $request->amount,
-                'daily_shares_rate' => $package->daily_shares_rate,
-                'remaining_days' => $package->effective_days,
-                'total_interest_earned' => 0,
-                'active' => false, // Will be activated when deposit is approved
-                'started_at' => now(),
-                'ended_at' => null,
-            ]);
-            
-            return redirect()->route('user.dashboard')
-                ->with('success', 'Investment submitted successfully! Your investment will be activated once payment is confirmed.');
-        }
-
-        return redirect()->route('user.dashboard')
-            ->with('success', 'Deposit request submitted successfully! It will be processed shortly.');
+        return view('user.investment-receipt', compact('transaction', 'investment'));
     }
 
     public function withdraw()
@@ -277,7 +318,7 @@ class DashboardController extends Controller
     public function transfer()
     {
         $user = Auth::user();
-        $accountBalance = $user->account_balance ?? 0;
+        $accountBalance = $user->accountBalance(); // Use calculated balance that excludes locked investments
         
         return view('user.transfer', compact('accountBalance'));
     }
@@ -301,10 +342,11 @@ class DashboardController extends Controller
         $user = Auth::user();
         $amount = $request->amount;
 
-        // Check if user has sufficient balance
-        if ($user->account_balance < $amount) {
+        // Check if user has sufficient available balance (excluding locked investments)
+        $availableBalance = $user->accountBalance();
+        if ($availableBalance < $amount) {
             return back()->withErrors([
-                'amount' => 'Insufficient account balance. Your current balance is $' . number_format($user->account_balance, 2)
+                'amount' => 'Insufficient available balance. Your current available balance is $' . number_format($availableBalance, 2)
             ])->withInput();
         }
 

@@ -22,6 +22,34 @@ Route::get('/test', function () {
     return view('test');
 });
 
+// Debug route to check auth status and PIN
+Route::get('/debug-auth', function () {
+    $user = auth()->user();
+    if ($user) {
+        return response()->json([
+            'authenticated' => true,
+            'user_id' => $user->id,
+            'user_name' => $user->name,
+            'user_email' => $user->email,
+            'has_pin' => $user->pin_hash ? true : false,
+            'pin_set_at' => $user->pin_set_at,
+        ]);
+    } else {
+        return response()->json([
+            'authenticated' => false,
+            'message' => 'User not logged in'
+        ]);
+    }
+});
+
+// Alternative logout route (GET)
+Route::get('/logout-alt', function () {
+    auth()->logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/');
+})->middleware('auth')->name('logout.alt');
+
 // Session and CSRF test route
 Route::get('/session-test', function () {
     session(['test_key' => 'Session is working!']);
@@ -53,12 +81,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard/withdraw', [UserDashboardController::class, 'withdraw'])->name('dashboard.withdraw');
     Route::get('/dashboard/transfer', [UserDashboardController::class, 'transfer'])->name('dashboard.transfer');
     Route::post('/dashboard/transfer', [UserDashboardController::class, 'processTransfer'])->name('dashboard.transfer.process');
+    Route::get('/dashboard/franchise', [UserDashboardController::class, 'franchise'])->name('dashboard.franchise');
+    Route::post('/dashboard/franchise', [UserDashboardController::class, 'processFranchise'])->name('dashboard.franchise.process');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // PIN Setup Route
+    Route::get('/pin-setup', function () {
+        return view('auth.pin-setup');
+    })->name('pin.setup.form');
 });
 
 // User Routes (Protected)
@@ -78,6 +113,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/deposit', [UserDashboardController::class, 'processDeposit'])->name('deposit.process');
         Route::get('/withdraw', [UserDashboardController::class, 'withdraw'])->name('withdraw');
         Route::post('/withdraw', [UserDashboardController::class, 'processWithdraw'])->name('withdraw.process');
+        
+        // Investment Receipt
+        Route::get('/investment/receipt/{transaction}', [UserDashboardController::class, 'investmentReceipt'])->name('investment.receipt');
         
         // Franchise Applications
         Route::get('/franchise', [UserDashboardController::class, 'franchise'])->name('franchise');

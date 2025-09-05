@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->timestamp('suspended_at')->nullable()->after('email_verified_at');
-            $table->timestamp('last_login_at')->nullable()->after('suspended_at');
-        });
+        if (!Schema::hasColumn('users', 'last_login_at')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->timestamp('last_login_at')->nullable();
+            });
+        }
     }
 
     /**
@@ -23,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['suspended_at', 'last_login_at']);
+            if (Schema::hasColumn('users', 'last_login_at')) {
+                $table->dropColumn('last_login_at');
+            }
         });
     }
 };
