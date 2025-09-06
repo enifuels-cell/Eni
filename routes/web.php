@@ -22,6 +22,39 @@ Route::get('/test', function () {
     return view('test');
 });
 
+// Public packages route for testing
+Route::get('/public-packages', function () {
+    $packages = App\Models\InvestmentPackage::available()->get();
+    return view('investments.index', compact('packages'))->with('userInvestments', collect());
+});
+
+// Debug packages route
+Route::get('/debug-packages', function () {
+    $packages = App\Models\InvestmentPackage::all();
+    $available = App\Models\InvestmentPackage::available()->get();
+    
+    return response()->json([
+        'total_packages' => $packages->count(),
+        'available_packages' => $available->count(),
+        'all_packages' => $packages->map(function($p) {
+            return [
+                'name' => $p->name,
+                'active' => $p->active,
+                'available_slots' => $p->available_slots,
+                'min_amount' => $p->min_amount,
+                'max_amount' => $p->max_amount
+            ];
+        }),
+        'available_only' => $available->map(function($p) {
+            return [
+                'name' => $p->name,
+                'active' => $p->active,
+                'available_slots' => $p->available_slots
+            ];
+        })
+    ]);
+});
+
 // Debug route to check auth status and PIN
 Route::get('/debug-auth', function () {
     $user = auth()->user();
