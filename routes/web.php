@@ -55,6 +55,33 @@ Route::get('/debug-packages', function () {
     ]);
 });
 
+// Production debug route (simpler, no auth required)
+Route::get('/prod-debug', function () {
+    try {
+        $totalPackages = App\Models\InvestmentPackage::count();
+        $activePackages = App\Models\InvestmentPackage::where('active', true)->count();
+        $packagesWithSlots = App\Models\InvestmentPackage::where('active', true)
+            ->where(function($q) {
+                $q->whereNull('available_slots')->orWhere('available_slots', '>', 0);
+            })->count();
+            
+        return response()->json([
+            'status' => 'success',
+            'total_packages' => $totalPackages,
+            'active_packages' => $activePackages,
+            'available_packages' => $packagesWithSlots,
+            'environment' => app()->environment(),
+            'database_connection' => config('database.default'),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+            'environment' => app()->environment(),
+        ]);
+    }
+});
+
 // Debug route to check auth status and PIN
 Route::get('/debug-auth', function () {
     $user = auth()->user();
