@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Test User',
                 'email' => 'test@example.com',
+                'password' => bcrypt('password'), // Add default password
+                'email_verified_at' => now(), // Mark as verified
             ]
         );
     }
