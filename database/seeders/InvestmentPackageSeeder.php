@@ -50,7 +50,10 @@ class InvestmentPackageSeeder extends Seeder
         ];
 
         foreach ($packages as $package) {
-            InvestmentPackage::create($package);
+            InvestmentPackage::updateOrCreate(
+                ['name' => $package['name']], // Find by name
+                $package // Update or create with this data
+            );
         }
 
         $this->command->info('Investment packages seeded successfully!');
