@@ -55,29 +55,33 @@
                     <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10 hover:border-eni-yellow/50 transition-all">
                         <div class="text-center mb-4">
                             <h3 class="text-xl font-bold text-eni-yellow">{{ $package->name }}</h3>
-                            <p class="text-white/70 text-sm">{{ $package->description }}</p>
+                            <p class="text-white/70 text-sm">{{ $package->daily_shares_rate }}% Daily Interest</p>
                         </div>
                         
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
                                 <span class="text-white/70">Minimum:</span>
-                                <span class="font-semibold">${{ number_format($package->minimum_amount, 2) }}</span>
+                                <span class="font-semibold">${{ number_format($package->min_amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-white/70">Maximum:</span>
-                                <span class="font-semibold">${{ number_format($package->maximum_amount, 2) }}</span>
+                                <span class="font-semibold">${{ number_format($package->max_amount, 2) }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-white/70">Daily Interest:</span>
-                                <span class="font-semibold text-eni-yellow">{{ $package->interest_rate }}%</span>
+                                <span class="font-semibold text-eni-yellow">{{ $package->daily_shares_rate }}%</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-white/70">Duration:</span>
-                                <span class="font-semibold">{{ $package->duration_days }} days</span>
+                                <span class="font-semibold">{{ $package->effective_days }} days</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-white/70">Available Slots:</span>
+                                <span class="font-semibold">{{ $package->available_slots ?? 'Unlimited' }}</span>
                             </div>
                         </div>
                         
-                        <button onclick="openInvestModal('{{ $package->id }}', '{{ $package->name }}', {{ $package->minimum_amount }}, {{ $package->maximum_amount }})" 
+                        <button onclick="openInvestModal('{{ $package->id }}', '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }})" 
                                 class="w-full bg-eni-yellow text-eni-dark font-bold py-3 rounded-xl hover:bg-yellow-400 transition-colors">
                             Invest Now
                         </button>

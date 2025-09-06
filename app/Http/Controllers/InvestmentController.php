@@ -17,8 +17,19 @@ class InvestmentController extends Controller
     use AuthorizesRequests;
     public function index()
     {
-        $packages = InvestmentPackage::available()->get();
+        \Log::info('InvestmentController index called');
+        
+        // Try using active() instead of available() for debugging
+        $packages = InvestmentPackage::active()->get();
+        \Log::info('Active packages count: ' . $packages->count());
+        \Log::info('All packages count: ' . InvestmentPackage::count());
+        
+        // Also get available packages separately for comparison
+        $availablePackages = InvestmentPackage::available()->get();
+        \Log::info('Available packages count: ' . $availablePackages->count());
+        
         $userInvestments = Auth::user()->investments()->with('investmentPackage')->latest()->get();
+        \Log::info('User investments count: ' . $userInvestments->count());
         
         return view('investments.index', compact('packages', 'userInvestments'));
     }

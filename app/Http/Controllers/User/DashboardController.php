@@ -46,6 +46,8 @@ class DashboardController extends Controller
 
     public function investments()
     {
+        \Log::info('UserDashboardController investments() called');
+        
         $user = Auth::user();
         $investments = $user->investments()
             ->with(['investmentPackage', 'dailyInterestLogs'])
@@ -54,6 +56,7 @@ class DashboardController extends Controller
 
         // Get available investment packages
         $investmentPackages = InvestmentPackage::active()->get();
+        \Log::info('Investment packages loaded for user.investments view: ' . $investmentPackages->count());
 
         return view('user.investments', compact('investments', 'investmentPackages'));
     }

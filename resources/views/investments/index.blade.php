@@ -23,6 +23,18 @@
                 </div>
             @endif
 
+            <!-- Debug Info -->
+            @if(config('app.debug'))
+                <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+                    <strong>Debug Info:</strong> 
+                    Packages count: {{ $packages->count() }} | 
+                    User investments: {{ $userInvestments->count() }}
+                    @if($packages->count() == 0)
+                        <br><strong>No packages available!</strong> Check if packages are active and have available slots.
+                    @endif
+                </div>
+            @endif
+
             <!-- Investment Packages -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 @foreach($packages as $package)
@@ -82,6 +94,14 @@
                                 Invest Now
                             </button>
                         </form>
+                    </div>
+                </div>
+                @empty
+                <div class="col-span-full text-center py-12">
+                    <div class="bg-gray-100 rounded-lg p-8">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">No Investment Packages Available</h3>
+                        <p class="text-gray-600 mb-4">There are currently no investment packages available for investment.</p>
+                        <p class="text-sm text-gray-500">Please contact support if you believe this is an error.</p>
                     </div>
                 </div>
                 @endforeach
