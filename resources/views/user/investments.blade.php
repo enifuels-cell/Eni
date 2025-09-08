@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         
-                        <button onclick="openInvestModal('{{ $package->id }}', '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }})" 
+                        <button onclick="openInvestModal('{{ $package->id }}', '{{ e($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }})" 
                                 class="w-full bg-eni-yellow text-eni-dark font-bold py-3 rounded-xl hover:bg-yellow-400 transition-colors">
                             Invest Now
                         </button>

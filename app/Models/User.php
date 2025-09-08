@@ -75,6 +75,8 @@ class User extends Authenticatable
         'swift_code',
         'phone',
         'address',
+        'suspended_at',
+        'email_verified_at',
     ];
 
     /**
@@ -99,6 +101,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'pin_set_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -180,5 +183,29 @@ class User extends Authenticatable
             ->sum('amount');
 
         return $credits + $transfers + $other - $withdrawals;
+    }
+
+    /**
+     * Check if the user is currently suspended
+     */
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
+    }
+
+    /**
+     * Suspend the user
+     */
+    public function suspend(): void
+    {
+        $this->update(['suspended_at' => now()]);
+    }
+
+    /**
+     * Unsuspend the user
+     */
+    public function unsuspend(): void
+    {
+        $this->update(['suspended_at' => null]);
     }
 }

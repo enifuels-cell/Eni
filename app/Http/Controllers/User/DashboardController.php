@@ -451,4 +451,9 @@ class DashboardController extends Controller
             ])->withInput();
         }
     }
+
+    public function notifications()
+    {
+        return view('user.notifications');
+    }
 }

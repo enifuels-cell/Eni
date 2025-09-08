@@ -53,7 +53,7 @@ class AuthenticatedSessionController extends Controller
 
         // Redirect admin users to admin dashboard
         if ($user->role === 'admin') {
-            return redirect()->intended(route('admin.dashboard'));
+            return redirect()->route('admin.dashboard');
         }
 
         // Check if user doesn't have PIN set up and prompt them

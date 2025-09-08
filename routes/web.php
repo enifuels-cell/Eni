@@ -127,11 +127,16 @@ Route::get('/demo-splash', function () {
     return view('splash-screen');
 })->name('demo.splash');
 
-// Redirect /dashboard to user dashboard
-Route::get('/dashboard', [UserDashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+// Redirect /dashboard based on user role
+Route::get('/dashboard', function () {
+    if (auth()->user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('user.dashboard');
+})->middleware(['auth', 'verified', 'check.suspended'])->name('dashboard');
 
 // Dashboard action routes
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     Route::get('/dashboard/investments', [UserDashboardController::class, 'investments'])->name('dashboard.investments');
     Route::get('/dashboard/transactions', [UserDashboardController::class, 'transactions'])->name('dashboard.transactions');
     Route::get('/dashboard/referrals', [UserDashboardController::class, 'referrals'])->name('dashboard.referrals');
@@ -145,7 +150,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/dashboard/franchise', [UserDashboardController::class, 'processFranchise'])->name('dashboard.franchise.process');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.suspended'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -157,13 +162,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // User Routes (Protected)
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     // User Dashboard
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
         Route::get('/investments', [UserDashboardController::class, 'investments'])->name('investments');
         Route::get('/transactions', [UserDashboardController::class, 'transactions'])->name('transactions');
         Route::get('/referrals', [UserDashboardController::class, 'referrals'])->name('referrals');
+        Route::get('/notifications', [UserDashboardController::class, 'notifications'])->name('notifications');
         
         // Investment Packages
         Route::get('/packages', [UserDashboardController::class, 'packages'])->name('packages');

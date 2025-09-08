@@ -561,9 +561,21 @@ class AdminDashboardController extends Controller
             return back()->with('error', 'User is already verified.');
         }
 
-        $user->update([
-            'email_verified_at' => now()
+        // Force update with refresh
+        $user->email_verified_at = now();
+        $saved = $user->save();
+
+        // Log the verification attempt
+        \Log::info('Admin user verification', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'verification_time' => $user->email_verified_at,
+            'save_result' => $saved,
+            'admin_id' => Auth::id()
         ]);
+
+        // Refresh the user model to make sure we have latest data
+        $user->refresh();
 
         $this->logAdminAction('verify_user', null, "Manually verified user: {$user->email}");
 
@@ -579,18 +591,16 @@ class AdminDashboardController extends Controller
             return back()->with('error', 'Cannot suspend admin users.');
         }
 
-        // Toggle suspension status
-        $isSuspended = $user->suspended_at !== null;
-        
-        if ($isSuspended) {
+        // Toggle suspension status using the new User model methods
+        if ($user->isSuspended()) {
             // Unsuspend user
-            $user->update(['suspended_at' => null]);
+            $user->unsuspend();
             $action = 'unsuspend_user';
             $message = 'User has been unsuspended successfully.';
             $logMessage = "Unsuspended user: {$user->email}";
         } else {
             // Suspend user
-            $user->update(['suspended_at' => now()]);
+            $user->suspend();
             $action = 'suspend_user';
             $message = 'User has been suspended successfully.';
             $logMessage = "Suspended user: {$user->email}";

@@ -56,6 +56,16 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        // Check if the authenticated user is suspended
+        if (Auth::user()->isSuspended()) {
+            Auth::logout(); // Log them out immediately
+            RateLimiter::hit($this->throttleKey()); // Apply rate limiting
+            
+            throw ValidationException::withMessages([
+                'suspended' => 'Your account has been suspended. Please contact administrator.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

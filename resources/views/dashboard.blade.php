@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -28,9 +29,23 @@
       }
     }
   </script>
-  <style> body{font-family:Inter,ui-sans-serif,system-ui} </style>
+  <style> 
+    body{font-family:Inter,ui-sans-serif,system-ui} 
+    
+    /* Mobile safe area considerations */
+    @media (max-width: 640px) {
+      #floatingNav {
+        bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+      }
+    }
+    
+    /* Ensure floating nav doesn't cause horizontal scroll */
+    #floatingNav > div {
+      max-width: calc(100vw - 2rem);
+    }
+  </style>
 </head>
-<body class="bg-eni-charcoal min-h-screen text-white flex flex-col">
+<body class="bg-eni-charcoal min-h-screen text-white flex flex-col pb-20 sm:pb-8">
   <!-- Header -->
   <header class="bg-eni-dark px-6 py-4 flex items-center justify-between shadow-md">
     <div class="flex items-center gap-4">
@@ -41,10 +56,16 @@
       </div>
     </div>
     <div class="flex items-center gap-4">
-      <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
-        <span class="absolute top-1 right-1 w-2 h-2 bg-eni-yellow rounded-full"></span>
-      </button>
+      <div class="relative">
+        <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
+          @if(!Auth::user()->pin_hash)
+          <span class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
+          @else
+          <span class="absolute top-1 right-1 w-2 h-2 bg-eni-yellow rounded-full"></span>
+          @endif
+        </button>
+      </div>
       <div class="relative">
         <button onclick="toggleProfileMenu()" class="block hover:opacity-80 transition-opacity relative">
           <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
@@ -129,8 +150,8 @@
       @endif
     </p>
     <div class="flex gap-4 mt-6">
-      <button onclick="window.location.href='{{ route('dashboard.packages') }}'" class="flex-1 bg-eni-dark text-white font-bold py-3 rounded-xl hover:bg-black/80">Invest</button>
-      <button onclick="window.location.href='{{ route('dashboard.withdraw') }}'" class="flex-1 bg-white text-eni-dark font-bold py-3 rounded-xl hover:bg-gray-100">Withdraw</button>
+      <button onclick="window.location.href='{{ route("dashboard.packages") }}'" class="flex-1 bg-eni-dark text-white font-bold py-3 rounded-xl hover:bg-black/80">Invest</button>
+      <button onclick="window.location.href='{{ route("dashboard.withdraw") }}'" class="flex-1 bg-white text-eni-dark font-bold py-3 rounded-xl hover:bg-gray-100">Withdraw</button>
     </div>
   </section>
 
@@ -208,31 +229,31 @@
   </section>
 
   <!-- Floating Navigation -->
-  <nav id="floatingNav" class="fixed bottom-4 inset-x-0 flex justify-center z-40 transform transition-transform duration-300 ease-in-out">
-    <div class="bg-eni-dark/95 backdrop-blur border border-eni-yellow/20 shadow-lg shadow-black/25 px-6 py-3 rounded-2xl flex gap-6 text-sm font-medium">
-      <a href="{{ route('dashboard') }}" class="text-eni-yellow flex items-center gap-1 hover:text-yellow-300 transition-colors">
+  <nav id="floatingNav" class="fixed bottom-4 sm:bottom-6 inset-x-4 sm:inset-x-0 flex justify-center z-40 transform transition-transform duration-300 ease-in-out" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
+    <div class="bg-eni-dark/95 backdrop-blur border border-eni-yellow/20 shadow-lg shadow-black/25 px-3 sm:px-6 py-3 rounded-2xl flex gap-2 sm:gap-6 text-xs sm:text-sm font-medium overflow-x-auto max-w-full">
+      <a href="{{ route('dashboard') }}" class="text-eni-yellow flex items-center gap-1 hover:text-yellow-300 hover:bg-white/10 active:bg-white/20 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-home text-xs"></i>
-        Dashboard
+        <span class="text-xs font-medium">Home</span>
       </a>
-      <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+      <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-chart-line text-xs"></i>
-        Invest
+        <span class="text-xs font-medium">Invest</span>
       </a>
-      <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+      <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-users text-xs"></i>
-        Referrals
+        <span class="text-xs font-medium">Refer</span>
       </a>
-      <a href="{{ route('dashboard.franchise') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+      <a href="{{ route('dashboard.franchise') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-gas-pump text-xs"></i>
-        Franchise
+        <span class="text-xs font-medium">Fuel</span>
       </a>
-      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-exchange-alt text-xs"></i>
-        Transfer
+        <span class="text-xs font-medium">Send</span>
       </a>
-      <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white flex items-center gap-1 transition-colors">
+      <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
         <i class="fas fa-history text-xs"></i>
-        History
+        <span class="text-xs font-medium">History</span>
       </a>
     </div>
   </nav>
@@ -242,7 +263,34 @@
     <div class="p-6">
       <h3 class="font-bold text-lg text-eni-yellow mb-4">Notifications</h3>
       
+      <!-- Debug Info -->
+      <div class="bg-yellow-100 p-2 text-xs text-black mb-4 rounded">
+        PIN Status: {{ Auth::user()->pin_hash ? 'SET' : 'NOT SET' }} | User ID: {{ Auth::user()->id }}
+      </div>
+      
       <div class="space-y-4">
+        @if(!Auth::user()->pin_hash)
+        <!-- PIN Setup Notification -->
+        <div class="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg p-4 cursor-pointer hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-200" onclick="window.location.href='{{ route('pin.setup.form') }}'">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-purple-500/20 border border-purple-400/40 rounded-full flex items-center justify-center">
+              <i class="fas fa-shield-alt text-purple-400 text-xs"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-sm text-purple-400">Set Up PIN Login</p>
+                <i class="fas fa-chevron-right text-purple-400/60 text-xs"></i>
+              </div>
+              <p class="text-white/70 text-xs mt-1">Enable 4-digit PIN for quick and secure login on this device.</p>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-purple-300 text-xs font-medium">Click to set up</span>
+                <div class="w-1 h-1 bg-purple-400 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        @endif
+
         <div class="bg-white/10 rounded-lg p-4">
           <div class="flex items-start gap-3">
             <div class="w-2 h-2 bg-eni-yellow rounded-full mt-2"></div>
@@ -278,7 +326,7 @@
       </div>
       
       <div class="mt-4 pt-4 border-t border-white/10">
-        <button class="text-eni-yellow text-sm hover:underline">View All Notifications</button>
+        <a href="{{ route('user.notifications') }}" class="text-eni-yellow text-sm hover:underline">View All Notifications</a>
       </div>
     </div>
   </div>

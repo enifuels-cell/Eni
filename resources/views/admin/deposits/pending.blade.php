@@ -95,13 +95,13 @@
                             </form>
                             
                             <!-- Deny Button -->
-                            <button onclick="openDenyModal({{ $deposit->id }})" 
+                            <button onclick="openDenyModal('{{ $deposit->id }}')" 
                                     class="bg-red-600/80 hover:bg-red-600 border border-red-600/50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                 <i class="fas fa-times mr-2"></i>Deny
                             </button>
                             
                             <!-- Delete Button -->
-                            <button onclick="openDeleteModal({{ $deposit->id }})" 
+                            <button onclick="openDeleteModal('{{ $deposit->id }}')" 
                                     class="bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                 <i class="fas fa-trash mr-2 text-white/60"></i>Delete
                             </button>

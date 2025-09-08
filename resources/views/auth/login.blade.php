@@ -265,6 +265,13 @@
                 </div>
             @endif
             
+            <!-- Suspension Error -->
+            @error('suspended')
+                <div class="error-message" style="margin-bottom: 20px; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; color: #ef4444; text-align: center;">
+                    {{ $message }}
+                </div>
+            @enderror
+            
             <!-- Login Form -->
             <form method="POST" action="{{ route('login') }}">
                 @csrf

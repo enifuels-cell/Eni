@@ -92,6 +92,15 @@ class PinLoginController extends Controller
             ]);
         }
 
+        // Check if user is suspended
+        if ($user->isSuspended()) {
+            RateLimiter::hit($key, 300); // Rate limit suspended users too
+            
+            throw ValidationException::withMessages([
+                'pin' => ['Your account has been suspended. Please contact administrator.'],
+            ]);
+        }
+
         // Clear rate limiter on successful login
         RateLimiter::clear($key);
 

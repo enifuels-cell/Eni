@@ -85,7 +85,7 @@
                 
                 @foreach($packages as $package)
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
-                     onclick="openPaymentForm({{ $package->id }}, '{{ $package->name }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
+                     onclick="openPaymentForm({{ $package->id }}, '{{ str_replace("'", "\\'", $package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
                     <div class="text-center relative min-h-[400px]">
                         <!-- Elevated loading placeholder -->
