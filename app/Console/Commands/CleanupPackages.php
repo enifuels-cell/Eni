@@ -1,22 +1,39 @@
 <?php
 
-namespace Database\Seeders;
+namespace App\Console\Commands;
 
 use App\Models\InvestmentPackage;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
+use Illuminate\Console\Command;
 
-class InvestmentPackageSeeder extends Seeder
+class CleanupPackages extends Command
 {
     /**
-     * Run the database seeds.
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function run(): void
+    protected $signature = 'cleanup:packages';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Clean up duplicate investment packages and ensure correct configuration';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
-        // Clear existing packages first to avoid duplicates
-        $this->command->info('Cleaning existing packages...');
-        InvestmentPackage::truncate();
+        $this->info('Cleaning up investment packages...');
         
+        // First, delete all existing packages
+        $deletedCount = InvestmentPackage::count();
+        InvestmentPackage::truncate();
+        $this->info("Deleted {$deletedCount} existing packages");
+        
+        // Create the correct packages
         $packages = [
             [
                 'name' => 'Energy Saver',
@@ -55,10 +72,18 @@ class InvestmentPackageSeeder extends Seeder
 
         foreach ($packages as $package) {
             $created = InvestmentPackage::create($package);
-            $this->command->info("✓ Created: {$created->name} (ID: {$created->id})");
+            $this->info("✓ Created: {$created->name} (ID: {$created->id})");
         }
-
-        $this->command->info('Investment packages seeded successfully!');
-        $this->command->info('Total packages: ' . InvestmentPackage::count());
+        
+        $this->info('Package cleanup completed successfully!');
+        $this->newLine();
+        
+        // Show final state
+        $this->info('Current packages:');
+        InvestmentPackage::all()->each(function($p) {
+            $this->info("  {$p->name}: \${$p->min_amount} - \${$p->max_amount}, {$p->daily_shares_rate}% daily, {$p->effective_days} days");
+        });
+        
+        return 0;
     }
 }

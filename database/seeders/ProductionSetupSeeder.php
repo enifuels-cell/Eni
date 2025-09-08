@@ -23,6 +23,10 @@ class ProductionSetupSeeder extends Seeder
     
     private function seedInvestmentPackages(): void
     {
+        // Clear existing packages first to avoid duplicates
+        $this->command->info('Cleaning existing packages...');
+        InvestmentPackage::truncate();
+        
         $packages = [
             [
                 'name' => 'Energy Saver',
@@ -60,11 +64,7 @@ class ProductionSetupSeeder extends Seeder
         ];
 
         foreach ($packages as $package) {
-            $created = InvestmentPackage::updateOrCreate(
-                ['name' => $package['name']], // Find by name
-                $package // Update or create with this data
-            );
-            
+            $created = InvestmentPackage::create($package);
             $this->command->info("✓ Package: {$created->name} (ID: {$created->id}) - Active: " . ($created->active ? 'Yes' : 'No'));
         }
         
