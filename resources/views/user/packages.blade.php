@@ -37,6 +37,48 @@
             border: 2px solid #FFCD00;
             box-shadow: 0 0 20px rgba(255, 205, 0, 0.3);
         }
+        
+        /* Loading animation enhancements */
+        .bank-option {
+            transition: all 0.3s ease;
+        }
+        .bank-option:hover {
+            transform: translateY(-2px);
+        }
+        
+        /* Pulse animation for loading states */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(255, 205, 0, 0.5); }
+            50% { opacity: 0.7; box-shadow: 0 0 20px rgba(255, 205, 0, 0.8); }
+        }
+        
+        .loading-pulse {
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+        
+        /* Enhanced bounce animation */
+        @keyframes enhanced-bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+            40%, 43% { transform: translate3d(0,-8px,0); }
+            70% { transform: translate3d(0,-4px,0); }
+            90% { transform: translate3d(0,-2px,0); }
+        }
+        
+        .enhanced-bounce {
+            animation: enhanced-bounce 1.4s ease-in-out infinite;
+        }
+        
+        /* Shimmer effect for loading */
+        @keyframes shimmer {
+            0% { background-position: -468px 0; }
+            100% { background-position: 468px 0; }
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 205, 0, 0.2) 50%, transparent 100%);
+            background-size: 468px 100%;
+            animation: shimmer 1.5s infinite;
+        }
     </style>
 </head>
 <body class="bg-eni-charcoal text-white min-h-screen">
@@ -1483,16 +1525,43 @@
             // Clear previous selections
             clearBankSelection();
             
-            // Mark selected bank
+            // Mark selected bank and add immediate loading effect
             const bankOptions = document.querySelectorAll('.bank-option');
+            let selectedBankElement = null;
+            
             bankOptions.forEach(option => {
                 if (option.onclick.toString().includes(bankName)) {
                     option.classList.add('ring-2', 'ring-eni-yellow', 'bg-white/20');
+                    selectedBankElement = option;
                 }
             });
             
+            // Add loading effect to the selected bank card
+            if (selectedBankElement) {
+                const originalContent = selectedBankElement.innerHTML;
+                selectedBankElement.innerHTML = `
+                    <div class="text-center">
+                        <div class="mb-2">
+                            <div class="inline-flex items-center justify-center w-8 h-8">
+                                <div class="w-4 h-4 border-2 border-eni-yellow border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        </div>
+                        <div class="text-white font-semibold">Connecting...</div>
+                        <div class="text-white/60 text-sm">Preparing QR Code</div>
+                    </div>
+                `;
+                
+                // Restore original content after 2 seconds
+                setTimeout(() => {
+                    selectedBankElement.innerHTML = originalContent;
+                }, 2000);
+            }
+            
             // Set hidden input value
             document.getElementById('selectedBank').value = bankName;
+            
+            // Show loading effect and generate QR code
+            showQrLoadingThenGenerate(bankName);
         }
 
         function clearBankSelection() {
@@ -1500,6 +1569,105 @@
             bankOptions.forEach(option => {
                 option.classList.remove('ring-2', 'ring-eni-yellow', 'bg-white/20');
             });
+        }
+
+        function showQrLoadingThenGenerate(bankName) {
+            // Get bank display name for the loading screen
+            let bankDisplayName = '';
+            switch(bankName) {
+                case 'landbank':
+                    bankDisplayName = 'LandBank of the Philippines';
+                    break;
+                case 'bpi':
+                    bankDisplayName = 'Bank of the Philippine Islands';
+                    break;
+                case 'rcbc':
+                    bankDisplayName = 'RCBC';
+                    break;
+                default:
+                    bankDisplayName = 'Selected Bank';
+            }
+
+            // Show modal with loading animation
+            const qrContent = document.getElementById('qrContent');
+            qrContent.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="mb-6">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-eni-yellow/30 to-eni-yellow/10 rounded-full mb-4 loading-pulse">
+                            <div class="w-10 h-10 border-4 border-eni-yellow border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">Generating QR Code</h4>
+                        <p class="text-white/70 text-sm mb-4">Please wait while we prepare your ${bankDisplayName} payment QR code...</p>
+                        
+                        <!-- Enhanced loading dots -->
+                        <div class="flex justify-center space-x-2 mb-6">
+                            <div class="w-3 h-3 bg-eni-yellow rounded-full enhanced-bounce" style="animation-delay: 0ms;"></div>
+                            <div class="w-3 h-3 bg-eni-yellow rounded-full enhanced-bounce" style="animation-delay: 200ms;"></div>
+                            <div class="w-3 h-3 bg-eni-yellow rounded-full enhanced-bounce" style="animation-delay: 400ms;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Simulated progress steps with enhanced styling -->
+                    <div class="text-left max-w-sm mx-auto">
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center p-2 bg-white/5 rounded-lg">
+                                <div class="w-3 h-3 bg-green-400 rounded-full mr-3 animate-pulse"></div>
+                                <span class="text-green-400">✓ Connecting to ${bankDisplayName}...</span>
+                            </div>
+                            <div class="flex items-center p-2 bg-white/5 rounded-lg shimmer" id="loading-step-2">
+                                <div class="w-3 h-3 bg-white/30 rounded-full mr-3" id="loading-dot-2"></div>
+                                <span class="text-white/40" id="loading-text-2">Generating secure payment code...</span>
+                            </div>
+                            <div class="flex items-center p-2 bg-white/5 rounded-lg" id="loading-step-3">
+                                <div class="w-3 h-3 bg-white/30 rounded-full mr-3" id="loading-dot-3"></div>
+                                <span class="text-white/30" id="loading-text-3">Creating QR code...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show the modal
+            document.getElementById('qrModal').classList.remove('hidden');
+            
+            // Simulate loading steps with delays
+            setTimeout(() => {
+                // Step 2: Generating secure payment code
+                const step2 = document.getElementById('loading-step-2');
+                const dot2 = document.getElementById('loading-dot-2');
+                const text2 = document.getElementById('loading-text-2');
+                
+                step2.classList.remove('shimmer');
+                step2.classList.add('bg-green-500/10');
+                dot2.classList.remove('bg-white/30');
+                dot2.classList.add('bg-green-400', 'animate-pulse');
+                text2.classList.remove('text-white/40');
+                text2.classList.add('text-green-400');
+                text2.innerHTML = '✓ Generating secure payment code...';
+                
+                // Add shimmer to step 3
+                document.getElementById('loading-step-3').classList.add('shimmer');
+            }, 800);
+            
+            setTimeout(() => {
+                // Step 3: Creating QR code
+                const step3 = document.getElementById('loading-step-3');
+                const dot3 = document.getElementById('loading-dot-3');
+                const text3 = document.getElementById('loading-text-3');
+                
+                step3.classList.remove('shimmer');
+                step3.classList.add('bg-green-500/10');
+                dot3.classList.remove('bg-white/30');
+                dot3.classList.add('bg-green-400', 'animate-pulse');
+                text3.classList.remove('text-white/30');
+                text3.classList.add('text-green-400');
+                text3.innerHTML = '✓ Creating QR code...';
+            }, 1600);
+            
+            // After loading animation (2.5 seconds), show the actual QR code
+            setTimeout(() => {
+                showQrCode(bankName);
+            }, 2500);
         }
 
         function showQrCode(bankName) {
@@ -1522,16 +1690,43 @@
                     break;
             }
             
+            // Create QR content with fade-in animation
             qrContent.innerHTML = `
-                <div class="mb-4">
-                    <h4 class="text-lg font-semibold text-white mb-2">${bankDisplayName}</h4>
-                    <img src="${qrImagePath}" alt="${bankDisplayName} QR Code with Eni Logo" 
-                         class="mx-auto max-w-full h-64 object-contain border border-white/20 rounded-lg">
-                    <p class="text-sm text-gray-300 mt-2 text-center">
-                        Scan this QR code to transfer to ${bankDisplayName}
-                    </p>
+                <div class="opacity-0 transform scale-95 transition-all duration-500 ease-out" id="qrCodeContent">
+                    <div class="mb-6">
+                        <!-- Success checkmark animation -->
+                        <div class="inline-flex items-center justify-center w-16 h-16 bg-green-500/20 rounded-full mb-4">
+                            <div class="w-8 h-8 text-green-400">
+                                <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-bold text-white mb-2">QR Code Ready!</h4>
+                        <p class="text-eni-yellow font-semibold mb-4">${bankDisplayName}</p>
+                    </div>
+                    
+                    <div class="mb-4 p-4 bg-white rounded-lg">
+                        <img src="${qrImagePath}" alt="${bankDisplayName} QR Code with Eni Logo" 
+                             class="mx-auto max-w-full h-64 object-contain">
+                    </div>
+                    
+                    <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-4">
+                        <p class="text-eni-yellow text-sm font-medium text-center">
+                            📱 Scan this QR code with your banking app to transfer to ${bankDisplayName}
+                        </p>
+                    </div>
                 </div>
             `;
+            
+            // Trigger fade-in animation
+            setTimeout(() => {
+                const qrCodeContent = document.getElementById('qrCodeContent');
+                if (qrCodeContent) {
+                    qrCodeContent.classList.remove('opacity-0', 'scale-95');
+                    qrCodeContent.classList.add('opacity-100', 'scale-100');
+                }
+            }, 100);
             
             document.getElementById('qrModal').classList.remove('hidden');
         }
@@ -1624,9 +1819,9 @@
                             return;
                         }
                         
-                        // Show QR code instead of submitting immediately
+                        // Show loading animation then QR code instead of submitting immediately
                         e.preventDefault();
-                        showQrCode(selectedBank);
+                        showQrLoadingThenGenerate(selectedBank);
                     }
                 });
             }
