@@ -25,6 +25,40 @@
     </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
+        
+        /* Payment Modal Animations */
+        #paymentNotAvailableModal {
+            transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
+        }
+        
+        #paymentNotAvailableModal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #paymentNotAvailableModal > div {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        #paymentNotAvailableModal.hidden > div {
+            transform: scale(0.95) translateY(-10px);
+            opacity: 0;
+        }
+        
+        /* Pulse animation for unavailable options */
+        .payment-unavailable {
+            animation: pulse-eni 0.6s ease-in-out;
+        }
+        
+        @keyframes pulse-eni {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(255, 205, 0, 0.7);
+            }
+            50% { 
+                box-shadow: 0 0 0 10px rgba(255, 205, 0, 0);
+            }
+        }
+        
         .package-card {
             transition: all 0.3s ease;
             cursor: pointer;
@@ -209,15 +243,62 @@
                 <!-- Payment Method -->
                 <div class="mb-6">
                     <label class="block text-white/80 font-semibold mb-3">Payment Method</label>
-                    <select name="payment_method" id="paymentMethod" required onchange="handlePaymentMethodChange()"
-                            class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white focus:ring-2 focus:ring-eni-yellow focus:border-transparent">
-                        <option value="" class="bg-eni-dark">Select payment method</option>
-                        <option value="account_balance" class="bg-eni-dark">💰 Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</option>
-                        <option value="bank_transfer" class="bg-eni-dark">🏦 Bank Transfer</option>
-                        <option value="credit_card" class="bg-eni-dark">💳 Credit Card</option>
-                        <option value="paypal" class="bg-eni-dark">🅿️ PayPal</option>
-                        <option value="cryptocurrency" class="bg-eni-dark">₿ Cryptocurrency</option>
-                    </select>
+                    <div class="relative">
+                        <!-- Hidden input for form submission -->
+                        <input type="hidden" name="payment_method" id="paymentMethodInput" required>
+                        
+                        <!-- Custom dropdown trigger -->
+                        <div id="paymentMethodDropdown" onclick="togglePaymentDropdown()" 
+                             class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white focus:ring-2 focus:ring-eni-yellow focus:border-transparent cursor-pointer flex items-center justify-between min-h-[50px]">
+                            <span id="selectedPaymentText" class="text-white/60">Select payment method</span>
+                            <svg class="w-5 h-5 text-white/60 transform transition-transform" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                        
+                        <!-- Dropdown options -->
+                        <div id="paymentMethodOptions" class="absolute top-full left-0 right-0 bg-eni-dark border border-white/20 rounded-lg mt-1 z-50 hidden max-h-64 overflow-y-auto">
+                            <div class="p-2 space-y-1">
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('', 'Select payment method', '')">
+                                    <span class="text-white/60">Select payment method</span>
+                                </div>
+                                
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('account_balance', '💰 Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)', '')">
+                                    <span class="text-2xl mr-3">💰</span>
+                                    <span class="text-white">Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</span>
+                                </div>
+                                
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('bank_transfer', '🏦 Bank Transfer', '')">
+                                    <span class="text-2xl mr-3">🏦</span>
+                                    <span class="text-white">Bank Transfer</span>
+                                </div>
+                                
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('credit_card', 'Credit Card', '')">
+                                    <svg class="w-6 h-4 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                                        <line x1="1" y1="10" x2="23" y2="10"/>
+                                    </svg>
+                                    <span class="text-white">Credit Card</span>
+                                </div>
+                                
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('paypal', 'PayPal', '{{ asset('Paypal.png') }}')">
+                                    <img src="{{ asset('Paypal.png') }}" alt="PayPal" class="w-8 h-6 mr-3 object-contain">
+                                    <span class="text-white">PayPal</span>
+                                </div>
+                                
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                     onclick="selectPaymentMethod('cryptocurrency', 'Cryptocurrency', '{{ asset('crypto.jpg') }}')">
+                                    <img src="{{ asset('crypto.jpg') }}" alt="Cryptocurrency" class="w-8 h-6 mr-3 object-contain rounded">
+                                    <span class="text-white">Cryptocurrency</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Bank Selection (Hidden by default) -->
@@ -1506,11 +1587,99 @@
     </div>
 
     <script>
+        // Custom dropdown functionality
+        function togglePaymentDropdown() {
+            const dropdown = document.getElementById('paymentMethodOptions');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        function selectPaymentMethod(value, displayText, logoUrl) {
+            const input = document.getElementById('paymentMethodInput');
+            const displayElement = document.getElementById('selectedPaymentText');
+            const dropdown = document.getElementById('paymentMethodOptions');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            input.value = value;
+            
+            // Update display text with logo if available
+            if (logoUrl && logoUrl !== '') {
+                displayElement.innerHTML = `<div class="flex items-center"><img src="${logoUrl}" alt="${displayText}" class="w-6 h-4 mr-3 object-contain${value === 'cryptocurrency' ? ' rounded' : ''}"><span>${displayText.replace(/^[^a-zA-Z]*\s*/, '')}</span></div>`;
+            } else if (value === 'account_balance') {
+                displayElement.innerHTML = `<div class="flex items-center"><span class="text-xl mr-3">💰</span><span>Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</span></div>`;
+            } else if (value === 'bank_transfer') {
+                displayElement.innerHTML = `<div class="flex items-center"><span class="text-xl mr-3">🏦</span><span>Bank Transfer</span></div>`;
+            } else if (value === 'credit_card') {
+                displayElement.innerHTML = `<div class="flex items-center"><svg class="w-6 h-4 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Credit Card</span></div>`;
+            } else {
+                displayElement.textContent = displayText;
+            }
+            
+            // Close dropdown
+            dropdown.classList.add('hidden');
+            arrow.style.transform = 'rotate(0deg)';
+            
+            // Handle payment method logic
+            handlePaymentMethodChange(value);
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('paymentMethodDropdown');
+            const options = document.getElementById('paymentMethodOptions');
+            const arrow = document.getElementById('dropdownArrow');
+            
+            if (dropdown && options && !dropdown.contains(event.target) && !options.contains(event.target)) {
+                options.classList.add('hidden');
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        });
+
         // Bank transfer functionality
-        function handlePaymentMethodChange() {
-            const paymentMethod = document.getElementById('paymentMethod').value;
+        function handlePaymentMethodChange(paymentMethod) {
+            if (!paymentMethod) {
+                paymentMethod = document.getElementById('paymentMethodInput').value;
+            }
+            
             const bankSelection = document.getElementById('bankSelection');
             
+            // Check for unavailable payment methods
+            const unavailableMethods = {
+                'credit_card': {
+                    name: 'Credit Card',
+                    reason: 'Credit card payments are not available in your region due to local banking regulations.'
+                },
+                'paypal': {
+                    name: 'PayPal',
+                    reason: 'PayPal services are currently restricted in your area. Please use alternative payment methods.'
+                },
+                'cryptocurrency': {
+                    name: 'Cryptocurrency',
+                    reason: 'Cryptocurrency payments are not supported in your region due to regulatory compliance.'
+                }
+            };
+            
+            if (unavailableMethods[paymentMethod]) {
+                // Show not available modal
+                showPaymentNotAvailableModal(
+                    unavailableMethods[paymentMethod].name,
+                    unavailableMethods[paymentMethod].reason
+                );
+                // Reset payment method selection
+                selectPaymentMethod('', 'Select payment method', '');
+                // Hide bank selection if it was shown
+                bankSelection.classList.add('hidden');
+                return;
+            }
+            
+            // Handle available payment methods
             if (paymentMethod === 'bank_transfer') {
                 bankSelection.classList.remove('hidden');
             } else {
@@ -1774,9 +1943,19 @@
             })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '/user/dashboard';
+                    return response.json();
                 } else {
-                    alert('Error submitting investment. Please try again.');
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.message || 'Error submitting investment. Please try again.');
+                    });
+                }
+            })
+            .then(data => {
+                if (data.success) {
+                    // Redirect to the specified URL (receipt page)
+                    window.location.href = data.redirect;
+                } else {
+                    alert(data.message || 'Error submitting investment. Please try again.');
                 }
             })
             .catch(error => {
@@ -1971,6 +2150,7 @@
                 closeGuidelinesModal();
                 closeAboutModal();
                 closeSupportModal();
+                closePaymentModal();
             }
         });
         
@@ -1996,7 +2176,116 @@
             
             console.log('Form validation passed, submitting...');
         });
+
+        // Payment Not Available Modal Functions
+        function showPaymentNotAvailableModal(paymentMethodName, reason) {
+            const modal = document.getElementById('paymentNotAvailableModal');
+            const paymentSelect = document.getElementById('paymentMethod');
+            
+            // Update modal content
+            document.getElementById('paymentMethodName').textContent = paymentMethodName;
+            document.getElementById('paymentMethodReason').textContent = reason || 'This payment method is currently not available in your region.';
+            
+            // Add pulse animation to the select dropdown
+            paymentSelect.classList.add('payment-unavailable');
+            setTimeout(() => {
+                paymentSelect.classList.remove('payment-unavailable');
+            }, 600);
+            
+            // Show modal with animation
+            modal.classList.remove('hidden');
+            // Force a reflow to ensure the initial state is rendered
+            modal.offsetHeight;
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentNotAvailableModal');
+            
+            // Add hidden class to trigger animation
+            modal.classList.add('hidden');
+            
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('paymentNotAvailableModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
     </script>
+
+    <!-- Payment Method Not Available Modal -->
+    <div id="paymentNotAvailableModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
+            <!-- Modal Header -->
+            <div class="bg-gradient-to-r from-eni-dark to-eni-charcoal text-white px-6 py-4 rounded-t-2xl">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-eni-yellow" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <h3 class="text-xl font-bold">Payment Method Unavailable</h3>
+                    </div>
+                    <button onclick="closePaymentModal()" class="text-white/80 hover:text-eni-yellow transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 text-eni-dark">
+                <div class="text-center mb-4">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-eni-dark/10 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-eni-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L5.636 5.636"></path>
+                        </svg>
+                    </div>
+                    <h4 class="text-lg font-semibold mb-2 text-eni-dark" id="paymentMethodName">Payment Method</h4>
+                    <p class="text-gray-600 mb-4 text-sm" id="paymentMethodReason">This payment method is currently not available in your region.</p>
+                </div>
+                
+                <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-4">
+                    <div class="flex items-start">
+                        <svg class="w-5 h-5 text-eni-dark mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div class="text-sm text-eni-dark">
+                            <p class="font-semibold mb-2">Available Payment Methods:</p>
+                            <ul class="space-y-1 text-gray-600">
+                                <li class="flex items-center">
+                                    <span class="w-2 h-2 bg-eni-yellow rounded-full mr-2"></span>
+                                    💰 Account Balance
+                                </li>
+                                <li class="flex items-center">
+                                    <span class="w-2 h-2 bg-eni-yellow rounded-full mr-2"></span>
+                                    🏦 Bank Transfer (LandBank, BPI, RCBC)
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex gap-3 justify-center">
+                <button onclick="closePaymentModal()" 
+                        class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-eni-yellow/90 transition-colors">
+                    I Understand
+                </button>
+                <button onclick="closePaymentModal(); openSupportModal();" 
+                        class="bg-eni-dark text-white px-6 py-2 rounded-lg font-semibold hover:bg-eni-charcoal transition-colors">
+                    Contact Support
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Global Footer -->
     @include('components.footer')

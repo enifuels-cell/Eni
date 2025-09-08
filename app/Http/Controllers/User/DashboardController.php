@@ -150,8 +150,17 @@ class DashboardController extends Controller
                 $package = InvestmentPackage::findOrFail($request->package_id);
                 
                 if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
+                    $errorMessage = "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package.";
+                    
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => $errorMessage
+                        ], 422);
+                    }
+                    
                     return back()->withErrors([
-                        'amount' => "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package."
+                        'amount' => $errorMessage
                     ]);
                 }
             }
@@ -206,20 +215,43 @@ class DashboardController extends Controller
                 
                 \Log::info('Investment created', ['investment_id' => $investment->id]);
                 
-                // Test simpler redirect first
-                \Log::info('Attempting redirect to receipt', ['transaction_id' => $transaction->id]);
+                // Check if this is an AJAX request
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Investment submitted successfully! Your transaction receipt is ready.',
+                        'redirect' => route('user.investment.receipt', $transaction->id)
+                    ]);
+                }
                 
-                // Try direct redirect to dashboard first to test
-                return redirect()->route('user.dashboard')
-                    ->with('success', 'Investment submitted successfully! Transaction ID: ' . $transaction->id);
+                // Redirect to investment receipt for regular requests
+                \Log::info('Redirecting to investment receipt', ['transaction_id' => $transaction->id]);
+                
+                return redirect()->route('user.investment.receipt', $transaction->id)
+                    ->with('success', 'Investment submitted successfully! Your transaction receipt is ready.');
             }
 
             // For regular deposits (non-investment)
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id,
+                    'redirect' => route('user.dashboard')
+                ]);
+            }
+            
             return redirect()->route('user.dashboard')
                 ->with('success', 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id);
                 
         } catch (\Exception $e) {
             \Log::error('Deposit processing error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Error submitting investment. Please try again. Error: ' . $e->getMessage()
+                ], 422);
+            }
             
             return back()->withErrors([
                 'general' => 'Error submitting investment. Please try again. Error: ' . $e->getMessage()
