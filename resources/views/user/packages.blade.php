@@ -161,7 +161,7 @@
                 
                 @foreach($packages as $package)
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
-                     onclick="openPaymentForm({{ $package->id }}, '{{ str_replace("'", "\\'", $package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
+                     onclick="openPaymentForm({{ $package->id }}, '{{ addslashes($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
                     <div class="text-center relative min-h-[400px]">
                         <!-- Elevated loading placeholder -->
@@ -182,7 +182,7 @@
                         <img src="{{ asset($package->image) }}" 
                              alt="{{ $package->name }} Investment Package" 
                              class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300 relative z-20"
-                             onload="setTimeout(() => document.getElementById('placeholder-{{ $package->id }}').style.display='none', 1000)"
+                             onload="setTimeout(function(){ document.getElementById('placeholder-{{ $package->id }}').style.display='none'; }, 1000)"
                              onerror="document.getElementById('placeholder-{{ $package->id }}').innerHTML='<div class=\'text-center p-12 bg-eni-dark/60 rounded-xl border border-eni-yellow/30\'><div class=\'w-20 h-20 bg-gradient-to-br from-eni-yellow/30 to-eni-yellow/10 rounded-xl mx-auto mb-6 flex items-center justify-center shadow-lg border border-eni-yellow/30\'><div class=\'w-8 h-8 bg-eni-yellow/60 rounded-lg\'></div></div><div class=\'text-eni-yellow font-bold text-lg\'>Investment Package</div><div class=\'text-white/60 text-sm mt-2\'>Preview unavailable</div></div>'">
                     </div>
                 </div>
@@ -1611,13 +1611,13 @@
             
             // Update display text with logo if available
             if (logoUrl && logoUrl !== '') {
-                displayElement.innerHTML = `<div class="flex items-center"><img src="${logoUrl}" alt="${displayText}" class="w-6 h-4 mr-3 object-contain${value === 'cryptocurrency' ? ' rounded' : ''}"><span>${displayText.replace(/^[^a-zA-Z]*\s*/, '')}</span></div>`;
+                displayElement.innerHTML = '<div class="flex items-center"><img src="' + logoUrl + '" alt="' + displayText + '" class="w-6 h-4 mr-3 object-contain' + (value === 'cryptocurrency' ? ' rounded' : '') + '"><span>' + displayText.replace(/^[^a-zA-Z]*\s*/, '') + '</span></div>';
             } else if (value === 'account_balance') {
-                displayElement.innerHTML = `<div class="flex items-center"><span class="text-xl mr-3">💰</span><span>Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</span></div>`;
+                displayElement.innerHTML = '<div class="flex items-center"><span class="text-xl mr-3">💰</span><span>Account Balance</span></div>';
             } else if (value === 'bank_transfer') {
-                displayElement.innerHTML = `<div class="flex items-center"><span class="text-xl mr-3">🏦</span><span>Bank Transfer</span></div>`;
+                displayElement.innerHTML = '<div class="flex items-center"><span class="text-xl mr-3">🏦</span><span>Bank Transfer</span></div>';
             } else if (value === 'credit_card') {
-                displayElement.innerHTML = `<div class="flex items-center"><svg class="w-6 h-4 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Credit Card</span></div>`;
+                displayElement.innerHTML = '<div class="flex items-center"><svg class="w-6 h-4 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg><span>Credit Card</span></div>';
             } else {
                 displayElement.textContent = displayText;
             }
@@ -2220,7 +2220,7 @@
     </script>
 
     <!-- Payment Method Not Available Modal -->
-    <div id="paymentNotAvailableModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div id="paymentNotAvailableModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" style="display: flex;">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-eni-dark to-eni-charcoal text-white px-6 py-4 rounded-t-2xl">
