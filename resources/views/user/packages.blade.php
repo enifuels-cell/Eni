@@ -1987,7 +1987,7 @@
             
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    const paymentMethod = document.getElementById('paymentMethod').value;
+                    const paymentMethod = document.getElementById('paymentMethodInput').value;
                     
                     if (paymentMethod === 'bank_transfer') {
                         const selectedBank = document.getElementById('selectedBank').value;
@@ -2160,12 +2160,12 @@
             console.log('Form action:', this.action);
             console.log('Package ID:', document.getElementById('selected_package_id').value);
             console.log('Amount:', document.getElementById('investment_amount').value);
-            console.log('Payment Method:', document.getElementById('paymentMethod').value);
+            console.log('Payment Method:', document.getElementById('paymentMethodInput').value);
             
             // Check if required fields are filled
             const packageId = document.getElementById('selected_package_id').value;
             const amount = document.getElementById('investment_amount').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
+            const paymentMethod = document.getElementById('paymentMethodInput').value;
             
             if (!packageId || !amount || !paymentMethod) {
                 console.error('Missing required fields');
@@ -2180,7 +2180,7 @@
         // Payment Not Available Modal Functions
         function showPaymentNotAvailableModal(paymentMethodName, reason) {
             const modal = document.getElementById('paymentNotAvailableModal');
-            const paymentSelect = document.getElementById('paymentMethod');
+            const paymentSelect = document.getElementById('paymentMethodInput');
             
             // Update modal content
             document.getElementById('paymentMethodName').textContent = paymentMethodName;
