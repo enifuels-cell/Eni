@@ -170,6 +170,8 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
         Route::get('/transactions', [UserDashboardController::class, 'transactions'])->name('transactions');
         Route::get('/referrals', [UserDashboardController::class, 'referrals'])->name('referrals');
         Route::get('/notifications', [UserDashboardController::class, 'notifications'])->name('notifications');
+        Route::post('/notifications/mark-all-read', [UserDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
+        Route::post('/notifications/{id}/mark-read', [UserDashboardController::class, 'markNotificationAsRead'])->name('notifications.mark-read');
         
         // Investment Packages
         Route::get('/packages', [UserDashboardController::class, 'packages'])->name('packages');

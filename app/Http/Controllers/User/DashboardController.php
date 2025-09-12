@@ -34,13 +34,28 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Get recent notifications for dropdown
+        $recent_notifications = $user->userNotifications()
+            ->active()
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Get unread notifications count
+        $unread_notifications_count = $user->userNotifications()
+            ->unread()
+            ->active()
+            ->count();
+
         return view('dashboard', compact(
             'total_invested', 
             'total_interest', 
             'total_referral_bonus', 
             'account_balance',
             'active_investments',
-            'recent_transactions'
+            'recent_transactions',
+            'recent_notifications',
+            'unread_notifications_count'
         ));
     }
 
@@ -484,8 +499,55 @@ class DashboardController extends Controller
         }
     }
 
-    public function notifications()
+    public function notifications(Request $request)
     {
-        return view('user.notifications');
+        $user = Auth::user();
+        
+        // Define available categories
+        $categories = [
+            'all' => 'All Notifications',
+            'security' => 'Security',
+            'investment' => 'Investment',
+            'account' => 'Account',
+            'system' => 'System',
+            'welcome' => 'Welcome',
+            'referral' => 'Referral',
+            'transaction' => 'Transaction',
+            'announcement' => 'Announcement',
+            'maintenance' => 'Maintenance'
+        ];
+        
+        // Get filter from request, default to 'all'
+        $filter = $request->get('filter', 'all');
+        
+        // Build notifications query
+        $notificationsQuery = $user->userNotifications()->active()->latest();
+        
+        // Apply filter if not 'all'
+        if ($filter !== 'all' && array_key_exists($filter, $categories)) {
+            $notificationsQuery->where('category', $filter);
+        }
+        
+        $notifications = $notificationsQuery->paginate(15);
+
+        return view('user.notifications', compact('notifications', 'categories', 'filter'));
+    }
+
+    public function markNotificationAsRead($id)
+    {
+        $user = Auth::user();
+        $notification = $user->userNotifications()->findOrFail($id);
+        
+        $notification->markAsRead();
+        
+        return response()->json(['success' => true]);
+    }
+
+    public function markAllNotificationsAsRead()
+    {
+        $user = Auth::user();
+        $user->userNotifications()->unread()->update(['is_read' => true]);
+        
+        return response()->json(['success' => true]);
     }
 }

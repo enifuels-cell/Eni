@@ -142,6 +142,11 @@ class User extends Authenticatable
         return $this->hasMany(DailyInterestLog::class);
     }
 
+    public function userNotifications(): HasMany
+    {
+        return $this->hasMany(UserNotification::class);
+    }
+
     // Helper methods for investment platform
     public function totalInvestedAmount(): float
     {
