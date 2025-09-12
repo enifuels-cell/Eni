@@ -33,7 +33,9 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            padding: 20px 0;
         }
         
         /* Background Pattern */
@@ -57,6 +59,9 @@
             width: 100%;
             max-width: 420px;
             padding: 20px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
         }
         
         .register-card {
@@ -64,8 +69,25 @@
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: var(--radius);
-            padding: 40px;
+            padding: 30px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        @media (max-height: 800px) {
+            .register-card {
+                padding: 20px;
+                max-height: 85vh;
+            }
+            
+            .eni-logo {
+                margin-bottom: 20px !important;
+            }
+            
+            .form-group {
+                margin-bottom: 15px !important;
+            }
         }
         
         /* ENI Logo */
@@ -254,6 +276,28 @@
                     @enderror
                 </div>
                 
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input 
+                        id="username" 
+                        class="form-input" 
+                        type="text" 
+                        name="username" 
+                        value="{{ old('username') }}" 
+                        required 
+                        placeholder="Choose a unique username"
+                        pattern="[a-zA-Z0-9_]+"
+                        title="Username can only contain letters, numbers, and underscores"
+                    />
+                    @error('username')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    <div style="color: #888; font-size: 12px; margin-top: 3px;">
+                        Your username will be used for referral links (e.g., /register?ref=yourusername)
+                    </div>
+                </div>
+                
                 <!-- Phone -->
                 <div class="form-group">
                     <label for="phone" class="form-label">Phone Number</label>
@@ -320,8 +364,12 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
                     @if(isset($referralCode) && $referralCode)
-                        <div style="color: var(--eni-yellow); font-size: 14px; margin-top: 5px;">
-                            ✓ You were referred by a friend! You'll both earn bonuses.
+                        <div id="referral-success-message" style="color: var(--eni-yellow); font-size: 14px; margin-top: 5px;">
+                            @if(isset($referrerUser) && $referrerUser)
+                                ✓ You were referred by {{ $referrerUser->username ?: $referrerUser->name }}! You'll both earn bonuses.
+                            @else
+                                ✓ You were referred by a friend! You'll both earn bonuses.
+                            @endif
                         </div>
                     @endif
                 </div>
@@ -347,24 +395,52 @@
             const urlParams = new URLSearchParams(window.location.search);
             const refParam = urlParams.get('ref');
             
-            console.log('=== Referral Code Debug ===');
+            console.log('=== Enhanced Referral Code Debug ===');
+            console.log('Current URL:', window.location.href);
+            console.log('Query string:', window.location.search);
+            console.log('All URL parameters:', Object.fromEntries(urlParams));
             console.log('URL ref parameter:', refParam);
-            console.log('Referral field value:', referralField.value);
+            console.log('Referral field value:', referralField ? referralField.value : 'FIELD NOT FOUND');
             console.log('PHP referralCode variable:', @json($referralCode ?? null));
             
-            // If there's a ref parameter but no field value, try to populate it
-            if (refParam && !referralField.value) {
-                console.log('Attempting to populate field with URL parameter');
-                referralField.value = refParam;
-                
-                // Show the success message
-                const successMsg = document.createElement('div');
-                successMsg.style.color = '#FFCD00';
-                successMsg.style.fontSize = '14px';
-                successMsg.style.marginTop = '5px';
-                successMsg.textContent = '✓ You were referred by a friend! You\'ll both earn bonuses.';
-                referralField.parentNode.appendChild(successMsg);
+            // Check if field exists
+            if (!referralField) {
+                console.error('❌ Referral code field not found!');
+                return;
             }
+            
+            // Show current state
+            if (refParam) {
+                console.log('✅ Found ref parameter in URL:', refParam);
+                
+                // Always populate the field with URL parameter
+                referralField.value = refParam;
+                console.log('✅ Set field value to:', refParam);
+                
+                // Show the success message (only if not already shown by PHP)
+                const existingMsg = document.getElementById('referral-success-message') || 
+                                  referralField.parentNode.querySelector('.referral-success-msg');
+                if (!existingMsg) {
+                    const successMsg = document.createElement('div');
+                    successMsg.className = 'referral-success-msg';
+                    successMsg.style.color = '#FFCD00';
+                    successMsg.style.fontSize = '14px';
+                    successMsg.style.marginTop = '5px';
+                    successMsg.textContent = '✓ You were referred by a friend! You\'ll both earn bonuses.';
+                    referralField.parentNode.appendChild(successMsg);
+                    console.log('✅ Added referral success message');
+                } else {
+                    console.log('ℹ️ Referral message already exists (from PHP)');
+                }
+            } else {
+                console.log('❌ No ref parameter found in URL');
+                console.log('Expected URL format: ' + window.location.origin + '/register?ref=YOUR_CODE');
+            }
+            
+            // Debug helper: show expected URL
+            console.log('=== Troubleshooting ===');
+            console.log('If you\'re not seeing a referral code, make sure your URL looks like:');
+            console.log(window.location.origin + '/register?ref=KJOS0AJ3');
         });
     </script>
 </body>

@@ -79,22 +79,44 @@
 
         <!-- Share Your Link (always visible) -->
         <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-8 border border-white/10 mb-8">
-            <h2 class="text-2xl font-bold text-eni-yellow mb-6">Share Your Referral Link</h2>
-            <div class="grid md:grid-cols-2 gap-8">
-                <!-- Referral Link -->
+            <h2 class="text-2xl font-bold text-eni-yellow mb-6">Share Your Referral Links</h2>
+            <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
+                
+                @if($usernameReferralLink)
+                <!-- Username-based Referral Link (Primary) -->
                 <div>
-                    <label class="block text-white/80 font-semibold mb-3">Your Referral Link</label>
+                    <div class="flex items-center gap-2 mb-3">
+                        <label class="block text-white/80 font-semibold">Username Link</label>
+                        <span class="bg-eni-yellow text-eni-dark text-xs px-2 py-1 rounded-full font-bold">RECOMMENDED</span>
+                    </div>
                     <div class="flex">
-                        <input type="text" id="referralLink" 
-                               value="{{ $referralLink ?? route('register', ['ref' => Auth::user()->referral_code]) }}" 
-                               class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow" 
+                        <input type="text" id="usernameReferralLink" 
+                               value="{{ $usernameReferralLink }}" 
+                               class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow text-sm" 
                                readonly>
-                        <button type="button" onclick="copyReferralLink(event)" 
-                                class="bg-eni-yellow text-eni-dark px-6 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
+                        <button type="button" onclick="copyLink('usernameReferralLink', this)" 
+                                class="bg-eni-yellow text-eni-dark px-4 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
                             Copy
                         </button>
                     </div>
-                    <p class="text-white/60 text-sm mt-2">Share this link to earn variable commission (5%-15%) based on investment packages made by your referrals</p>
+                    <p class="text-white/60 text-xs mt-2">Easy to remember: /register?ref={{ Auth::user()->username }}</p>
+                </div>
+                @endif
+
+                <!-- Referral Code Link -->
+                <div>
+                    <label class="block text-white/80 font-semibold mb-3">Code Link {{ $usernameReferralLink ? '(Legacy)' : '' }}</label>
+                    <div class="flex">
+                        <input type="text" id="codeReferralLink" 
+                               value="{{ $codeReferralLink }}" 
+                               class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow text-sm" 
+                               readonly>
+                        <button type="button" onclick="copyLink('codeReferralLink', this)" 
+                                class="bg-gray-600 text-white px-4 py-3 rounded-r-lg font-semibold hover:bg-gray-500 transition-colors">
+                            Copy
+                        </button>
+                    </div>
+                    <p class="text-white/60 text-xs mt-2">Unique code: {{ Auth::user()->referral_code }}</p>
                 </div>
                 <!-- QR Code -->
                 <div class="text-center">
@@ -145,38 +167,55 @@
     </div>
 
     <script>
-        function copyReferralLink(e) {
-            const linkInput = document.getElementById('referralLink');
+        // New universal copy function
+        function copyLink(inputId, buttonElement) {
+            const linkInput = document.getElementById(inputId);
             if (!linkInput) return;
+            
             // Try clipboard API first
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(linkInput.value).then(function() {
-                    showCopyFeedback(e);
+                    showCopyFeedback(buttonElement);
                 }, function() {
-                    fallbackCopy(linkInput, e);
+                    fallbackCopy(linkInput, buttonElement);
                 });
             } else {
-                fallbackCopy(linkInput, e);
+                fallbackCopy(linkInput, buttonElement);
             }
         }
-        function fallbackCopy(input, e) {
+
+        // Legacy function for backward compatibility
+        function copyReferralLink(e) {
+            const linkInput = document.getElementById('referralLink');
+            if (!linkInput) return;
+            copyLink('referralLink', e.target);
+        }
+
+        function fallbackCopy(input, buttonElement) {
             input.select();
             input.setSelectionRange(0, 99999);
             document.execCommand('copy');
-            showCopyFeedback(e);
+            showCopyFeedback(buttonElement);
         }
-        function showCopyFeedback(e) {
-            if (!e) return;
-            const button = e.target;
+
+        function showCopyFeedback(button) {
             if (!button) return;
             const originalText = button.textContent;
+            const originalClasses = Array.from(button.classList);
+            
             button.textContent = 'Copied!';
+            button.classList.remove('bg-eni-yellow', 'bg-gray-600');
             button.classList.add('bg-green-500');
-            button.classList.remove('bg-eni-yellow');
+            
             setTimeout(() => {
                 button.textContent = originalText;
                 button.classList.remove('bg-green-500');
-                button.classList.add('bg-eni-yellow');
+                // Restore original classes
+                originalClasses.forEach(cls => {
+                    if (cls.startsWith('bg-')) {
+                        button.classList.add(cls);
+                    }
+                });
             }, 2000);
         }
     </script>

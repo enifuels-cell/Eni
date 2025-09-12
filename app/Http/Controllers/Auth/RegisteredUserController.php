@@ -22,16 +22,46 @@ class RegisteredUserController extends Controller
      */
     public function create(Request $request): View
     {
-        $referralCode = $request->get('ref');
+        // Handle referral parameter with support for username, referral_code, or user_id
+        $referrerUser = null;
+        $referralParam = $request->get('ref');
+        
+        if ($referralParam) {
+            \Log::info("Referral parameter detected: " . $referralParam);
+            
+            // First try to find by username (new system - most user-friendly)
+            $referrerUser = User::where('username', $referralParam)->first();
+            
+            // If not found, try by referral_code (current system)
+            if (!$referrerUser) {
+                $referrerUser = User::where('referral_code', $referralParam)->first();
+            }
+            
+            // If still not found, try by user ID for backward compatibility
+            if (!$referrerUser && is_numeric($referralParam)) {
+                $referrerUser = User::find($referralParam);
+                \Log::info("Fallback: Looking up user by ID: " . $referralParam);
+            }
+            
+            if ($referrerUser) {
+                \Log::info("Found referrer user: " . $referrerUser->name . " (ID: " . $referrerUser->id . ", Username: " . ($referrerUser->username ?? 'none') . ")");
+            } else {
+                \Log::warning("No referrer found for parameter: " . $referralParam);
+            }
+        }
         
         // Debug logging
         \Log::info('Registration page accessed', [
-            'ref_parameter' => $referralCode,
+            'ref_parameter' => $referralParam,
+            'referrer_found' => $referrerUser ? $referrerUser->name : 'none',
             'all_parameters' => $request->all(),
             'query_string' => $request->getQueryString()
         ]);
         
-        return view('auth.register', compact('referralCode'));
+        return view('auth.register', [
+            'referralCode' => $referralParam,
+            'referrerUser' => $referrerUser
+        ]);
     }
 
     /**
@@ -44,6 +74,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'username' => ['required', 'string', 'min:3', 'max:50', 'unique:'.User::class, 'regex:/^[a-zA-Z0-9_]+$/'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => ['required', 'string', 'max:20'],
             'referral_code' => ['nullable', 'string'],
@@ -52,14 +83,20 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'username' => $request->username,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
         ]);
 
         // Handle referral if provided
         if ($request->referral_code) {
-            // Try to find referrer by referral_code first
-            $referrer = User::where('referral_code', $request->referral_code)->first();
+            // Try to find referrer by username first (new system - most user-friendly)
+            $referrer = User::where('username', $request->referral_code)->first();
+            
+            // If not found by username, try by referral_code 
+            if (!$referrer) {
+                $referrer = User::where('referral_code', $request->referral_code)->first();
+            }
             
             // If not found by referral_code, try by user ID for backward compatibility
             if (!$referrer && is_numeric($request->referral_code)) {

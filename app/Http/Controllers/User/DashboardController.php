@@ -111,11 +111,22 @@ class DashboardController extends Controller
             ->orderBy('min_amount')
             ->get();
 
-        // Generate referral QR code with Eni logo
-        $referralLink = route('register', ['ref' => $user->referral_code]);
-        $qrCode = QrCodeService::generateWithLogo($referralLink, 200);
+        // Generate referral links - prioritize username-based if available
+        $usernameReferralLink = $user->username ? route('register', ['ref' => $user->username]) : null;
+        $codeReferralLink = route('register', ['ref' => $user->referral_code]);
+        
+        // Use username-based link for QR code if available, otherwise use referral code
+        $primaryReferralLink = $usernameReferralLink ?: $codeReferralLink;
+        $qrCode = QrCodeService::generateWithLogo($primaryReferralLink, 200);
 
-        return view('user.referrals', compact('referrals', 'qrCode', 'referralLink', 'packages'));
+        return view('user.referrals', compact(
+            'referrals', 
+            'qrCode', 
+            'usernameReferralLink',
+            'codeReferralLink',
+            'primaryReferralLink',
+            'packages'
+        ));
     }
 
     public function packages()
