@@ -70,7 +70,7 @@
         </div>
         <div class="flex items-center gap-3">
           <!-- Mark All as Read -->
-          <button class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
+          <button onclick="markAllAsRead()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
             <i class="fas fa-check-double text-xs mr-2"></i>
             Mark All Read
           </button>
@@ -78,16 +78,17 @@
           <div class="relative">
             <button onclick="toggleFilter()" class="px-4 py-2 bg-eni-dark border border-white/20 hover:bg-white/10 text-white text-sm rounded-lg transition-colors flex items-center gap-2">
               <i class="fas fa-filter text-xs"></i>
-              Filter
+              {{ $categories[$filter] ?? 'Filter' }}
               <i class="fas fa-chevron-down text-xs"></i>
             </button>
             <div id="filterMenu" class="absolute right-0 mt-2 w-48 bg-eni-dark border border-white/20 rounded-lg shadow-xl z-50 hidden">
               <div class="p-2">
-                <a href="#" class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded">All Notifications</a>
-                <a href="#" class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded">Security</a>
-                <a href="#" class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded">Investments</a>
-                <a href="#" class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded">Account</a>
-                <a href="#" class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded">System</a>
+                @foreach($categories as $key => $name)
+                  <a href="{{ route('user.notifications', ['filter' => $key]) }}" 
+                     class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded {{ $filter === $key ? 'bg-white/10' : '' }}">
+                    {{ $name }}
+                  </a>
+                @endforeach
               </div>
             </div>
           </div>
@@ -97,8 +98,53 @@
 
     <!-- Notifications List -->
     <div class="space-y-4">
-      <!-- PIN Setup Notification (if not set) -->
-      @if(!Auth::user()->pin_hash)
+      @forelse($notifications as $notification)
+      <div class="bg-gradient-to-r from-{{ $notification->category_color }}-500/20 to-{{ $notification->category_color }}-600/20 border border-{{ $notification->category_color }}-400/30 rounded-xl p-6 hover:from-{{ $notification->category_color }}-500/30 hover:to-{{ $notification->category_color }}-600/30 transition-all duration-200 {{ $notification->action_url ? 'cursor-pointer' : '' }}"
+           @if($notification->action_url) onclick="window.location.href='{{ $notification->action_url }}'" @endif>
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-{{ $notification->category_color }}-500/20 border border-{{ $notification->category_color }}-400/40 rounded-full flex items-center justify-center">
+            <i class="{{ $notification->icon }} text-{{ $notification->category_color }}-400"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-3">
+                <h3 class="font-semibold text-lg text-{{ $notification->category_color }}-400">{{ $notification->title }}</h3>
+                <span class="px-2 py-1 bg-{{ $notification->category_color }}-500/20 text-{{ $notification->category_color }}-300 text-xs rounded-full capitalize">{{ $notification->category }}</span>
+                @if($notification->priority === 'high')
+                  <span class="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded-full">High Priority</span>
+                @endif
+              </div>
+              <span class="text-white/50 text-sm">{{ $notification->created_at->diffForHumans() }}</span>
+            </div>
+            <p class="text-white/70 mb-3">{{ $notification->message }}</p>
+            <div class="flex items-center gap-2">
+              @if(!$notification->is_read)
+                <div class="w-2 h-2 bg-{{ $notification->category_color }}-400 rounded-full"></div>
+                <span class="text-white/50 text-sm">Unread</span>
+              @else
+                <div class="w-2 h-2 bg-gray-400 rounded-full"></div>
+                <span class="text-white/50 text-sm">Read</span>
+              @endif
+              @if($notification->action_url)
+                <span class="text-{{ $notification->category_color }}-300 text-sm font-medium ml-2">Click to view</span>
+                <i class="fas fa-chevron-right text-{{ $notification->category_color }}-400/60"></i>
+              @endif
+            </div>
+          </div>
+        </div>
+      </div>
+      @empty
+      <div class="text-center py-12">
+        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-bell text-white/40 text-xl"></i>
+        </div>
+        <h3 class="text-white font-medium mb-2">No notifications yet</h3>
+        <p class="text-white/60">We'll notify you when something important happens</p>
+      </div>
+      @endforelse
+
+      <!-- PIN Setup Notification (if not set and no custom notification exists) -->
+      @if(!Auth::user()->pin_hash && !$notifications->where('category', 'security')->where('title', 'like', '%PIN%')->count())
       <div class="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-xl p-6 cursor-pointer hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-200" onclick="window.location.href='{{ route('pin.setup.form') }}'">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 bg-purple-500/20 border border-purple-400/40 rounded-full flex items-center justify-center">
@@ -123,31 +169,6 @@
         </div>
       </div>
       @endif
-
-      <!-- Welcome Notification -->
-      <div class="bg-eni-dark/50 border border-white/10 rounded-xl p-6 hover:bg-eni-dark/70 transition-all duration-200">
-        <div class="flex items-start gap-4">
-          <div class="w-12 h-12 bg-eni-yellow/20 border border-eni-yellow/40 rounded-full flex items-center justify-center">
-            <i class="fas fa-hand-wave text-eni-yellow"></i>
-          </div>
-          <div class="flex-1">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-3">
-                <h3 class="font-semibold text-lg text-white">Welcome to ENI Investment Platform!</h3>
-                <span class="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-full">Account</span>
-              </div>
-              <span class="text-white/50 text-sm">Just now</span>
-            </div>
-            <p class="text-white/70 mb-3">Thank you for joining ENI! Complete your profile and explore our investment packages to get started on your financial journey.</p>
-            <div class="flex items-center gap-2">
-              <div class="w-2 h-2 bg-eni-yellow rounded-full"></div>
-              <span class="text-white/50 text-sm">Unread</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Account Verification -->
       @if(Auth::user()->email_verified_at)
       <div class="bg-eni-dark/30 border border-white/10 rounded-xl p-6 hover:bg-eni-dark/50 transition-all duration-200">
         <div class="flex items-start gap-4">
@@ -256,6 +277,40 @@
     function toggleFilter() {
       const menu = document.getElementById('filterMenu');
       menu.classList.toggle('hidden');
+    }
+
+    // Mark all notifications as read
+    async function markAllAsRead() {
+      try {
+        const response = await fetch('{{ route("user.notifications.mark-all-read") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+        });
+        
+        if (response.ok) {
+          location.reload();
+        }
+      } catch (error) {
+        console.error('Error marking notifications as read:', error);
+      }
+    }
+
+    // Mark individual notification as read
+    async function markAsRead(notificationId) {
+      try {
+        await fetch(`{{ route("user.notifications.mark-read", ":id") }}`.replace(':id', notificationId), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+        });
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
     }
 
     // Close filter menu when clicking outside

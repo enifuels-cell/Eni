@@ -82,8 +82,8 @@
             <h2 class="text-2xl font-bold text-eni-yellow mb-6">Share Your Referral Links</h2>
             <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-6">
                 
+                <!-- Username Referral Link (If available) -->
                 @if($usernameReferralLink)
-                <!-- Username-based Referral Link (Primary) -->
                 <div>
                     <div class="flex items-center gap-2 mb-3">
                         <label class="block text-white/80 font-semibold">Username Link</label>
@@ -102,6 +102,39 @@
                     <p class="text-white/60 text-xs mt-2">Easy to remember: /register?ref={{ Auth::user()->username }}</p>
                 </div>
                 @endif
+
+                <!-- Code Referral Link (Always available as fallback) -->
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <label class="block text-white/80 font-semibold">
+                            @if($usernameReferralLink)
+                                Code Link
+                            @else
+                                Referral Link
+                            @endif
+                        </label>
+                        @if(!$usernameReferralLink)
+                            <span class="bg-eni-yellow text-eni-dark text-xs px-2 py-1 rounded-full font-bold">PRIMARY</span>
+                        @endif
+                    </div>
+                    <div class="flex">
+                        <input type="text" id="codeReferralLink" 
+                               value="{{ $codeReferralLink }}" 
+                               class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow text-sm" 
+                               readonly>
+                        <button type="button" onclick="copyLink('codeReferralLink', this)" 
+                                class="bg-eni-yellow text-eni-dark px-4 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
+                            Copy
+                        </button>
+                    </div>
+                    <p class="text-white/60 text-xs mt-2">
+                        @if($usernameReferralLink)
+                            Alternative referral link using your code
+                        @else
+                            Share this link to earn referral bonuses
+                        @endif
+                    </p>
+                </div>
 
                 <!-- QR Code Section -->
                 <div class="text-center">
