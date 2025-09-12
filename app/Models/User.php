@@ -77,6 +77,7 @@ class User extends Authenticatable
         'address',
         'suspended_at',
         'email_verified_at',
+        'referral_code',
     ];
 
     /**
@@ -104,6 +105,23 @@ class User extends Authenticatable
             'suspended_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function ($user) {
+            if (empty($user->referral_code)) {
+                $user->referral_code = strtoupper(\Illuminate\Support\Str::random(8));
+                
+                // Ensure uniqueness
+                while (static::where('referral_code', $user->referral_code)->exists()) {
+                    $user->referral_code = strtoupper(\Illuminate\Support\Str::random(8));
+                }
+            }
+        });
     }
 
     // Investment Platform Relationships

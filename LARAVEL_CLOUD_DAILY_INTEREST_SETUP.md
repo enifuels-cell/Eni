@@ -3,6 +3,7 @@
 ## 1. Initial Setup Commands (Run Once After Deployment)
 
 ### Database Setup
+
 ```bash
 # Run database migrations
 php artisan migrate
@@ -12,6 +13,7 @@ php artisan db:seed --class=InvestmentPackageSeeder
 ```
 
 ### Verify System Components
+
 ```bash
 # Check if investments exist and are active
 php artisan tinker --execute="dump(App\Models\Investment::active()->count());"
@@ -23,12 +25,14 @@ php artisan list | grep interest
 ## 2. Manual Daily Interest Execution
 
 ### Test the System (Safe - No Changes)
+
 ```bash
 # Dry run to see what would be processed
 php artisan interest:update --dry-run
 ```
 
 ### Execute Daily Interest Calculation
+
 ```bash
 # Run daily interest calculation manually
 php artisan interest:update
@@ -37,13 +41,17 @@ php artisan interest:update
 ## 3. Automated Scheduling Setup
 
 ### Option A: Laravel Cloud Native Scheduling
+
 Laravel Cloud should automatically handle the scheduler if you have this in your `routes/console.php`:
+
 ```php
 Schedule::command('interest:update')->daily();
 ```
 
 ### Option B: Manual Cron Job (If Laravel Cloud Doesn't Auto-Schedule)
+
 Add this cron job to run Laravel's scheduler:
+
 ```bash
 # Edit crontab
 crontab -e
@@ -55,6 +63,7 @@ crontab -e
 ## 4. Verification Commands
 
 ### Check if Interest Was Processed Today
+
 ```bash
 # Check daily interest logs for today
 php artisan tinker --execute="use Carbon\Carbon; dump(App\Models\DailyInterestLog::whereDate('interest_date', Carbon::today())->count());"
@@ -67,6 +76,7 @@ php artisan tinker --execute="use Carbon\Carbon; dump(App\Models\Transaction::wh
 ```
 
 ### Check Active Investments
+
 ```bash
 # Verify active investments
 php artisan tinker --execute="dump(App\Models\Investment::active()->where('remaining_days', '>', 0)->count());"
@@ -75,6 +85,7 @@ php artisan tinker --execute="dump(App\Models\Investment::active()->where('remai
 ## 5. Troubleshooting Commands
 
 ### If No Active Investments
+
 ```bash
 # Check if investments need activation (pending deposits)
 php artisan tinker --execute="dump(App\Models\Transaction::where('status', 'pending')->count());"
@@ -84,6 +95,7 @@ php artisan tinker --execute="App\Models\Investment::where('active', false)->upd
 ```
 
 ### Force Interest Calculation (Emergency Use Only)
+
 ```bash
 # This will process interest even if already done today (use carefully)
 php artisan tinker --execute="
@@ -96,12 +108,14 @@ php artisan interest:update
 ## 6. Production Deployment Checklist
 
 ### Essential Files to Verify
+
 - ✅ `routes/console.php` contains: `Schedule::command('interest:update')->daily();`
 - ✅ `app/Console/Commands/UpdateTotalInterest.php` exists
 - ✅ Database migrations are applied
 - ✅ Investment packages are seeded
 
 ### Post-Deployment Test Sequence
+
 ```bash
 # 1. Check system status
 php artisan interest:update --dry-run
@@ -120,6 +134,7 @@ echo 'Total Interest Today: $' . App\Models\Transaction::where('type', 'interest
 ## 7. Monitoring Commands (Run Periodically)
 
 ### Daily Health Check
+
 ```bash
 # Check if yesterday's interest was processed
 php artisan tinker --execute="
@@ -131,6 +146,7 @@ echo 'Yesterday (' . \$yesterday->toDateString() . ') processed: ' . \$processed
 ```
 
 ### Weekly Report
+
 ```bash
 # Get weekly interest summary
 php artisan tinker --execute="
@@ -149,7 +165,9 @@ echo 'Total interest paid in last 7 days: $' . \$total . PHP_EOL;
 4. **Scheduler**: Laravel Cloud should auto-detect the scheduler, but verify it's working after deployment
 
 ## Emergency Recovery
+
 If daily interest stops working:
+
 ```bash
 # Check what's wrong
 php artisan interest:update --dry-run
