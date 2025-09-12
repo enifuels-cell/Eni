@@ -254,6 +254,23 @@
                     @enderror
                 </div>
                 
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input 
+                        id="phone" 
+                        class="form-input" 
+                        type="tel" 
+                        name="phone" 
+                        value="{{ old('phone') }}" 
+                        required 
+                        placeholder="Enter your phone number"
+                    />
+                    @error('phone')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
@@ -322,5 +339,33 @@
             </form>
         </div>
     </div>
+
+    <script>
+        // Debug referral code functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const referralField = document.getElementById('referral_code');
+            const urlParams = new URLSearchParams(window.location.search);
+            const refParam = urlParams.get('ref');
+            
+            console.log('=== Referral Code Debug ===');
+            console.log('URL ref parameter:', refParam);
+            console.log('Referral field value:', referralField.value);
+            console.log('PHP referralCode variable:', @json($referralCode ?? null));
+            
+            // If there's a ref parameter but no field value, try to populate it
+            if (refParam && !referralField.value) {
+                console.log('Attempting to populate field with URL parameter');
+                referralField.value = refParam;
+                
+                // Show the success message
+                const successMsg = document.createElement('div');
+                successMsg.style.color = '#FFCD00';
+                successMsg.style.fontSize = '14px';
+                successMsg.style.marginTop = '5px';
+                successMsg.textContent = '✓ You were referred by a friend! You\'ll both earn bonuses.';
+                referralField.parentNode.appendChild(successMsg);
+            }
+        });
+    </script>
 </body>
 </html>

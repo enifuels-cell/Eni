@@ -23,6 +23,14 @@ class RegisteredUserController extends Controller
     public function create(Request $request): View
     {
         $referralCode = $request->get('ref');
+        
+        // Debug logging
+        \Log::info('Registration page accessed', [
+            'ref_parameter' => $referralCode,
+            'all_parameters' => $request->all(),
+            'query_string' => $request->getQueryString()
+        ]);
+        
         return view('auth.register', compact('referralCode'));
     }
 
