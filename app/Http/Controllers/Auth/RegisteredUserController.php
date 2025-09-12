@@ -50,7 +50,14 @@ class RegisteredUserController extends Controller
 
         // Handle referral if provided
         if ($request->referral_code) {
+            // Try to find referrer by referral_code first
             $referrer = User::where('referral_code', $request->referral_code)->first();
+            
+            // If not found by referral_code, try by user ID for backward compatibility
+            if (!$referrer && is_numeric($request->referral_code)) {
+                $referrer = User::find($request->referral_code);
+            }
+            
             if ($referrer && $referrer->id !== $user->id) {
                 // Create referral record
                 Referral::create([
@@ -64,6 +71,12 @@ class RegisteredUserController extends Controller
                     'referrer_id' => $referrer->id,
                     'referee_id' => $user->id,
                     'referral_code' => $request->referral_code
+                ]);
+            } else {
+                \Log::warning('Referral creation failed', [
+                    'referral_code' => $request->referral_code,
+                    'referrer_found' => $referrer ? 'yes' : 'no',
+                    'referee_id' => $user->id
                 ]);
             }
         }

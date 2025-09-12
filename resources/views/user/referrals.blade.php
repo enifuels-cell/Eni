@@ -86,7 +86,7 @@
                     <label class="block text-white/80 font-semibold mb-3">Your Referral Link</label>
                     <div class="flex">
                         <input type="text" id="referralLink" 
-                               value="{{ $referralLink ?? route('register', ['ref' => Auth::id()]) }}" 
+                               value="{{ $referralLink ?? route('register', ['ref' => Auth::user()->referral_code]) }}" 
                                class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow" 
                                readonly>
                         <button type="button" onclick="copyReferralLink(event)" 
