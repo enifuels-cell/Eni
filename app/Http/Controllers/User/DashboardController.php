@@ -9,11 +9,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Services\QrCodeService;
-use App\Services\NotificationService;
-use App\Models\UserNotification;
 
 class DashboardController extends Controller
 {
@@ -114,34 +111,11 @@ class DashboardController extends Controller
             ->orderBy('min_amount')
             ->get();
 
-        // Ensure user has a referral code
-        if (empty($user->referral_code)) {
-            $user->referral_code = strtoupper(Str::random(8));
-            // Ensure uniqueness
-            while (User::where('referral_code', $user->referral_code)->exists()) {
-                $user->referral_code = strtoupper(Str::random(8));
-            }
-            $user->save();
-        }
-        
-        // Generate username-based referral link (preferred)
-        $usernameReferralLink = $user->username ? route('register', ['ref' => $user->username]) : null;
-        
-        // Generate referral code link (fallback)
-        $codeReferralLink = route('register', ['ref' => $user->referral_code]);
-        
-        // Primary referral link for QR code (prefer username, fallback to code)
-        $primaryReferralLink = $usernameReferralLink ?: $codeReferralLink;
-        $qrCode = QrCodeService::generateWithLogo($primaryReferralLink, 200);
+        // Generate referral QR code with Eni logo
+        $referralLink = route('register', ['ref' => $user->id]);
+        $qrCode = QrCodeService::generateWithLogo($referralLink, 200);
 
-        return view('user.referrals', compact(
-            'referrals', 
-            'qrCode', 
-            'usernameReferralLink',
-            'codeReferralLink',
-            'primaryReferralLink',
-            'packages'
-        ));
+        return view('user.referrals', compact('referrals', 'qrCode', 'referralLink', 'packages'));
     }
 
     public function packages()
@@ -510,53 +484,8 @@ class DashboardController extends Controller
         }
     }
 
-    public function notifications(Request $request)
+    public function notifications()
     {
-        $user = Auth::user();
-        
-        // Get filter parameter
-        $filter = $request->get('filter', 'all');
-        
-        // Base query
-        $query = $user->userNotifications()->active()->latest();
-        
-        // Apply filter
-        if ($filter !== 'all') {
-            $query->byCategory($filter);
-        }
-        
-        // Get notifications
-        $notifications = $query->get();
-        
-        // Get unread count
-        $unreadCount = $user->userNotifications()->unread()->active()->count();
-        
-        // Get available categories for filter
-        $categories = [
-            'all' => 'All Notifications',
-            'security' => 'Security',
-            'investment' => 'Investments', 
-            'account' => 'Account',
-            'referral' => 'Referrals',
-            'transaction' => 'Transactions',
-            'system' => 'System'
-        ];
-        
-        return view('user.notifications', compact('notifications', 'unreadCount', 'categories', 'filter'));
-    }
-
-    public function markNotificationAsRead($id)
-    {
-        $notification = Auth::user()->userNotifications()->findOrFail($id);
-        $notification->markAsRead();
-        
-        return response()->json(['success' => true]);
-    }
-
-    public function markAllNotificationsAsRead()
-    {
-        NotificationService::markAllAsRead(Auth::user());
-        
-        return response()->json(['success' => true]);
+        return view('user.notifications');
     }
 }

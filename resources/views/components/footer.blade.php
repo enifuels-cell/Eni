@@ -45,7 +45,7 @@
         <div class="border-t border-white/10 mt-8 pt-6 text-center">
             <div class="flex flex-col md:flex-row justify-between items-center">
                 <div class="text-white/60 text-sm mb-4 md:mb-0">
-                    © {{ date('Y') }} ENI Investment Platform. All rights reserved.
+                    © {{ date('Y') }} Eni Members. All rights reserved.
                 </div>
                 <div class="flex items-center gap-4 text-white/60 text-sm">
                     <span>Regulated Investment Platform</span>

@@ -161,7 +161,7 @@
                 
                 @foreach($packages as $package)
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
-                     onclick="openPaymentForm({{ $package->id }}, '{{ addslashes($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ number_format($package->daily_shares_rate, 4, '.', '') }})">
+                     onclick="openPaymentForm({{ $package->id }}, '{{ addslashes($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
                     <div class="text-center relative min-h-[400px]">
                         <!-- Elevated loading placeholder -->
@@ -1534,6 +1534,10 @@
                     </button>
                 </div>
 
+            </div>
+        </div>
+    </div>
+                
             </div>
         </div>
     </div>

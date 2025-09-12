@@ -51,18 +51,23 @@
     <div class="flex items-center gap-4">
       <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
       <div>
-        <h1 class="font-extrabold text-xl tracking-tight">ENI Investment</h1>
+        <h1 class="font-extrabold text-xl tracking-tight">Eni Members</h1>
         <p class="text-sm text-white/70">Welcome back, {{ Auth::user()->name }}</p>
       </div>
     </div>
     <div class="flex items-center gap-4">
       <div class="relative">
         <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
-          @if(!Auth::user()->pin_hash)
-          <span class="absolute top-1 right-1 w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
-          @else
-          <span class="absolute top-1 right-1 w-2 h-2 bg-eni-yellow rounded-full"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
+          @php
+            $totalUnread = $unread_notifications_count + (!Auth::user()->pin_hash ? 1 : 0);
+          @endphp
+          @if($totalUnread > 0)
+            @if($totalUnread > 9)
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">9+</span>
+            @else
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">{{ $totalUnread }}</span>
+            @endif
           @endif
         </button>
       </div>
@@ -261,72 +266,75 @@
   <!-- Notifications Panel -->
   <div id="notificationsPanel" class="fixed top-16 right-6 w-80 bg-eni-dark rounded-2xl shadow-xl border border-white/10 z-50 hidden">
     <div class="p-6">
-      <h3 class="font-bold text-lg text-eni-yellow mb-4">Notifications</h3>
-      
-      <!-- Debug Info -->
-      <div class="bg-yellow-100 p-2 text-xs text-black mb-4 rounded">
-        PIN Status: {{ Auth::user()->pin_hash ? 'SET' : 'NOT SET' }} | User ID: {{ Auth::user()->id }}
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-eni-yellow">Notifications</h3>
+        @if($unread_notifications_count > 0)
+          <span class="px-2 py-1 bg-eni-yellow/20 text-eni-yellow text-xs rounded-full">
+            {{ $unread_notifications_count }} unread
+          </span>
+        @endif
       </div>
       
-      <div class="space-y-4">
+      <div class="space-y-3">
         @if(!Auth::user()->pin_hash)
         <!-- PIN Setup Notification -->
-        <div class="bg-gradient-to-r from-purple-500/20 to-purple-600/20 border border-purple-400/30 rounded-lg p-4 cursor-pointer hover:from-purple-500/30 hover:to-purple-600/30 transition-all duration-200" onclick="window.location.href='{{ route('pin.setup.form') }}'">
+        <div class="bg-eni-dark/50 border border-eni-yellow/30 rounded-lg p-4 cursor-pointer hover:bg-eni-dark/70 transition-all duration-200" onclick="window.location.href='{{ route('pin.setup.form') }}'">
           <div class="flex items-start gap-3">
-            <div class="w-8 h-8 bg-purple-500/20 border border-purple-400/40 rounded-full flex items-center justify-center">
-              <i class="fas fa-shield-alt text-purple-400 text-xs"></i>
+            <div class="w-8 h-8 bg-eni-yellow/20 border border-eni-yellow/40 rounded-full flex items-center justify-center">
+              <i class="fas fa-shield-alt text-eni-yellow text-xs"></i>
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between">
-                <p class="font-semibold text-sm text-purple-400">Set Up PIN Login</p>
-                <i class="fas fa-chevron-right text-purple-400/60 text-xs"></i>
+                <p class="font-semibold text-sm text-white">Set Up PIN Login</p>
+                <i class="fas fa-chevron-right text-white/40 text-xs"></i>
               </div>
-              <p class="text-white/70 text-xs mt-1">Enable 4-digit PIN for quick and secure login on this device.</p>
+              <p class="text-white/70 text-xs mt-1">{{ \Illuminate\Support\Str::limit('Enable 4-digit PIN for quick and secure login on this device.', 60) }}</p>
               <div class="flex items-center gap-2 mt-2">
-                <span class="text-purple-300 text-xs font-medium">Click to set up</span>
-                <div class="w-1 h-1 bg-purple-400 rounded-full animate-pulse"></div>
+                <div class="w-1 h-1 bg-eni-yellow rounded-full animate-pulse"></div>
+                <span class="text-white/50 text-xs">Action required</span>
               </div>
             </div>
           </div>
         </div>
         @endif
 
-        <div class="bg-white/10 rounded-lg p-4">
+        @forelse($recent_notifications as $notification)
+        <div class="bg-white/5 border border-white/10 rounded-lg p-4 cursor-pointer hover:bg-white/10 transition-all duration-200" onclick="window.location.href='{{ route('user.notifications') }}'">
           <div class="flex items-start gap-3">
-            <div class="w-2 h-2 bg-eni-yellow rounded-full mt-2"></div>
-            <div>
-              <p class="font-semibold text-sm">Welcome to ENI!</p>
-              <p class="text-white/70 text-xs mt-1">Complete your profile to get started with investments.</p>
-              <p class="text-white/50 text-xs mt-2">Just now</p>
+            <div class="w-8 h-8 bg-white/10 border border-white/20 rounded-full flex items-center justify-center">
+              <i class="{{ $notification->icon }} text-eni-yellow text-xs"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-sm text-white truncate">{{ $notification->title }}</p>
+                @if(!$notification->is_read)
+                  <div class="w-2 h-2 bg-eni-yellow rounded-full flex-shrink-0"></div>
+                @endif
+              </div>
+              <p class="text-white/70 text-xs mt-1">{!! \Illuminate\Support\Str::limit($notification->message, 80) !!}</p>
+              <div class="flex items-center justify-between mt-2">
+                <span class="text-white/50 text-xs">{{ $notification->created_at->diffForHumans() }}</span>
+                <span class="text-white/40 text-xs capitalize">{{ $notification->category }}</span>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div class="bg-white/10 rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <div class="w-2 h-2 bg-green-400 rounded-full mt-2"></div>
-            <div>
-              <p class="font-semibold text-sm">Account Verified</p>
-              <p class="text-white/70 text-xs mt-1">Your account has been successfully verified.</p>
-              <p class="text-white/50 text-xs mt-2">2 hours ago</p>
-            </div>
+        @empty
+        <div class="text-center py-6">
+          <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-bell text-white/40"></i>
           </div>
+          <p class="text-white/60 text-sm">No notifications yet</p>
+          <p class="text-white/40 text-xs mt-1">We'll notify you when something important happens</p>
         </div>
-        
-        <div class="bg-white/10 rounded-lg p-4">
-          <div class="flex items-start gap-3">
-            <div class="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
-            <div>
-              <p class="font-semibold text-sm">New Investment Packages</p>
-              <p class="text-white/70 text-xs mt-1">Check out our latest high-yield investment options.</p>
-              <p class="text-white/50 text-xs mt-2">1 day ago</p>
-            </div>
-          </div>
-        </div>
+        @endforelse
       </div>
       
       <div class="mt-4 pt-4 border-t border-white/10">
-        <a href="{{ route('user.notifications') }}" class="text-eni-yellow text-sm hover:underline">View All Notifications</a>
+        <a href="{{ route('user.notifications') }}" class="text-eni-yellow text-sm hover:underline flex items-center justify-between">
+          <span>View All Notifications</span>
+          <i class="fas fa-arrow-right text-xs"></i>
+        </a>
       </div>
     </div>
   </div>
@@ -340,6 +348,21 @@
     function toggleProfileMenu() {
       const menu = document.getElementById('profileMenu');
       menu.classList.toggle('hidden');
+    }
+
+    // Mark notification as read when clicked (for quick dropdown actions)
+    async function markNotificationAsRead(notificationId) {
+      try {
+        await fetch(`{{ route("user.notifications.mark-read", ":id") }}`.replace(':id', notificationId), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+        });
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
     }
 
     // Close notifications when clicking outside

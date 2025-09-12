@@ -2,7 +2,6 @@
 
 namespace App\Mail;
 
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -10,22 +9,16 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class WelcomeEmail extends Mailable implements ShouldQueue
+class WelcomeEmail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $user;
-    public $wasReferred;
-    public $referrer;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user = $user;
-        $this->wasReferred = $user->referralReceived ? true : false;
-        $this->referrer = $user->referralReceived ? $user->referralReceived->referrer : null;
+        //
     }
 
     /**
@@ -34,8 +27,7 @@ class WelcomeEmail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: config('mail.from.address'),
-            subject: 'Welcome to ENI Investment Platform - Your Journey Begins!',
+            subject: 'Welcome Email',
         );
     }
 
@@ -45,7 +37,7 @@ class WelcomeEmail extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            view: 'emails.welcome',
+            view: 'view.name',
         );
     }
 

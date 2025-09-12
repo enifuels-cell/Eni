@@ -13,7 +13,7 @@ function openTermsModal() {
                 </div>
                 <div class="text-white/80 space-y-4 text-sm">
                     <h3 class="text-eni-yellow font-semibold">1. Agreement to Terms</h3>
-                    <p>By accessing and using the ENI Investment Platform, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
+                    <p>By accessing and using Eni Members, you agree to be bound by these Terms of Service and all applicable laws and regulations.</p>
                     
                     <h3 class="text-eni-yellow font-semibold">2. Investment Services</h3>
                     <p>ENI provides investment opportunities through our regulated platform. All investments carry risk and past performance does not guarantee future results.</p>

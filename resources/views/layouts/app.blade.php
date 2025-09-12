@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'ENI Investment Platform') }}</title>
+        <title>{{ config('app.name', 'Eni Members') }}</title>
         <meta name="theme-color" content="#FFCD00">
 
         <!-- Fonts -->

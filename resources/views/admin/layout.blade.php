@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin Dashboard') - ENI Investment Platform</title>
+    <title>@yield('title', 'Admin Dashboard') - Eni Members</title>
     <meta name="theme-color" content="#FFCD00" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -186,7 +186,7 @@
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center">
                 <div class="text-sm">
-                    © 2025 <span class="text-eni-yellow font-semibold">ENI Investment Platform</span> - Admin Panel
+                    © 2025 <span class="text-eni-yellow font-semibold">Eni Members</span> - Admin Panel
                 </div>
                 <div class="text-sm">
                     Session: <span class="text-eni-yellow">{{ Auth::user()->name }}</span> | IP: {{ request()->ip() }}
