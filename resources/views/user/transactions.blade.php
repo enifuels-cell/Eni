@@ -138,6 +138,7 @@
                             <th class="text-left p-4 font-semibold text-white/80">Description</th>
                             <th class="text-right p-4 font-semibold text-white/80">Amount</th>
                             <th class="text-center p-4 font-semibold text-white/80">Status</th>
+                            <th class="text-center p-4 font-semibold text-white/80">Receipt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -177,10 +178,33 @@
                                         {{ ucfirst($transaction->status) }}
                                     </span>
                                 </td>
+                                <td class="p-4 text-center">
+                                    @if($transaction->receipt_path)
+                                        @php
+                                            $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
+                                            $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                                        @endphp
+                                        
+                                        @if($isImage)
+                                            <button onclick="openReceiptModal('{{ asset('storage/' . $transaction->receipt_path) }}')" 
+                                                    class="bg-eni-yellow/20 text-eni-yellow px-3 py-1 rounded-lg text-xs font-semibold hover:bg-eni-yellow/30 transition-colors">
+                                                View Receipt
+                                            </button>
+                                        @else
+                                            <a href="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                               target="_blank" 
+                                               class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-500/30 transition-colors">
+                                                View PDF
+                                            </a>
+                                        @endif
+                                    @else
+                                        <span class="text-white/40 text-xs">No receipt</span>
+                                    @endif
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="p-12 text-center">
+                                <td colspan="6" class="p-12 text-center">
                                     <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -227,6 +251,43 @@
                 }
             });
         }
+
+        function openReceiptModal(imageSrc) {
+            document.getElementById('modalReceiptImage').src = imageSrc;
+            document.getElementById('receiptModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById('receiptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReceiptModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReceiptModal();
+            }
+        });
     </script>
+
+    <!-- Receipt Image Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+        <div class="relative max-w-4xl max-h-full">
+            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <img id="modalReceiptImage" src="" alt="Payment Receipt" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
 </body>
 </html>

@@ -186,6 +186,43 @@
                     </div>
                 </div>
 
+                <!-- Payment Receipt -->
+                @if($transaction->receipt_path)
+                <div class="mt-8 bg-gray-50 rounded-lg p-6">
+                    <h3 class="text-lg font-bold text-eni-dark mb-4">Payment Receipt</h3>
+                    <div class="border rounded-lg overflow-hidden bg-white">
+                        @php
+                            $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
+                            $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                        @endphp
+                        
+                        @if($isImage)
+                            <img src="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                 alt="Payment Receipt" 
+                                 class="w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
+                                 onclick="openReceiptModal(this.src)">
+                        @else
+                            <div class="p-6 text-center">
+                                <div class="mb-4">
+                                    <svg class="w-16 h-16 mx-auto text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <p class="text-gray-600 font-semibold">PDF Receipt</p>
+                                <a href="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                   target="_blank" 
+                                   class="inline-block mt-2 bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
+                                    View PDF
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+                    <p class="text-sm text-gray-500 text-center mt-2">
+                        Uploaded: {{ $transaction->created_at->format('M d, Y - H:i A') }}
+                    </p>
+                </div>
+                @endif
+
                 <!-- Important Notice -->
                 <div class="mt-8 bg-blue-50 border-l-4 border-blue-400 p-4">
                     <div class="flex">
@@ -223,5 +260,44 @@
             </a>
         </div>
     </div>
+
+    <!-- Receipt Image Modal -->
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+        <div class="relative max-w-4xl max-h-full">
+            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            <img id="modalReceiptImage" src="" alt="Payment Receipt" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl">
+        </div>
+    </div>
+
+    <script>
+        function openReceiptModal(imageSrc) {
+            document.getElementById('modalReceiptImage').src = imageSrc;
+            document.getElementById('receiptModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById('receiptModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReceiptModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeReceiptModal();
+            }
+        });
+    </script>
 </body>
 </html>

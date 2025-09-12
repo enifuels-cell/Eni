@@ -288,6 +288,27 @@
                     @enderror
                 </div>
                 
+                <!-- Referral Code (Optional) -->
+                <div class="form-group">
+                    <label for="referral_code" class="form-label">Referral Code (Optional)</label>
+                    <input 
+                        id="referral_code" 
+                        class="form-input" 
+                        type="text" 
+                        name="referral_code" 
+                        value="{{ old('referral_code') ?? $referralCode ?? '' }}" 
+                        placeholder="Enter referral code if you have one"
+                    />
+                    @error('referral_code')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                    @if(isset($referralCode) && $referralCode)
+                        <div style="color: var(--eni-yellow); font-size: 14px; margin-top: 5px;">
+                            ✓ You were referred by a friend! You'll both earn bonuses.
+                        </div>
+                    @endif
+                </div>
+                
                 <!-- Register Button -->
                 <button type="submit" class="register-button">
                     Create Investment Account

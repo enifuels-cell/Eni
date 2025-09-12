@@ -161,7 +161,7 @@
                 
                 @foreach($packages as $package)
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
-                     onclick="openPaymentForm({{ $package->id }}, '{{ addslashes($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
+                     onclick="openPaymentForm({{ $package->id }}, '{{ e($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
                     
                     <div class="text-center relative min-h-[400px]">
                         <!-- Elevated loading placeholder -->
@@ -1925,6 +1925,32 @@
             const form = document.getElementById('investment-form-element');
             const receiptInput = document.getElementById('receiptInput');
             
+            // Validate required fields before submission
+            const packageId = document.getElementById('selected_package_id').value;
+            const amount = document.getElementById('investment_amount').value;
+            const paymentMethod = document.getElementById('paymentMethodInput').value;
+            
+            console.log('Form validation:', {
+                packageId: packageId,
+                amount: amount,
+                paymentMethod: paymentMethod
+            });
+            
+            if (!packageId) {
+                alert('Please select an investment package first.');
+                return;
+            }
+            
+            if (!amount || parseFloat(amount) < 10) {
+                alert('Please enter a valid investment amount.');
+                return;
+            }
+            
+            if (!paymentMethod) {
+                alert('Please select a payment method.');
+                return;
+            }
+            
             // Create FormData to handle file upload
             const formData = new FormData(form);
             
@@ -1942,25 +1968,43 @@
                 }
             })
             .then(response => {
+                console.log('Response status:', response.status);
                 if (response.ok) {
                     return response.json();
                 } else {
                     return response.json().then(errorData => {
-                        throw new Error(errorData.message || 'Error submitting investment. Please try again.');
+                        console.log('Error response:', errorData);
+                        throw new Error(errorData.message || `Server error: ${response.status}`);
+                    }).catch(() => {
+                        throw new Error(`Server error: ${response.status} - ${response.statusText}`);
                     });
                 }
             })
             .then(data => {
+                console.log('Success response:', data);
                 if (data.success) {
                     // Redirect to the specified URL (receipt page)
                     window.location.href = data.redirect;
                 } else {
-                    alert(data.message || 'Error submitting investment. Please try again.');
+                    alert(data.message || 'Investment submission failed. Please check your details.');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Error submitting investment. Please try again.');
+                console.error('Investment submission error:', error);
+                
+                // Show more specific error message
+                let errorMessage = 'Error submitting investment: ';
+                if (error.message.includes('422')) {
+                    errorMessage += 'Please check all required fields are filled correctly.';
+                } else if (error.message.includes('419')) {
+                    errorMessage += 'Session expired. Please refresh the page and try again.';
+                } else if (error.message.includes('500')) {
+                    errorMessage += 'Server error. Please contact support.';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                alert(errorMessage);
             });
         }
 
@@ -1987,7 +2031,41 @@
             
             if (form) {
                 form.addEventListener('submit', function(e) {
+                    // Validate all required fields first
+                    const packageId = document.getElementById('selected_package_id').value;
+                    const amount = document.getElementById('investment_amount').value;
                     const paymentMethod = document.getElementById('paymentMethodInput').value;
+                    
+                    console.log('Form submission validation:', { packageId, amount, paymentMethod });
+                    
+                    if (!packageId) {
+                        e.preventDefault();
+                        alert('Please select an investment package first.');
+                        return;
+                    }
+                    
+                    if (!amount) {
+                        e.preventDefault();
+                        alert('Please enter an investment amount.');
+                        return;
+                    }
+                    
+                    if (!paymentMethod) {
+                        e.preventDefault();
+                        alert('Please select a payment method.');
+                        return;
+                    }
+                    
+                    // Additional validation for amount
+                    const amountValue = parseFloat(amount);
+                    const minAmount = parseFloat(document.getElementById('investment_amount').min);
+                    const maxAmount = parseFloat(document.getElementById('investment_amount').max);
+                    
+                    if (isNaN(amountValue) || amountValue < minAmount || amountValue > maxAmount) {
+                        e.preventDefault();
+                        alert(`Please enter a valid amount between $${minAmount.toLocaleString()} and $${maxAmount.toLocaleString()}.`);
+                        return;
+                    }
                     
                     if (paymentMethod === 'bank_transfer') {
                         const selectedBank = document.getElementById('selectedBank').value;
