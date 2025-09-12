@@ -111,19 +111,17 @@ class DashboardController extends Controller
             ->orderBy('min_amount')
             ->get();
 
-        // Generate referral links - prioritize username-based if available
+        // Generate username-based referral link
         $usernameReferralLink = $user->username ? route('register', ['ref' => $user->username]) : null;
-        $codeReferralLink = route('register', ['ref' => $user->referral_code]);
         
-        // Use username-based link for QR code if available, otherwise use referral code
-        $primaryReferralLink = $usernameReferralLink ?: $codeReferralLink;
+        // Use username-based link for QR code, fallback to code if no username
+        $primaryReferralLink = $usernameReferralLink ?: route('register', ['ref' => $user->referral_code]);
         $qrCode = QrCodeService::generateWithLogo($primaryReferralLink, 200);
 
         return view('user.referrals', compact(
             'referrals', 
             'qrCode', 
             'usernameReferralLink',
-            'codeReferralLink',
             'primaryReferralLink',
             'packages'
         ));

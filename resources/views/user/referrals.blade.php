@@ -103,28 +103,35 @@
                 </div>
                 @endif
 
-                <!-- Referral Code Link -->
-                <div>
-                    <label class="block text-white/80 font-semibold mb-3">Code Link {{ $usernameReferralLink ? '(Legacy)' : '' }}</label>
-                    <div class="flex">
-                        <input type="text" id="codeReferralLink" 
-                               value="{{ $codeReferralLink }}" 
-                               class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow text-sm" 
-                               readonly>
-                        <button type="button" onclick="copyLink('codeReferralLink', this)" 
-                                class="bg-gray-600 text-white px-4 py-3 rounded-r-lg font-semibold hover:bg-gray-500 transition-colors">
-                            Copy
-                        </button>
-                    </div>
-                    <p class="text-white/60 text-xs mt-2">Unique code: {{ Auth::user()->referral_code }}</p>
-                </div>
-                <!-- QR Code -->
+                <!-- QR Code Section -->
                 <div class="text-center">
                     <label class="block text-white/80 font-semibold mb-3">QR Code</label>
-                    <div class="bg-white p-4 rounded-lg inline-block">
-                        {!! $qrCode ?? '<div class="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">QR Code</div>' !!}
+                    
+                    <!-- QR Code Container (Initially Hidden) -->
+                    <div id="qrCodeContainer" class="hidden">
+                        <div class="bg-white p-4 rounded-lg inline-block mb-3">
+                            {!! $qrCode ?? '<div class="w-32 h-32 bg-gray-200 flex items-center justify-center text-gray-500">QR Code</div>' !!}
+                        </div>
+                        <p class="text-white/60 text-sm mb-4">
+                            @if($usernameReferralLink)
+                                Scan to register with username: {{ Auth::user()->username }}
+                            @else
+                                Share this QR code for quick registration
+                            @endif
+                        </p>
                     </div>
-                    <p class="text-white/60 text-sm mt-2">Share this QR code for quick registration</p>
+                    
+                    <!-- Generate QR Code Button -->
+                    <button type="button" id="generateQrBtn" onclick="toggleQrCode()" 
+                            class="bg-eni-yellow text-eni-dark font-semibold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors">
+                        <i class="fas fa-qrcode mr-2"></i>Generate QR Code
+                    </button>
+                    
+                    <!-- Hide QR Code Button (Initially Hidden) -->
+                    <button type="button" id="hideQrBtn" onclick="toggleQrCode()" 
+                            class="hidden bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-500 transition-colors">
+                        <i class="fas fa-eye-slash mr-2"></i>Hide QR Code
+                    </button>
                 </div>
             </div>
         </div>
@@ -217,6 +224,24 @@
                     }
                 });
             }, 2000);
+        }
+
+        function toggleQrCode() {
+            const qrContainer = document.getElementById('qrCodeContainer');
+            const generateBtn = document.getElementById('generateQrBtn');
+            const hideBtn = document.getElementById('hideQrBtn');
+            
+            if (qrContainer.classList.contains('hidden')) {
+                // Show QR Code
+                qrContainer.classList.remove('hidden');
+                generateBtn.classList.add('hidden');
+                hideBtn.classList.remove('hidden');
+            } else {
+                // Hide QR Code
+                qrContainer.classList.add('hidden');
+                generateBtn.classList.remove('hidden');
+                hideBtn.classList.add('hidden');
+            }
         }
     </script>
 </body>
