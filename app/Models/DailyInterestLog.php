@@ -34,7 +34,7 @@ class DailyInterestLog extends Model
     ];
 
     protected $casts = [
-        'interest_amount' => 'decimal:2',
+        'interest_amount' => \App\Casts\MoneyCast::class,
         'interest_date' => 'date'
     ];
 

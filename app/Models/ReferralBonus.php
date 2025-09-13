@@ -42,7 +42,7 @@ class ReferralBonus extends Model
     ];
 
     protected $casts = [
-        'bonus_amount' => 'decimal:2',
+        'bonus_amount' => \App\Casts\MoneyCast::class,
         'paid' => 'boolean',
         'paid_at' => 'datetime'
     ];

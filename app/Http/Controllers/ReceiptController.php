@@ -13,6 +13,15 @@ class ReceiptController extends Controller
     {
         $user = $request->user();
         if (!$user || $transaction->user_id !== $user->id) {
+            \Log::channel('investment')->warning('Unauthorized receipt access attempt', [
+                'transaction_id' => $transaction->id,
+                'acting_user_id' => $user?->id,
+                'owner_user_id' => $transaction->user_id,
+                'ip' => $request->ip(),
+            ]);
+            \App\Services\AuditLogger::log($user, 'receipt.unauthorized_access', $transaction, [
+                'owner_user_id' => $transaction->user_id,
+            ]);
             abort(403);
         }
 
@@ -23,24 +32,47 @@ class ReceiptController extends Controller
 
         $disk = Storage::disk('local');
 
-        // Normalize stored path: allow prefixes like 'private/' or leading slashes
-        $path = ltrim($transaction->receipt_path, '/');
+        // --- Path Hardening & Normalization ---
+        $originalPath = $transaction->receipt_path;
+        $path = ltrim($originalPath, '/');
+
+        // Disallow absolute drive letters or protocol wrappers (Windows / streams)
+        if (preg_match('/^[A-Za-z]:\\\\|^[a-z]+:\/\//i', $path)) {
+            \Log::channel('investment')->warning('Rejected receipt path with disallowed prefix', [
+                'transaction_id' => $transaction->id,
+                'path' => $originalPath,
+            ]);
+            abort(404);
+        }
+
+        // Normalize legacy prefixes
         if (str_starts_with($path, 'storage/')) {
             $path = substr($path, 8);
         }
-        // If user-form uploads previously stored under public/ move expectation to private/
         if (str_starts_with($path, 'public/')) {
-            $alt = preg_replace('#^public/#', 'private/', $path);
-            if ($alt && $disk->exists($alt)) {
-                $path = $alt;
-            }
-        }
-        if (!str_starts_with($path, 'private/')) {
-            // Force into private directory convention if file exists there
-            $candidate = 'private/' . $path;
-            if ($disk->exists($candidate)) {
+            $candidate = preg_replace('#^public/#', 'private/', $path);
+            if ($candidate) {
                 $path = $candidate;
             }
+        }
+
+        // Enforce private root
+        if (!str_starts_with($path, 'private/')) {
+            $path = 'private/' . $path;
+        }
+
+        // Collapse any repeated slashes
+        $path = preg_replace('#/{2,}#', '/', $path);
+
+        // Reject traversal attempts after normalization
+        if (str_contains($path, '..')) {
+            \Log::channel('investment')->warning('Rejected receipt path traversal attempt', [
+                'transaction_id' => $transaction->id,
+                'normalized' => $path,
+                'original' => $originalPath,
+                'ip' => $request->ip(),
+            ]);
+            abort(404);
         }
 
         if (!$disk->exists($path)) {
@@ -78,7 +110,9 @@ class ReceiptController extends Controller
             }, 200, [
                 'Content-Type' => $mime,
                 'Content-Disposition' => 'inline; filename="'.$filename.'"',
-                'X-Receipt-Code' => $transaction->receipt_code ?? ''
+                'X-Receipt-Code' => $transaction->receipt_code ?? '',
+                'X-Content-Type-Options' => 'nosniff',
+                'X-Frame-Options' => 'DENY'
             ]);
         }
 
@@ -92,7 +126,9 @@ class ReceiptController extends Controller
             }
         }, $filename, [
             'Content-Type' => $mime,
-            'X-Receipt-Code' => $transaction->receipt_code ?? ''
+            'X-Receipt-Code' => $transaction->receipt_code ?? '',
+            'X-Content-Type-Options' => 'nosniff',
+            'X-Frame-Options' => 'DENY'
         ]);
     }
 }

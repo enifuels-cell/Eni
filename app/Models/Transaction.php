@@ -35,8 +35,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @mixin \Eloquent
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Transaction extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'type',
@@ -50,7 +53,7 @@ class Transaction extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
         'processed_at' => 'datetime'
     ];
 

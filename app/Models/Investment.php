@@ -44,8 +44,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Investment whereUserId($value)
  * @mixin \Eloquent
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Investment extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'investment_package_id',
@@ -60,9 +63,10 @@ class Investment extends Model
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
+        // Keep rate as decimal since it's a percentage, not an amount
         'daily_shares_rate' => 'decimal:2',
-        'total_interest_earned' => 'decimal:2',
+        'total_interest_earned' => \App\Casts\MoneyCast::class,
         'active' => 'boolean',
         'started_at' => 'datetime',
         'ended_at' => 'datetime'

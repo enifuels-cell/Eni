@@ -25,6 +25,10 @@ class HandleUserVerified implements ShouldQueue
             'verified_at' => now()->toIso8601String(),
         ]);
 
+        \App\Services\AuditLogger::log($user instanceof \Illuminate\Contracts\Auth\Authenticatable ? $user : null, 'user.verified_email', $user, [
+            'email' => $user->email,
+        ]);
+
         // Optional: place to award sign-up bonuses, send welcome mail, etc.
     }
 }
