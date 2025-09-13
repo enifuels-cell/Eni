@@ -108,8 +108,14 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Transaction ID:</span>
-                                <span class="font-mono font-semibold">{{ $transaction->id }}</span>
+                                <span class="font-mono font-semibold">{{ $transaction->receipt_code ?? $transaction->id }}</span>
                             </div>
+                            @if(isset($investment) && $investment->investment_code)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Investment Code:</span>
+                                <span class="font-mono font-semibold">{{ $investment->investment_code }}</span>
+                            </div>
+                            @endif
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Payment Method:</span>
                                 <span class="font-semibold">{{ ucwords(str_replace('_', ' ', $transaction->reference)) }}</span>

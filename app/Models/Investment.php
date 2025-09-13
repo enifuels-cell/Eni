@@ -55,7 +55,8 @@ class Investment extends Model
         'total_interest_earned',
         'active',
         'started_at',
-        'ended_at'
+        'ended_at',
+        'investment_code'
     ];
 
     protected $casts = [
@@ -110,6 +111,30 @@ class Investment extends Model
     public function daysRemaining(): int
     {
         return max(0, $this->remaining_days);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (!$model->investment_code) {
+                $model->investment_code = static::generateInvestmentCode();
+            }
+        });
+    }
+
+    protected static function generateInvestmentCode(int $length = 6): string
+    {
+        $tries = 0; $code = '';
+        do {
+            $tries++;
+            $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            $segment = '';
+            for ($i=0; $i<$length; $i++) {
+                $segment .= $alphabet[random_int(0, strlen($alphabet)-1)];
+            }
+            $code = 'INV-' . $segment;
+        } while (self::where('investment_code', $code)->exists() && $tries < 10);
+        return $code;
     }
 
     // Alias for status
