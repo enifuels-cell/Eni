@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +22,8 @@ Route::get('/', function () {
     return view('splash-screen');
 })->name('splash');
 
+// Public FAQs JSON endpoint (read-only)
+Route::get('/faqs.json', [FaqController::class, 'index'])->name('faqs.index');
 // Test route for debugging
 Route::get('/test', function () {
     return view('test');
@@ -199,6 +203,9 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     Route::post('/dashboard/transfer', [UserDashboardController::class, 'processTransfer'])->name('dashboard.transfer.process');
     Route::get('/dashboard/franchise', [UserDashboardController::class, 'franchise'])->name('dashboard.franchise');
     Route::post('/dashboard/franchise', [UserDashboardController::class, 'processFranchise'])->name('dashboard.franchise.process');
+
+    // Secure transaction receipt file streaming
+    Route::get('/transaction/{transaction}/receipt-file', [ReceiptController::class, 'show'])->name('transaction.receipt.file');
 });
 
 Route::middleware(['auth', 'check.suspended'])->group(function () {

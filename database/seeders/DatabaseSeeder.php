@@ -24,5 +24,7 @@ class DatabaseSeeder extends Seeder
                 // No password - will use PIN login
             ]
         );
+
+        $this->call([FaqSeeder::class]);
     }
 }

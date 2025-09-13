@@ -43,5 +43,6 @@
         
         <!-- Footer Modals -->
         @include('components.footer-modals')
+        @include('components.chatbot')
     </body>
 </html>

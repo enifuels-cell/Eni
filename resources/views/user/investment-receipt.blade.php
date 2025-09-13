@@ -190,7 +190,7 @@
                         @endphp
                         
                         @if($isImage)
-                            <img src="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                            <img src="{{ route('transaction.receipt.file', $transaction->id) }}" 
                                  alt="Payment Receipt" 
                                  class="w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
                                  onclick="openReceiptModal(this.src)">
@@ -202,7 +202,7 @@
                                     </svg>
                                 </div>
                                 <p class="text-gray-600 font-semibold">PDF Receipt</p>
-                                <a href="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
                                    target="_blank" 
                                    class="inline-block mt-2 bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                                     View PDF
