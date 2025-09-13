@@ -147,7 +147,7 @@
                         <div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Package:</span>
-                                <span class="font-semibold">{{ $investment->package->name }}</span>
+                                <span class="font-semibold">{{ $investment->investmentPackage->name }}</span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Investment Amount:</span>
@@ -161,15 +161,15 @@
                         <div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Duration:</span>
-                                <span class="font-semibold">{{ $investment->package->effective_days }} days</span>
+                                <span class="font-semibold">{{ $investment->investmentPackage->effective_days }} days</span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Expected Maturity:</span>
-                                <span class="font-semibold">{{ $investment->started_at->addDays($investment->package->effective_days)->format('M d, Y') }}</span>
+                                <span class="font-semibold">{{ $investment->started_at->addDays($investment->investmentPackage->effective_days)->format('M d, Y') }}</span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Total Expected Return:</span>
-                                <span class="font-bold text-lg text-green-600">${{ number_format($investment->amount * (1 + ($investment->daily_shares_rate / 100) * $investment->package->effective_days), 2) }}</span>
+                                <span class="font-bold text-lg text-green-600">${{ number_format($investment->amount * (1 + ($investment->daily_shares_rate / 100) * $investment->investmentPackage->effective_days), 2) }}</span>
                             </div>
                         </div>
                     </div>
