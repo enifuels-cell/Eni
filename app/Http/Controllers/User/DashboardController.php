@@ -326,7 +326,7 @@ class DashboardController extends Controller
                 ->where('amount', $transaction->amount)
                 ->where('created_at', '>=', $transaction->created_at->subMinutes(5))
                 ->where('created_at', '<=', $transaction->created_at->addMinutes(5))
-                ->with('package')
+                ->with('investmentPackage')
                 ->first();
         }
         
