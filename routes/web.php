@@ -6,6 +6,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Illuminate\Support\Facades\Route;
 
+// Include debug routes
+require __DIR__.'/debug_investment.php';
+
 Route::get('/', function () {
     // Check if the user is authenticated
     if (auth()->check()) {

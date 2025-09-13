@@ -224,7 +224,7 @@
                 <p class="text-white/60 text-sm">Available for instant investment</p>
             </div>
             
-            <form id="investment-form-element" method="POST" action="{{ route('user.deposit.process') }}" enctype="multipart/form-data">
+            <form id="investment-form-element" method="POST" action="/debug/test-deposit" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="package_id" id="selected_package_id">
                 
@@ -1590,6 +1590,7 @@
     </div>
 
     <script>
+        // @ts-nocheck
         // Custom dropdown functionality
         function togglePaymentDropdown() {
             const dropdown = document.getElementById('paymentMethodOptions');
