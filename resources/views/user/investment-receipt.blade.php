@@ -5,24 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Receipt - ENI Platform</title>
     <!-- Force recompile: <?php echo date('Y-m-d H:i:s'); ?> -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'eni-yellow': '#FFCD00',
-                        'eni-dark': '#0B2241',
-                        'eni-charcoal': '#121417'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
         @media print {
@@ -269,9 +255,9 @@
     </div>
 
     <!-- Receipt Image Modal -->
-    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Receipt image modal">
         <div class="relative max-w-4xl max-h-full">
-            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
+            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10" aria-label="Close modal">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -281,15 +267,30 @@
     </div>
 
     <script>
+        let lastFocusedElement = null;
         function openReceiptModal(imageSrc) {
+            lastFocusedElement = document.activeElement;
+            const modal = document.getElementById('receiptModal');
             document.getElementById('modalReceiptImage').src = imageSrc;
-            document.getElementById('receiptModal').classList.remove('hidden');
+            modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+            if (focusable.length) focusable[0].focus();
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            });
         }
 
         function closeReceiptModal() {
-            document.getElementById('receiptModal').classList.add('hidden');
+            const modal = document.getElementById('receiptModal');
+            modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+            if (lastFocusedElement) lastFocusedElement.focus();
         }
 
         // Close modal when clicking outside the image

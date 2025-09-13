@@ -1544,8 +1544,8 @@
 
     <!-- Bank QR Code Modal -->
     <div id="qrModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden" onclick="closeQrModalOnOutsideClick(event)">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10 relative" onclick="event.stopPropagation()">
+        <div class="flex justify-center items-start min-h-screen p-4 overflow-y-auto">
+            <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10 relative max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <!-- Close Button -->
                 <button type="button" onclick="closeQrModal()" 
                         class="absolute top-4 right-4 text-white/60 hover:text-white text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
@@ -1901,11 +1901,16 @@
                 }
             }, 100);
             
-            document.getElementById('qrModal').classList.remove('hidden');
+            const modal = document.getElementById('qrModal');
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            const panel = modal.querySelector('.max-w-md');
+            if (panel) panel.scrollTop = 0;
         }
 
         function closeQrModal() {
             document.getElementById('qrModal').classList.add('hidden');
+            document.body.style.overflow = '';
         }
 
         function closeQrModalOnOutsideClick(event) {

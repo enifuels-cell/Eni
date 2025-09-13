@@ -33,7 +33,8 @@ class UpdateTotalInterest extends Command
         $isDryRun = $this->option('dry-run');
         $today = Carbon::today();
         
-        $this->info("Processing daily interest for: {$today->toDateString()}");
+    $this->info("Processing daily interest for: {$today->toDateString()}");
+    \Log::channel('investment')->info('Daily interest run started', ['date' => $today->toDateString(), 'dry_run' => $isDryRun]);
         
         // Get all active investments
         $activeInvestments = Investment::active()
@@ -57,6 +58,10 @@ class UpdateTotalInterest extends Command
                     ->exists();
 
                 if ($existingLog) {
+                    \Log::channel('investment')->info('Skipping already processed investment for today', [
+                        'investment_id' => $investment->id,
+                        'date' => $today->toDateString()
+                    ]);
                     continue;
                 }
 
@@ -65,12 +70,24 @@ class UpdateTotalInterest extends Command
                 $totalProcessed++;
 
                 if (!$isDryRun) {
-                    // Create daily interest log
-                    DailyInterestLog::create([
-                        'investment_id' => $investment->id,
-                        'interest_amount' => $dailyInterest,
-                        'interest_date' => $today,
-                    ]);
+                    // Create daily interest log (catch race duplicates)
+                    try {
+                        DailyInterestLog::create([
+                            'investment_id' => $investment->id,
+                            'interest_amount' => $dailyInterest,
+                            'interest_date' => $today,
+                        ]);
+                    } catch (\Throwable $e) {
+                        if (str_contains($e->getMessage(), 'UNIQUE')) {
+                            // Another process inserted; skip safely
+                            \Log::channel('investment')->warning('Duplicate daily interest prevented', [
+                                'investment_id' => $investment->id,
+                                'date' => $today->toDateString()
+                            ]);
+                            continue; // do not double credit
+                        }
+                        throw $e; // rethrow unexpected
+                    }
 
                     // Update investment totals
                     $investment->update([
@@ -103,6 +120,13 @@ class UpdateTotalInterest extends Command
         $this->info("Total investments processed: {$totalProcessed}");
         $this->info("Total interest distributed: $" . number_format($totalInterest, 2));
         
+        \Log::channel('investment')->info('Daily interest run completed', [
+            'date' => $today->toDateString(),
+            'processed' => $totalProcessed,
+            'total_interest' => $totalInterest,
+            'dry_run' => $isDryRun
+        ]);
+
         if ($isDryRun) {
             $this->warn("DRY RUN - No changes were made to the database.");
         } else {

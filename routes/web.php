@@ -229,9 +229,9 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
         
         // Deposit & Withdrawal
         Route::get('/deposit', [UserDashboardController::class, 'deposit'])->name('deposit');
-        Route::post('/deposit', [UserDashboardController::class, 'processDeposit'])->name('deposit.process');
+    Route::post('/deposit', [UserDashboardController::class, 'processDeposit'])->middleware('throttle:deposits')->name('deposit.process');
         Route::get('/withdraw', [UserDashboardController::class, 'withdraw'])->name('withdraw');
-        Route::post('/withdraw', [UserDashboardController::class, 'processWithdraw'])->name('withdraw.process');
+    Route::post('/withdraw', [UserDashboardController::class, 'processWithdraw'])->middleware('throttle:withdrawals')->name('withdraw.process');
         
         // Investment Receipt
         Route::get('/investment/receipt/{transaction}', [UserDashboardController::class, 'investmentReceipt'])->name('investment.receipt');
@@ -244,7 +244,7 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     // Investment Routes
     Route::prefix('investments')->name('investments.')->group(function () {
         Route::get('/', [InvestmentController::class, 'index'])->name('index');
-        Route::post('/', [InvestmentController::class, 'store'])->name('store');
+    Route::post('/', [InvestmentController::class, 'store'])->middleware('throttle:investments')->name('store');
         Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
     });
 });

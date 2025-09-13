@@ -160,7 +160,7 @@ class DashboardController extends Controller
                 'amount' => 'required|numeric|min:10',
                 'payment_method' => 'required|string',
                 'package_id' => 'nullable|exists:investment_packages,id',
-                'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'receipt' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf|max:2048',
                 'selected_bank' => 'nullable|string|in:landbank,bpi,rcbc'
             ]);
 
@@ -203,10 +203,19 @@ class DashboardController extends Controller
                 }
             }
             
-            // Handle receipt upload if provided
+            // Handle receipt upload if provided (hardened)
             $receiptPath = null;
             if ($request->hasFile('receipt')) {
-                $receiptPath = $request->file('receipt')->store('receipts', 'public');
+                $file = $request->file('receipt');
+                // Extra mime validation using PHP's Fileinfo
+                $finfoMime = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file->getRealPath());
+                $allowed = ['image/jpeg','image/png','application/pdf'];
+                if (!in_array($finfoMime, $allowed)) {
+                    return back()->withErrors(['receipt' => 'Invalid file type. Only JPG, PNG or PDF allowed.']);
+                }
+                $randomName = 'rcpt_' . bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
+                // Store in private storage (local disk) not publicly accessible
+                $receiptPath = $file->storeAs('receipts', $randomName, 'local');
             }
 
             // Build reference string with bank info if bank transfer
@@ -231,7 +240,7 @@ class DashboardController extends Controller
                 'reference' => $reference,
                 'status' => 'pending',
                 'description' => $description,
-                'receipt_path' => $receiptPath,
+                'receipt_path' => $receiptPath, // stored in local disk (private)
             ]);
 
             \Log::info('Transaction created', ['transaction_id' => $transaction->id]);
