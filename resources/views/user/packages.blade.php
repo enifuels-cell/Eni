@@ -1985,7 +1985,9 @@
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
                 }
             })
             .then(response => {
@@ -2333,11 +2335,14 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('paymentNotAvailableModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePaymentModal();
-            }
-        });
+        const paymentModal = document.getElementById('paymentNotAvailableModal');
+        if (paymentModal) {
+            paymentModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePaymentModal();
+                }
+            });
+        }
     </script>
 
     <!-- Payment Method Not Available Modal -->
