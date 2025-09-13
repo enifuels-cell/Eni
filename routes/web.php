@@ -40,6 +40,36 @@ Route::get('/clear-cache-temp', function () {
     ]);
 });
 
+// Temporary debug route for investment issues (REMOVE AFTER USE)
+Route::get('/debug-investment', function () {
+    $user = auth()->user();
+    if (!$user) {
+        return response()->json(['error' => 'Not authenticated']);
+    }
+    
+    $packages = \App\Models\InvestmentPackage::all();
+    $activePackages = \App\Models\InvestmentPackage::where('active', true)->get();
+    
+    return response()->json([
+        'user_id' => $user->id,
+        'user_balance' => $user->account_balance,
+        'calculated_balance' => $user->accountBalance(),
+        'total_packages' => $packages->count(),
+        'active_packages' => $activePackages->count(),
+        'packages' => $packages->map(function($p) {
+            return [
+                'id' => $p->id,
+                'name' => $p->name,
+                'active' => $p->active,
+                'min_amount' => $p->min_amount,
+                'max_amount' => $p->max_amount,
+                'available_slots' => $p->available_slots
+            ];
+        }),
+        'recent_logs' => \DB::table('laravel_log')->latest()->take(5)->get() ?? []
+    ]);
+});
+
 // Public packages route for testing
 Route::get('/public-packages', function () {
     $packages = App\Models\InvestmentPackage::available()->get();

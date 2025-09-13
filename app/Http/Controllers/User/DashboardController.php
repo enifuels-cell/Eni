@@ -163,6 +163,23 @@ class DashboardController extends Controller
             // If package_id is provided, validate investment amount against package limits
             if ($request->package_id) {
                 $package = InvestmentPackage::findOrFail($request->package_id);
+                \Log::info('Package found', ['package' => $package->toArray()]);
+                
+                // Check if package is active
+                if (!$package->active) {
+                    $errorMessage = "This investment package is currently not available.";
+                    
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => $errorMessage
+                        ], 422);
+                    }
+                    
+                    return back()->withErrors([
+                        'package_id' => $errorMessage
+                    ]);
+                }
                 
                 if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
                     $errorMessage = "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package.";
@@ -259,17 +276,38 @@ class DashboardController extends Controller
                 ->with('success', 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id);
                 
         } catch (\Exception $e) {
-            \Log::error('Deposit processing error', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            \Log::error('Deposit processing error', [
+                'error' => $e->getMessage(), 
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $user->id,
+                'request_data' => $request->all(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
+            
+            // More specific error messages based on the exception type
+            $errorMessage = 'Server error. Please contact support.';
+            
+            if (str_contains($e->getMessage(), 'SQLSTATE')) {
+                $errorMessage = 'Database error. Please try again or contact support.';
+            } elseif (str_contains($e->getMessage(), 'file') || str_contains($e->getMessage(), 'upload')) {
+                $errorMessage = 'File upload error. Please check your receipt and try again.';
+            } elseif (str_contains($e->getMessage(), 'package') || str_contains($e->getMessage(), 'Package')) {
+                $errorMessage = 'Invalid investment package. Please refresh the page and try again.';
+            } elseif (str_contains($e->getMessage(), 'balance')) {
+                $errorMessage = 'Insufficient balance. Please check your account balance.';
+            }
             
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Error submitting investment. Please try again. Error: ' . $e->getMessage()
+                    'message' => $errorMessage,
+                    'debug_info' => config('app.debug') ? $e->getMessage() : null
                 ], 422);
             }
             
             return back()->withErrors([
-                'general' => 'Error submitting investment. Please try again. Error: ' . $e->getMessage()
+                'general' => $errorMessage
             ])->withInput();
         }
     }
