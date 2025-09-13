@@ -216,6 +216,24 @@ class DashboardController extends Controller
                 $randomName = 'rcpt_' . bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
                 // Store in private storage (local disk) not publicly accessible
                 $receiptPath = $file->storeAs('receipts', $randomName, 'local');
+
+                // Detailed logging for diagnostics
+                try {
+                    $fullPath = storage_path('app/' . $receiptPath);
+                    \Log::channel('investment')->info('Receipt stored', [
+                        'transaction_stage' => 'pre-create',
+                        'original_name' => $file->getClientOriginalName(),
+                        'stored_name' => $randomName,
+                        'relative_path' => $receiptPath,
+                        'size_bytes' => $file->getSize(),
+                        'mime_reported' => $file->getClientMimeType(),
+                        'mime_finfo' => $finfoMime,
+                        'hash_sha256' => (is_file($fullPath) ? hash_file('sha256', $fullPath) : null),
+                        'exists' => is_file($fullPath),
+                    ]);
+                } catch (\Throwable $logErr) {
+                    \Log::warning('Receipt logging failure', ['error' => $logErr->getMessage()]);
+                }
             }
 
             // Build reference string with bank info if bank transfer
@@ -243,7 +261,11 @@ class DashboardController extends Controller
                 'receipt_path' => $receiptPath, // stored in local disk (private)
             ]);
 
-            \Log::info('Transaction created', ['transaction_id' => $transaction->id]);
+            \Log::info('Transaction created', [
+                'transaction_id' => $transaction->id,
+                'has_receipt' => (bool)$receiptPath,
+                'receipt_path' => $receiptPath,
+            ]);
 
             // If this is a package investment, create the investment record
             if ($request->package_id) {

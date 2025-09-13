@@ -41,3 +41,19 @@ A robust, secure, and enterprise-level investment/deposit platform built with La
 ---
 
 For detailed setup and customization, see `.github/copilot-instructions.md`.
+
+## Email Verification Flow
+
+The application uses Laravel's verification workflow with enhancements:
+
+- `User` now implements `MustVerifyEmail` and sends a queued `CustomVerifyEmail` notification.
+- Verification links are valid for 24 hours (custom expiration) and are signed to prevent tampering.
+- Post-verification the user is redirected to the dashboard with `?verified=1` so the UI can display a success notice.
+- `HandleUserVerified` listens for the `Verified` event and logs the verification (extensible for onboarding actions).
+- A feature test `tests/Feature/EmailVerificationTest.php` covers the basic happy path.
+
+Resending Verification:
+`POST /email/verification-notification` (authenticated) is throttled (`throttle:6,1`).
+
+To customize further (e.g., bonus credits on verification), extend the `HandleUserVerified` listener.
+
