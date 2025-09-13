@@ -22,6 +22,24 @@ Route::get('/test', function () {
     return view('test');
 });
 
+// Temporary cache clear route (REMOVE AFTER USE)
+Route::get('/clear-cache-temp', function () {
+    \Artisan::call('config:clear');
+    \Artisan::call('cache:clear');
+    \Artisan::call('route:clear');
+    \Artisan::call('view:clear');
+    
+    return response()->json([
+        'message' => 'All caches cleared successfully!',
+        'commands_run' => [
+            'config:clear',
+            'cache:clear', 
+            'route:clear',
+            'view:clear'
+        ]
+    ]);
+});
+
 // Public packages route for testing
 Route::get('/public-packages', function () {
     $packages = App\Models\InvestmentPackage::available()->get();
