@@ -22,22 +22,76 @@ class ReceiptController extends Controller
         }
 
         $disk = Storage::disk('local');
-        if (!$disk->exists($transaction->receipt_path)) {
-            \Log::channel('investment')->warning('Receipt file not found', ['path' => $transaction->receipt_path]);
-            abort(404);
+
+        // Normalize stored path: allow prefixes like 'private/' or leading slashes
+        $path = ltrim($transaction->receipt_path, '/');
+        if (str_starts_with($path, 'storage/')) {
+            $path = substr($path, 8);
+        }
+        // If user-form uploads previously stored under public/ move expectation to private/
+        if (str_starts_with($path, 'public/')) {
+            $alt = preg_replace('#^public/#', 'private/', $path);
+            if ($alt && $disk->exists($alt)) {
+                $path = $alt;
+            }
+        }
+        if (!str_starts_with($path, 'private/')) {
+            // Force into private directory convention if file exists there
+            $candidate = 'private/' . $path;
+            if ($disk->exists($candidate)) {
+                $path = $candidate;
+            }
         }
 
-        $mime = $disk->mimeType($transaction->receipt_path) ?: 'application/octet-stream';
-        $filename = basename($transaction->receipt_path);
+        if (!$disk->exists($path)) {
+            $debug = [
+                'original' => $transaction->receipt_path,
+                'normalized' => $path,
+                'candidates' => array_filter([
+                    $transaction->receipt_path,
+                    'private/' . ltrim($transaction->receipt_path, '/'),
+                    preg_replace('#^public/#', 'private/', ltrim($transaction->receipt_path, '/')),
+                ]),
+            ];
+            \Log::channel('investment')->warning('Receipt file not found', $debug);
+            if ($request->boolean('debug')) {
+                return response()->json(['error' => 'not_found', 'debug' => $debug], 404);
+            }
+            abort(404);
+        }
+        
+        $mime = $disk->mimeType($path) ?: 'application/octet-stream';
+        $filename = basename($path);
 
         // Inline display for images / pdf, else download
         $inline = preg_match('/^(image\/(jpeg|png)|application\/pdf)$/', $mime) === 1;
 
-        return new StreamedResponse(function () use ($disk, $transaction) {
-            echo $disk->get($transaction->receipt_path);
-        }, 200, [
+        if ($inline) {
+            return new StreamedResponse(function () use ($disk, $path) {
+                $stream = $disk->readStream($path);
+                if (is_resource($stream)) {
+                    fpassthru($stream);
+                    fclose($stream);
+                } else {
+                    echo $disk->get($path);
+                }
+            }, 200, [
+                'Content-Type' => $mime,
+                'Content-Disposition' => 'inline; filename="'.$filename.'"',
+                'X-Receipt-Code' => $transaction->receipt_code ?? ''
+            ]);
+        }
+
+        return response()->streamDownload(function () use ($disk, $path) {
+            $stream = $disk->readStream($path);
+            if (is_resource($stream)) {
+                fpassthru($stream);
+                fclose($stream);
+            } else {
+                echo $disk->get($path);
+            }
+        }, $filename, [
             'Content-Type' => $mime,
-            'Content-Disposition' => ($inline ? 'inline' : 'attachment') . '; filename="'.$filename.'"',
             'X-Receipt-Code' => $transaction->receipt_code ?? ''
         ]);
     }
