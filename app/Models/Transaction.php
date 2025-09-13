@@ -45,7 +45,8 @@ class Transaction extends Model
         'status',
         'description',
         'receipt_path',
-        'processed_at'
+        'processed_at',
+        'receipt_code',
     ];
 
     protected $casts = [
@@ -71,5 +72,25 @@ class Transaction extends Model
     public function scopeByType($query, string $type)
     {
         return $query->where('type', $type);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (!$model->receipt_code) {
+                $model->receipt_code = static::uniqueReceiptCode();
+            }
+        });
+    }
+
+    protected static function uniqueReceiptCode(int $length = 8): string
+    {
+        $tries = 0; $code = '';
+        do {
+            $tries++;
+            $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            $code = collect(range(1, $length))->map(fn() => $alphabet[random_int(0, strlen($alphabet)-1)])->implode('');
+        } while (self::where('receipt_code', $code)->exists() && $tries < 10);
+        return $code;
     }
 }

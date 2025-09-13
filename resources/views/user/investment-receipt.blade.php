@@ -70,7 +70,7 @@
                     <div class="text-right">
                         <div class="bg-eni-dark text-eni-yellow px-4 py-2 rounded-lg">
                             <span class="text-sm font-semibold">Receipt #</span>
-                            <div class="text-lg font-bold">{{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</div>
+                            <div class="text-lg font-bold">{{ $transaction->receipt_code ?? str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</div>
                         </div>
                     </div>
                 </div>
