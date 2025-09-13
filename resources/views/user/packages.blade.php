@@ -1543,9 +1543,15 @@
     </div>
 
     <!-- Bank QR Code Modal -->
-    <div id="qrModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
+    <div id="qrModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden" onclick="closeQrModalOnOutsideClick(event)">
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10">
+            <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10 relative" onclick="event.stopPropagation()">
+                <!-- Close Button -->
+                <button type="button" onclick="closeQrModal()" 
+                        class="absolute top-4 right-4 text-white/60 hover:text-white text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+                    &times;
+                </button>
+                
                 <div class="text-center">
                     <h3 class="text-xl font-bold mb-6 text-eni-yellow">Bank Transfer Payment</h3>
                     
@@ -1554,9 +1560,6 @@
                     </div>
                     
                     <div class="mt-6">
-                        <p class="text-white/80 text-sm mb-4">
-                            Scan the QR code above or use your banking app to transfer the investment amount.
-                        </p>
                         <p class="text-white/60 text-xs mb-6">
                             After completing the transfer, upload your payment receipt below.
                         </p>
@@ -1877,7 +1880,7 @@
                     
                     <div class="mb-4 p-4 bg-white rounded-lg">
                         <img src="${qrImagePath}" alt="${bankDisplayName} QR Code with Eni Logo" 
-                             class="mx-auto max-w-full h-64 object-contain">
+                             class="mx-auto w-full max-w-xs h-auto object-contain">
                     </div>
                     
                     <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-4">
@@ -1903,6 +1906,23 @@
         function closeQrModal() {
             document.getElementById('qrModal').classList.add('hidden');
         }
+
+        function closeQrModalOnOutsideClick(event) {
+            // Only close if clicking the backdrop (not the modal content)
+            if (event.target === event.currentTarget) {
+                closeQrModal();
+            }
+        }
+
+        // Add keyboard support for closing modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('qrModal');
+                if (!modal.classList.contains('hidden')) {
+                    closeQrModal();
+                }
+            }
+        });
 
         function confirmBankTransfer() {
             const receiptInput = document.getElementById('receiptInput');
