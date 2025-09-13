@@ -127,7 +127,7 @@ class DashboardController extends Controller
             ->get();
 
         // Generate referral QR code with Eni logo
-        $referralLink = route('register', ['ref' => $user->id]);
+        $referralLink = $user->getReferralUrl();
         $qrCode = QrCodeService::generateWithLogo($referralLink, 200);
 
         return view('user.referrals', compact('referrals', 'qrCode', 'referralLink', 'packages'));

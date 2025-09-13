@@ -199,6 +199,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the user's referral URL using their username
+     */
+    public function getReferralUrl(): string
+    {
+        // If username exists, use it; otherwise fallback to user ID
+        $referralCode = $this->username ?: $this->id;
+        return route('register', ['ref' => $referralCode]);
+    }
+
+    /**
      * Suspend the user
      */
     public function suspend(): void

@@ -98,7 +98,13 @@
                             Copy
                         </button>
                     </div>
-                    <p class="text-white/60 text-xs mt-2">Easy to remember: /register?ref={{ Auth::user()->username }}</p>
+                    <p class="text-white/60 text-xs mt-2">
+                        @if(Auth::user()->username)
+                            Easy to remember: /register?ref={{ Auth::user()->username }}
+                        @else
+                            Your referral code: {{ Auth::user()->id }}
+                        @endif
+                    </p>
                 </div>
 
                 <!-- QR Code Section -->

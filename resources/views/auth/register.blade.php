@@ -236,6 +236,24 @@
                     @enderror
                 </div>
                 
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input 
+                        id="username" 
+                        class="form-input" 
+                        type="text" 
+                        name="username" 
+                        value="{{ old('username') }}" 
+                        required 
+                        autocomplete="username"
+                        placeholder="Choose a unique username"
+                    />
+                    @error('username')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+                
                 <!-- Email Address -->
                 <div class="form-group">
                     <label for="email" class="form-label">Email Address</label>
@@ -290,14 +308,14 @@
                 
                 <!-- Referral Code (Optional) -->
                 <div class="form-group">
-                    <label for="referral_code" class="form-label">Referral Code (Optional)</label>
+                    <label for="referral_code" class="form-label">Referral Username (Optional)</label>
                     <input 
                         id="referral_code" 
                         class="form-input" 
                         type="text" 
                         name="referral_code" 
                         value="{{ old('referral_code') ?? $referralCode ?? '' }}" 
-                        placeholder="Enter referral code if you have one"
+                        placeholder="Enter the username of who referred you"
                     />
                     @error('referral_code')
                         <div class="error-message">{{ $message }}</div>
