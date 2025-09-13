@@ -148,7 +148,13 @@ class DashboardController extends Controller
     public function processDeposit(Request $request)
     {
         try {
-            \Log::info('Processing deposit', ['request_data' => $request->all()]);
+            \Log::info('Processing deposit', [
+                'request_data' => $request->except(['receipt']), // Exclude file from log
+                'has_receipt' => $request->hasFile('receipt'),
+                'is_ajax' => $request->ajax(),
+                'wants_json' => $request->wantsJson(),
+                'content_type' => $request->header('Content-Type')
+            ]);
             
             $request->validate([
                 'amount' => 'required|numeric|min:10',

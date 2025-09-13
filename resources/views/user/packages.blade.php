@@ -161,7 +161,7 @@
                 
                 @foreach($packages as $package)
                 <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
-                     onclick="openPaymentForm({{ $package->id }}, '{{ addslashes($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})">
+                     onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
                     
                     <div class="text-center relative min-h-[400px]">
                         <!-- Elevated loading placeholder -->
@@ -1989,15 +1989,37 @@
             })
             .then(response => {
                 console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
                 if (response.ok) {
-                    return response.json();
+                    // Check if response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        // If it's not JSON, get the text to see what error page was returned
+                        return response.text().then(text => {
+                            console.log('Non-JSON response:', text);
+                            throw new Error('Server returned HTML instead of JSON. Check server logs for detailed error.');
+                        });
+                    }
                 } else {
-                    return response.json().then(errorData => {
-                        console.log('Error response:', errorData);
-                        throw new Error(errorData.message || `Server error: ${response.status}`);
-                    }).catch(() => {
-                        throw new Error(`Server error: ${response.status} - ${response.statusText}`);
-                    });
+                    // Try to parse JSON error, but fallback to text if it fails
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        return response.json().then(errorData => {
+                            console.log('JSON Error response:', errorData);
+                            throw new Error(errorData.message || `Server error: ${response.status}`);
+                        });
+                    } else {
+                        return response.text().then(text => {
+                            console.log('HTML Error response:', text);
+                            // Try to extract meaningful error from HTML
+                            const match = text.match(/<title>(.*?)<\/title>/i);
+                            const errorTitle = match ? match[1] : 'Unknown server error';
+                            throw new Error(`Server error (${response.status}): ${errorTitle}`);
+                        });
+                    }
                 }
             })
             .then(data => {
