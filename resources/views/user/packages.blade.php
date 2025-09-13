@@ -224,7 +224,7 @@
                 <p class="text-white/60 text-sm">Available for instant investment</p>
             </div>
             
-            <form id="investment-form-element" method="POST" action="/debug/test-deposit" enctype="multipart/form-data">
+            <form id="investment-form-element" method="POST" action="{{ route('user.deposit.process') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="package_id" id="selected_package_id">
                 
@@ -1850,15 +1850,15 @@
             
             switch(bankName) {
                 case 'landbank':
-                    qrImagePath = '/landbank_qr_with_logo.png';
+                    qrImagePath = '/Landbank QR.png';
                     bankDisplayName = 'LandBank of the Philippines';
                     break;
                 case 'bpi':
-                    qrImagePath = '/bpi_qr_with_logo.png';
+                    qrImagePath = '/bpi_qr.jpg';
                     bankDisplayName = 'Bank of the Philippine Islands';
                     break;
                 case 'rcbc':
-                    qrImagePath = '/rcbc_qr_with_logo.png';
+                    qrImagePath = '/rcbc_qr.jpg';
                     bankDisplayName = 'RCBC';
                     break;
             }
@@ -1880,7 +1880,7 @@
                     </div>
                     
                     <div class="mb-4 p-4 bg-white rounded-lg">
-                        <img src="${qrImagePath}" alt="${bankDisplayName} QR Code with Eni Logo" 
+                        <img src="${qrImagePath}" alt="${bankDisplayName} QR Code for Bank Transfer" 
                              class="mx-auto w-full max-w-xs h-auto object-contain">
                     </div>
                     
