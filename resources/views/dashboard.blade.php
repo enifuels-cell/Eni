@@ -430,5 +430,14 @@
       }, 1500); // Show nav 1.5 seconds after scrolling stops
     });
   </script>
+
+  <!-- Attendance Modal Component -->
+  @include('components.attendance-modal', [
+      'showModal' => $showAttendanceModal ?? false,
+      'currentMonthTickets' => $currentMonthTickets ?? 0,
+      'currentMonthAttendance' => $currentMonthAttendance ?? 0,
+      'currentMonthDays' => $currentMonthDays ?? now()->daysInMonth,
+      'attendanceDates' => $attendanceDates ?? []
+  ])
 </body>
 </html>

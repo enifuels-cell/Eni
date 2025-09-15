@@ -191,7 +191,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified', 'check.suspended'])->name('dashboard');
 
 // Dashboard action routes
-Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
+Route::middleware(['auth', 'verified', 'check.suspended', 'track.attendance'])->group(function () {
     Route::get('/dashboard/investments', [UserDashboardController::class, 'investments'])->name('dashboard.investments');
     Route::get('/dashboard/transactions', [UserDashboardController::class, 'transactions'])->name('dashboard.transactions');
     Route::get('/dashboard/referrals', [UserDashboardController::class, 'referrals'])->name('dashboard.referrals');
@@ -204,6 +204,9 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     Route::post('/dashboard/transfer', [UserDashboardController::class, 'processTransfer'])->name('dashboard.transfer.process');
     Route::get('/dashboard/franchise', [UserDashboardController::class, 'franchise'])->name('dashboard.franchise');
     Route::post('/dashboard/franchise', [UserDashboardController::class, 'processFranchise'])->name('dashboard.franchise.process');
+
+    // Manual attendance marking
+    Route::post('/dashboard/mark-attendance', [UserDashboardController::class, 'markAttendance'])->name('dashboard.mark.attendance');
 
     // Secure transaction receipt file streaming
     Route::get('/transaction/{transaction}/receipt-file', [ReceiptController::class, 'show'])->name('transaction.receipt.file');

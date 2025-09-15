@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Services\QrCodeService;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -47,6 +48,17 @@ class DashboardController extends Controller
             ->active()
             ->count();
 
+        // Attendance System Data
+        $showAttendanceModal = $user->shouldShowAttendanceModal();
+        $currentMonthTickets = $user->getMonthlyTicketCount();
+        $currentMonthAttendance = $user->getMonthlyAttendance()->count();
+        $currentMonthDays = now()->daysInMonth;
+
+        // Get attendance dates for calendar
+        $attendanceDates = $user->getMonthlyAttendance()->pluck('attendance_date')->map(function($date) {
+            return $date->toDateString();
+        })->toArray();
+
         return view('dashboard', compact(
             'total_invested', 
             'total_interest', 
@@ -55,7 +67,12 @@ class DashboardController extends Controller
             'active_investments',
             'recent_transactions',
             'recent_notifications',
-            'unread_notifications_count'
+            'unread_notifications_count',
+            'showAttendanceModal',
+            'currentMonthTickets',
+            'currentMonthAttendance',
+            'currentMonthDays',
+            'attendanceDates'
         ));
     }
 
@@ -681,5 +698,56 @@ class DashboardController extends Controller
         $user->userNotifications()->unread()->update(['is_read' => true]);
         
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark attendance for a specific date manually
+     */
+    public function markAttendance(Request $request)
+    {
+        $request->validate([
+            'date' => 'required|date|before_or_equal:today'
+        ]);
+
+        $user = Auth::user();
+        $date = Carbon::parse($request->date);
+
+        // Check if attendance already exists for this date
+        $existingAttendance = \App\Models\DailyAttendance::where('user_id', $user->id)
+            ->where('attendance_date', $date)
+            ->first();
+
+        if ($existingAttendance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attendance already marked for this date.'
+            ]);
+        }
+
+        // Check if the date is in the future
+        if ($date->isFuture()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot mark attendance for future dates.'
+            ]);
+        }
+
+        // Record the attendance
+        \App\Models\DailyAttendance::create([
+            'user_id' => $user->id,
+            'attendance_date' => $date,
+            'tickets_earned' => 1,
+            'first_login_time' => Carbon::now()->format('H:i:s'),
+            'logged_in_at' => Carbon::now(),
+        ]);
+
+        // Get updated ticket count
+        $newTicketCount = $user->getMonthlyTicketCount();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance marked successfully!',
+            'newTicketCount' => $newTicketCount
+        ]);
     }
 }

@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\AdminRole::class,
             'admin.session' => \App\Http\Middleware\ExtendAdminSession::class,
             'check.suspended' => \App\Http\Middleware\CheckSuspended::class,
+            'track.attendance' => \App\Http\Middleware\TrackDailyAttendance::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -26,15 +26,33 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $validated = $request->validated();
+        
+        $user->fill($validated);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        // Determine what was updated for a more specific success message
+        $bankFields = ['bank_name', 'account_number', 'account_holder_name', 'routing_number', 'swift_code'];
+        $personalFields = ['name', 'email', 'phone', 'address', 'username'];
+        
+        $updatedBankFields = array_intersect(array_keys($validated), $bankFields);
+        $updatedPersonalFields = array_intersect(array_keys($validated), $personalFields);
+        
+        if (!empty($updatedBankFields) && empty($updatedPersonalFields)) {
+            $message = 'Bank details updated successfully!';
+        } elseif (!empty($updatedPersonalFields) && empty($updatedBankFields)) {
+            $message = 'Personal information updated successfully!';
+        } else {
+            $message = 'Profile updated successfully!';
+        }
+
+        return Redirect::route('profile.edit')->with('status', $message);
     }
 
     /**

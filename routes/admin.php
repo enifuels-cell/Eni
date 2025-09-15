@@ -50,7 +50,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin',
     
     // Activation Fund Management (placeholder)
     Route::get('/activation-fund', [AdminDashboardController::class, 'activationFund'])->name('activation-fund.index');
-    
+
+    // Raffle Management
+    Route::resource('raffles', \App\Http\Controllers\Admin\RaffleController::class);
+    Route::post('/raffles/{raffle}/conduct-draw', [\App\Http\Controllers\Admin\RaffleController::class, 'conductDraw'])->name('raffles.conduct-draw');
+
 });
 
 // Admin redirect route

@@ -148,6 +148,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(UserNotification::class);
     }
 
+    // Attendance System Relationships
+    public function dailyAttendance(): HasMany
+    {
+        return $this->hasMany(DailyAttendance::class);
+    }
+
+    public function raffleWins(): HasMany
+    {
+        return $this->hasMany(MonthlyRaffle::class, 'winner_user_id');
+    }
+
     // Helper methods for investment platform
     public function totalInvestedAmount(): float
     {
@@ -303,5 +314,46 @@ class User extends Authenticatable implements MustVerifyEmail
                 $user->account_id = static::generateAccountId();
             }
         });
+    }
+
+    // Attendance System Methods
+    /**
+     * Check if user has logged in today
+     */
+    public function hasLoggedInToday(): bool
+    {
+        return DailyAttendance::hasLoggedInToday($this->id);
+    }
+
+    /**
+     * Record today's attendance and return the attendance record
+     */
+    public function recordTodaysAttendance(): DailyAttendance
+    {
+        return DailyAttendance::recordTodaysAttendance($this->id);
+    }
+
+    /**
+     * Get user's attendance for current month
+     */
+    public function getMonthlyAttendance($month = null)
+    {
+        return DailyAttendance::getMonthlyAttendance($this->id, $month);
+    }
+
+    /**
+     * Get user's total tickets for current month
+     */
+    public function getMonthlyTicketCount($month = null): int
+    {
+        return DailyAttendance::getMonthlyTicketCount($this->id, $month);
+    }
+
+    /**
+     * Check if user should see attendance modal (first login today)
+     */
+    public function shouldShowAttendanceModal(): bool
+    {
+        return !$this->hasLoggedInToday();
     }
 }
