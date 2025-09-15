@@ -19,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.session' => \App\Http\Middleware\ExtendAdminSession::class,
             'check.suspended' => \App\Http\Middleware\CheckSuspended::class,
         ]);
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

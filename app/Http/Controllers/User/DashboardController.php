@@ -83,26 +83,42 @@ class DashboardController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Calculate summary statistics
-        $totalDeposits = $user->transactions()
+        // Calculate summary statistics - handle Money objects properly
+        $depositTransactions = $user->transactions()
             ->where('type', 'deposit')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+        $totalDeposits = 0.0;
+        foreach ($depositTransactions as $transaction) {
+            $totalDeposits += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $totalWithdrawals = $user->transactions()
+        $withdrawalTransactions = $user->transactions()
             ->where('type', 'withdrawal')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+        $totalWithdrawals = 0.0;
+        foreach ($withdrawalTransactions as $transaction) {
+            $totalWithdrawals += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $totalInterest = $user->transactions()
+        $interestTransactions = $user->transactions()
             ->where('type', 'interest')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+        $totalInterest = 0.0;
+        foreach ($interestTransactions as $transaction) {
+            $totalInterest += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $totalReferralBonuses = $user->transactions()
+        $referralBonusTransactions = $user->transactions()
             ->where('type', 'referral_bonus')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+        $totalReferralBonuses = 0.0;
+        foreach ($referralBonusTransactions as $transaction) {
+            $totalReferralBonuses += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
         return view('user.transactions', compact(
             'transactions', 
@@ -452,13 +468,13 @@ class DashboardController extends Controller
     {
         \Log::info('Transfer attempt started', [
             'user' => Auth::user()->email,
-            'recipient_email' => $request->recipient_email,
+            'recipient' => $request->recipient,
             'amount' => $request->amount,
             'package_id' => $request->package_id
         ]);
 
         $request->validate([
-            'recipient_email' => 'required|email|exists:users,email',
+            'recipient' => 'required|string',
             'amount' => 'required|numeric|min:1',
             'package_id' => 'nullable|exists:investment_packages,id',
             'description' => 'nullable|string|max:255'
@@ -475,19 +491,44 @@ class DashboardController extends Controller
             ])->withInput();
         }
 
-        // Get recipient user
-        $recipient = User::where('email', $request->recipient_email)->first();
+        // Get recipient user by email, username, or name
+        $recipients = User::where('email', $request->recipient)
+                         ->orWhere('username', $request->recipient)
+                         ->orWhere('name', $request->recipient)
+                         ->get();
         
-        if (!$recipient) {
+        if ($recipients->isEmpty()) {
             return back()->withErrors([
-                'recipient_email' => 'Recipient not found.'
+                'recipient' => 'Recipient not found. Please check the email address, username, or full name.'
             ])->withInput();
+        }
+        
+        // If multiple users found with the same name, require more specific identifier
+        if ($recipients->count() > 1) {
+            // Check if exact email or username match exists
+            $exactMatch = $recipients->filter(function ($user) use ($request) {
+                return $user->email === $request->recipient || $user->username === $request->recipient;
+            })->first();
+            
+            if ($exactMatch) {
+                $recipient = $exactMatch;
+            } else {
+                $usersList = $recipients->map(function ($user) {
+                    return $user->name . ' (' . $user->username . ', ' . $user->email . ')';
+                })->join(', ');
+                
+                return back()->withErrors([
+                    'recipient' => 'Multiple users found with that name: ' . $usersList . '. Please use email or username for exact match.'
+                ])->withInput();
+            }
+        } else {
+            $recipient = $recipients->first();
         }
 
         // Prevent self-transfer
         if ($recipient->id === $user->id) {
             return back()->withErrors([
-                'recipient_email' => 'You cannot transfer funds to yourself.'
+                'recipient' => 'You cannot transfer funds to yourself.'
             ])->withInput();
         }
 
@@ -504,7 +545,7 @@ class DashboardController extends Controller
                     'type' => 'transfer',
                     'amount' => -$amount, // Negative for outgoing transfer
                     'status' => 'completed',
-                    'description' => 'Transfer to ' . $recipient->email . ($request->description ? ': ' . $request->description : ''),
+                    'description' => 'Transfer to ' . $recipient->name . ' (' . $recipient->email . ')' . ($request->description ? ': ' . $request->description : ''),
                     'reference' => 'TXN' . time() . rand(1000, 9999)
                 ]);
 
@@ -513,7 +554,7 @@ class DashboardController extends Controller
                     'type' => 'transfer',
                     'amount' => $amount, // Positive for incoming transfer
                     'status' => 'completed',
-                    'description' => 'Transfer from ' . $user->email . ($request->description ? ': ' . $request->description : ''),
+                    'description' => 'Transfer from ' . $user->name . ' (' . $user->email . ')' . ($request->description ? ': ' . $request->description : ''),
                     'reference' => 'TXN' . time() . rand(1000, 9999)
                 ]);
 
@@ -540,7 +581,7 @@ class DashboardController extends Controller
                             'type' => 'other',
                             'amount' => -$amount, // Negative because it's deducted from their balance
                             'status' => 'completed',
-                            'description' => 'Investment in ' . $package->name . ' (funded by transfer from ' . $user->email . ')',
+                            'description' => 'Investment in ' . $package->name . ' (funded by transfer from ' . $user->name . ')',
                             'reference' => 'INV' . time() . rand(1000, 9999)
                         ]);
 
@@ -555,9 +596,25 @@ class DashboardController extends Controller
                 }
             });
 
+            // Create receipt data
+            $receiptData = [
+                'transaction_id' => 'TXN' . time() . rand(1000, 9999),
+                'sender_name' => $user->name,
+                'sender_account_id' => $user->account_id,
+                'recipient_name' => $recipient->name,
+                'recipient_account_id' => $recipient->account_id,
+                'amount' => $amount,
+                'description' => $request->description,
+                'date' => now()->format('M d, Y'),
+                'time' => now()->format('H:i:s'),
+                'package_investment' => $request->package_id ? true : false,
+                'package_name' => $request->package_id ? InvestmentPackage::find($request->package_id)->name : null
+            ];
+
             return redirect()->route('dashboard.transfer')
                 ->with('success', 'Transfer completed successfully!' . 
-                    ($request->package_id ? ' Investment has been automatically activated.' : ''));
+                    ($request->package_id ? ' Investment has been automatically activated.' : ''))
+                ->with('receipt', $receiptData);
 
         } catch (\Exception $e) {
             \Log::error('Transfer failed', [

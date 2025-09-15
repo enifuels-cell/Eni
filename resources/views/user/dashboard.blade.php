@@ -33,28 +33,29 @@
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Total Invested</div>
-                        <div class="text-2xl font-bold text-eni-yellow">${{ number_format($stats['total_invested'], 2) }}</div>
+                        <div class="text-2xl font-bold text-eni-yellow">$@money($stats['total_invested'])</div>
                     </div>
                 </div>
                 
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Total Interest</div>
-                        <div class="text-2xl font-bold text-green-400">${{ number_format($stats['total_interest'], 2) }}</div>
+                        <div class="text-2xl font-bold text-green-400">$@money($stats['total_interest'])</div>
                     </div>
                 </div>
                 
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Referral Bonus</div>
-                        <div class="text-2xl font-bold text-blue-400">${{ number_format($stats['total_referral_bonus'], 2) }}</div>
+                        <div class="text-2xl font-bold text-blue-400">$@money($stats['total_referral_bonus'])</div>
                     </div>
                 </div>
                 
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Account Balance</div>
-                        <div class="text-2xl font-bold text-white">${{ number_format($stats['account_balance'], 2) }}</div>
+                        <div class="text-2xl font-bold text-white">$@money($stats['account_balance'])</div>
+                        <div class="text-xs text-gray-500 mt-1">Account ID: {{ Auth::user()->account_id }}</div>
                     </div>
                 </div>
             </div>
@@ -135,10 +136,10 @@
                                     @foreach($activeInvestments as $investment)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ $investment->investmentPackage->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${{ number_format($investment->amount, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">$@money($investment->amount)</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">{{ $investment->daily_shares_rate }}%</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-white">{{ $investment->remaining_days }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">${{ number_format($investment->total_interest_earned, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-400">$@money($investment->total_interest_earned)</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -165,7 +166,7 @@
                                 </div>
                                 <div class="text-right">
                                     <div class="font-medium {{ $transaction->amount > 0 ? 'text-green-400' : 'text-red-400' }}">
-                                        {{ $transaction->amount > 0 ? '+' : '' }}${{ number_format($transaction->amount, 2) }}
+                                        {{ $transaction->amount > 0 ? '+' : '' }}$@money($transaction->amount)
                                     </div>
                                     <div class="text-sm text-gray-400">{{ ucfirst($transaction->status) }}</div>
                                 </div>

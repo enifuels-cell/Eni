@@ -36,5 +36,10 @@ class AppServiceProvider extends ServiceProvider
             $userId = optional($request->user())->id ?: $request->ip();
             return \Illuminate\Cache\RateLimiting\Limit::perMinutes(1, 5)->by('withdrawals|'.$userId);
         });
+
+        // Blade directive for formatting Money objects
+        \Illuminate\Support\Facades\Blade::directive('money', function ($expression) {
+            return "<?php echo number_format(({$expression}) instanceof \\App\\Support\\Money ? ({$expression})->toFloat() : (float)({$expression}), 2); ?>";
+        });
     }
 }

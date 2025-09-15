@@ -7,11 +7,11 @@
             <div class="text-center md:text-left">
                 <h4 class="text-eni-yellow font-bold text-lg mb-4">Legal & Compliance</h4>
                 <ul class="space-y-2 text-white/70 text-sm">
-                    <li><a href="#" onclick="openTermsModal()" class="hover:text-eni-yellow transition-colors">Terms of Service</a></li>
-                    <li><a href="#" onclick="openPrivacyModal()" class="hover:text-eni-yellow transition-colors">Privacy Policy</a></li>
-                    <li><a href="#" onclick="openRiskModal()" class="hover:text-eni-yellow transition-colors">Risk Disclosure</a></li>
-                    <li><a href="#" onclick="openAmlModal()" class="hover:text-eni-yellow transition-colors">Anti-Money Laundering</a></li>
-                    <li><a href="#" onclick="openGuidelinesModal()" class="hover:text-eni-yellow transition-colors">Investment Guidelines</a></li>
+                    <li><a href="#" data-modal="terms" class="open-modal hover:text-eni-yellow transition-colors">Terms of Service</a></li>
+                    <li><a href="#" data-modal="privacy" class="open-modal hover:text-eni-yellow transition-colors">Privacy Policy</a></li>
+                    <li><a href="#" data-modal="risk" class="open-modal hover:text-eni-yellow transition-colors">Risk Disclosure</a></li>
+                    <li><a href="#" data-modal="aml" class="open-modal hover:text-eni-yellow transition-colors">Anti-Money Laundering</a></li>
+                    <li><a href="#" data-modal="guidelines" class="open-modal hover:text-eni-yellow transition-colors">Investment Guidelines</a></li>
                 </ul>
             </div>
 
@@ -70,3 +70,32 @@
         </div>
     </div>
 </footer>
+
+<script>
+    // Delegated modal openers for footer links
+    document.addEventListener('click', function (e) {
+        const el = e.target.closest && e.target.closest('.open-modal');
+        if (!el) return;
+        e.preventDefault();
+        const modal = el.dataset.modal;
+        switch (modal) {
+            case 'terms':
+                if (typeof openTermsModal === 'function') openTermsModal();
+                break;
+            case 'privacy':
+                if (typeof openPrivacyModal === 'function') openPrivacyModal();
+                break;
+            case 'risk':
+                if (typeof openRiskModal === 'function') openRiskModal();
+                break;
+            case 'aml':
+                if (typeof openAmlModal === 'function') openAmlModal();
+                break;
+            case 'guidelines':
+                if (typeof openGuidelinesModal === 'function') openGuidelinesModal();
+                break;
+            default:
+                break;
+        }
+    });
+</script>

@@ -63,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'username',
         'password',
         'role',
+        'account_id',
         'account_balance',
         'last_login_at',
         'last_login_ip',
@@ -150,42 +151,79 @@ class User extends Authenticatable implements MustVerifyEmail
     // Helper methods for investment platform
     public function totalInvestedAmount(): float
     {
-        return $this->investments()->active()->sum('amount');
+        $investments = $this->investments()->active()->get();
+        $total = 0.0;
+        foreach ($investments as $investment) {
+            $total += $investment->amount instanceof \App\Support\Money ? $investment->amount->toFloat() : (float)$investment->amount;
+        }
+        return $total;
     }
 
     public function totalInterestEarned(): float
     {
-        return $this->investments()->active()->sum('total_interest_earned');
+        $investments = $this->investments()->active()->get();
+        $total = 0.0;
+        foreach ($investments as $investment) {
+            $total += $investment->total_interest_earned instanceof \App\Support\Money ? $investment->total_interest_earned->toFloat() : (float)$investment->total_interest_earned;
+        }
+        return $total;
     }
 
     public function totalReferralBonuses(): float
     {
-        return \App\Models\ReferralBonus::whereHas('referral', function($query) {
+        $bonuses = \App\Models\ReferralBonus::whereHas('referral', function($query) {
             $query->where('referrer_id', $this->id);
-        })->where('paid', true)->sum('bonus_amount');
+        })->where('paid', true)->get();
+        
+        $total = 0.0;
+        foreach ($bonuses as $bonus) {
+            $total += $bonus->bonus_amount instanceof \App\Support\Money ? $bonus->bonus_amount->toFloat() : (float)$bonus->bonus_amount;
+        }
+        return $total;
     }
 
     public function accountBalance(): float
     {
-        $credits = $this->transactions()
+        // Get transactions and convert Money objects to floats
+        $creditTransactions = $this->transactions()
             ->whereIn('type', ['deposit', 'interest', 'referral_bonus'])
-            ->whereIn('status', ['completed', 'approved']) // Include approved deposits
-            ->sum('amount');
+            ->whereIn('status', ['completed', 'approved'])
+            ->get();
+        
+        $credits = 0.0;
+        foreach ($creditTransactions as $transaction) {
+            $credits += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $transfers = $this->transactions()
+        $transferTransactions = $this->transactions()
             ->where('type', 'transfer')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+            
+        $transfers = 0.0;
+        foreach ($transferTransactions as $transaction) {
+            $transfers += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $withdrawals = $this->transactions()
+        $withdrawalTransactions = $this->transactions()
             ->where('type', 'withdrawal')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+            
+        $withdrawals = 0.0;
+        foreach ($withdrawalTransactions as $transaction) {
+            $withdrawals += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
-        $other = $this->transactions()
+        $otherTransactions = $this->transactions()
             ->where('type', 'other')
             ->where('status', 'completed')
-            ->sum('amount');
+            ->get();
+            
+        $other = 0.0;
+        foreach ($otherTransactions as $transaction) {
+            $other += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
+        }
 
         return $credits + $transfers + $other - $withdrawals;
     }
@@ -230,5 +268,40 @@ class User extends Authenticatable implements MustVerifyEmail
     public function unsuspend(): void
     {
         $this->update(['suspended_at' => null]);
+    }
+
+    /**
+     * Generate a unique account ID with 5 digits and 3 letters (e.g., 12345ABC)
+     */
+    public static function generateAccountId(): string
+    {
+        do {
+            // Generate 5 random digits
+            $digits = str_pad(random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
+            
+            // Generate 3 random uppercase letters
+            $letters = '';
+            for ($i = 0; $i < 3; $i++) {
+                $letters .= chr(random_int(65, 90)); // A-Z
+            }
+            
+            $accountId = $digits . $letters;
+        } while (static::where('account_id', $accountId)->exists());
+
+        return $accountId;
+    }
+
+    /**
+     * Boot method to auto-generate account ID when creating a user
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (empty($user->account_id)) {
+                $user->account_id = static::generateAccountId();
+            }
+        });
     }
 }

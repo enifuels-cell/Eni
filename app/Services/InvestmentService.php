@@ -84,7 +84,7 @@ class InvestmentService
             // Referral bonus logic
             if ($referralCode) {
                 $referral = Referral::where('referral_code', $referralCode)->first();
-                if ($referral && $referral->referee_id !== $user->id) {
+                if ($referral && $referral->referee_id === $user->id) {
                     $bonusAmount = $amount * ($package->referral_bonus_rate / 100);
 
                     $bonus = ReferralBonus::create([

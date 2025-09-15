@@ -199,6 +199,7 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
     Route::get('/dashboard/deposit', [UserDashboardController::class, 'deposit'])->name('dashboard.deposit');
     Route::post('/dashboard/deposit', [UserDashboardController::class, 'processDeposit'])->name('dashboard.deposit.process');
     Route::get('/dashboard/withdraw', [UserDashboardController::class, 'withdraw'])->name('dashboard.withdraw');
+    Route::post('/dashboard/withdraw', [UserDashboardController::class, 'processWithdraw'])->name('dashboard.withdraw.process');
     Route::get('/dashboard/transfer', [UserDashboardController::class, 'transfer'])->name('dashboard.transfer');
     Route::post('/dashboard/transfer', [UserDashboardController::class, 'processTransfer'])->name('dashboard.transfer.process');
     Route::get('/dashboard/franchise', [UserDashboardController::class, 'franchise'])->name('dashboard.franchise');

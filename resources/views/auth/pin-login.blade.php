@@ -27,9 +27,7 @@
             }
         }
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
 </head>
 <body class="bg-eni-dark text-eni-text-primary font-sans min-h-screen flex items-center justify-center">
     <div class="w-full max-w-sm p-8 bg-eni-gray rounded-2xl shadow-xl border border-eni-light-gray">

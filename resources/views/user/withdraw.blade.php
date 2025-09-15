@@ -4,10 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdraw - ENI Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#FFCD00" />
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+                    colors: {
+                        eni: {
+                            yellow: '#FFCD00',
+                            dark: '#0B2241',
+                            charcoal: '#121417'
+                        }
+                    },
+                    boxShadow: {
+                        glow: '0 0 20px rgba(255,205,0,0.45)',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
     </style>
@@ -69,7 +88,7 @@
                 <p class="text-white/70">Withdraw your earnings to your bank account</p>
             </div>
 
-            <form method="POST" action="{{ route('user.withdraw.process') }}">
+            <form method="POST" action="{{ route('dashboard.withdraw.process') }}">
                 @csrf
                 
                 <!-- Amount -->
@@ -141,6 +160,9 @@
                                 @endif
                             </div>
                         </div>
+                        
+                        <!-- Hidden bank details field for form submission -->
+                        <input type="hidden" name="bank_details" value="{{ auth()->user()->bank_name }} - {{ auth()->user()->account_holder_name }} - **** {{ substr(auth()->user()->account_number, -4) }}">
                     </div>
                 @endif
 
@@ -172,9 +194,9 @@
         </div>
 
         <!-- Recent Withdrawals -->
-                <div class="mt-12">
-                    <h3 class="text-xl font-bold mb-6 text-eni-yellow">Recent Withdrawals</h3>
-                    <div class="bg-black/20 border border-white/10 rounded-lg overflow-hidden">
+        <div class="mt-12">
+            <h3 class="text-xl font-bold mb-6 text-eni-yellow">Recent Withdrawals</h3>
+            <div class="bg-black/20 border border-white/10 rounded-lg overflow-hidden">
                         <table class="min-w-full">
                             <thead class="bg-black/40">
                                 <tr>
@@ -185,47 +207,45 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-eni-yellow uppercase tracking-wider">Transaction ID</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-white/10">
-                                @forelse(auth()->user()->transactions()->where('type', 'withdrawal')->orderBy('created_at', 'desc')->take(5)->get() as $withdrawal)
-                                <tr class="hover:bg-white/5">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                        {{ $withdrawal->created_at->format('M d, Y') }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-400">
-                                        -${{ number_format($withdrawal->amount, 2) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
-                                        {{ ucfirst(str_replace('_', ' ', $withdrawal->payment_method)) }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                            @if($withdrawal->status === 'completed') bg-green-500/20 text-green-400
-                                            @elseif($withdrawal->status === 'pending') bg-yellow-500/20 text-yellow-400
-                                            @elseif($withdrawal->status === 'processing') bg-blue-500/20 text-blue-400
-                                            @else bg-red-500/20 text-red-400
-                                            @endif">
-                                            {{ ucfirst($withdrawal->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-white/60">
-                                        {{ $withdrawal->transaction_id }}
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="5" class="px-6 py-8 text-center text-white/60">
-                                        No withdrawal history found.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                        <tbody class="divide-y divide-white/10">
+                            @forelse(auth()->user()->transactions()->where('type', 'withdrawal')->orderBy('created_at', 'desc')->take(5)->get() as $withdrawal)
+                            <tr class="hover:bg-white/5">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                    {{ $withdrawal->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-400">
+                                    -${{ number_format($withdrawal->amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
+                                    {{ ucfirst(str_replace('_', ' ', $withdrawal->payment_method)) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                        @if($withdrawal->status === 'completed') bg-green-500/20 text-green-400
+                                        @elseif($withdrawal->status === 'pending') bg-yellow-500/20 text-yellow-400
+                                        @elseif($withdrawal->status === 'processing') bg-blue-500/20 text-blue-400
+                                        @else bg-red-500/20 text-red-400
+                                        @endif">
+                                        {{ ucfirst($withdrawal->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-white/60">
+                                    {{ $withdrawal->transaction_id }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-white/60">
+                                    No withdrawal history found.
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

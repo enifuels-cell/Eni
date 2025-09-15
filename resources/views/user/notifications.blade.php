@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notifications — Eni Members</title>
   <meta name="theme-color" content="#FFCD00" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -87,13 +85,13 @@
         </div>
         <div class="flex items-center gap-3">
           <!-- Mark All as Read -->
-          <button onclick="markAllAsRead()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
+          <button type="button" data-action="mark-all-read" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
             <i class="fas fa-check-double text-xs mr-2"></i>
             Mark All Read
           </button>
           <!-- Filter Dropdown -->
           <div class="relative">
-            <button onclick="toggleFilter()" class="px-4 py-2 bg-eni-dark border border-white/20 hover:bg-white/10 text-white text-sm rounded-lg transition-colors flex items-center gap-2">
+            <button type="button" data-action="toggle-filter" class="px-4 py-2 bg-eni-dark border border-white/20 hover:bg-white/10 text-white text-sm rounded-lg transition-colors flex items-center gap-2">
               <i class="fas fa-filter text-xs"></i>
               {{ $categories[$filter] ?? 'Filter' }}
               <i class="fas fa-chevron-down text-xs"></i>
@@ -117,7 +115,15 @@
     <div class="space-y-4">
       @forelse($notifications as $notification)
       <div class="bg-eni-dark/50 border border-white/10 rounded-xl p-6 hover:bg-eni-dark/70 transition-all duration-200 cursor-pointer"
-           onclick="openNotificationModal({{ $notification->id }}, {{ json_encode($notification->title) }}, {{ json_encode($notification->message) }}, {{ json_encode($notification->category) }}, {{ json_encode($notification->created_at->format('M j, Y \a\t g:i A')) }}, {{ $notification->is_read ? 'true' : 'false' }}, {{ json_encode($notification->action_url ?? '') }})">
+             role="button"
+             data-action="open-notification"
+             data-id="{{ $notification->id }}"
+             data-title="{{ e($notification->title) }}"
+             data-message="{{ e($notification->message) }}"
+             data-category="{{ e($notification->category) }}"
+             data-date="{{ $notification->created_at->format('M j, Y \a\t g:i A') }}"
+             data-is-read="{{ $notification->is_read ? 'true' : 'false' }}"
+             data-action-url="{{ e($notification->action_url ?? '') }}">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center flex-shrink-0">
             <i class="{{ $notification->icon }} text-eni-yellow"></i>
@@ -163,8 +169,8 @@
       @endforelse
 
       <!-- PIN Setup Notification (if not set and no custom notification exists) -->
-      @if(!Auth::user()->pin_hash && !$notifications->where('category', 'security')->where('title', 'like', '%PIN%')->count())
-      <div class="bg-eni-dark/50 border border-eni-yellow/30 rounded-xl p-6 hover:bg-eni-dark/70 transition-all duration-200 cursor-pointer" onclick="window.location.href='{{ route('pin.setup.form') }}'">
+  @if(!Auth::user()->pin_hash && !$notifications->where('category', 'security')->where('title', 'like', '%PIN%')->count())
+  <div class="bg-eni-dark/50 border border-eni-yellow/30 rounded-xl p-6 hover:bg-eni-dark/70 transition-all duration-200 cursor-pointer" data-action="goto" data-url="{{ route('pin.setup.form') }}">
         <div class="flex items-start gap-4">
           <div class="w-12 h-12 bg-eni-yellow/20 border border-eni-yellow/40 rounded-full flex items-center justify-center flex-shrink-0">
             <i class="fas fa-shield-alt text-eni-yellow"></i>
@@ -325,9 +331,9 @@
   </main>
 
   <!-- Notification Detail Modal -->
-  <div id="notificationModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden" onclick="closeNotificationModal(event)">
+  <div id="notificationModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
     <div class="fixed inset-0 flex items-center justify-center p-4">
-      <div class="bg-eni-dark border border-white/20 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+      <div id="notificationModalContent" class="bg-eni-dark border border-white/20 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <!-- Modal Header -->
         <div class="flex items-center justify-between p-6 border-b border-white/10">
           <div class="flex items-center gap-3">
@@ -342,7 +348,7 @@
               </div>
             </div>
           </div>
-          <button onclick="closeNotificationModal()" class="text-white/60 hover:text-white text-2xl font-bold leading-none transition-colors" title="Close">
+          <button data-action="close-modal" class="text-white/60 hover:text-white text-2xl font-bold leading-none transition-colors" title="Close">
             ×
           </button>
         </div>
@@ -365,17 +371,17 @@
         <!-- Modal Footer -->
         <div class="flex items-center justify-between p-6 border-t border-white/10 bg-eni-dark/50">
           <div class="flex items-center gap-3">
-            <button id="markReadBtn" onclick="markNotificationAsRead()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
+            <button id="markReadBtn" data-action="mark-read" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
               <i class="fas fa-check text-xs mr-2"></i>
               Mark as Read
             </button>
           </div>
           <div class="flex items-center gap-3">
-            <button id="actionBtn" onclick="handleNotificationAction()" class="px-4 py-2 bg-eni-yellow text-eni-dark font-semibold rounded-lg hover:bg-yellow-400 transition-colors hidden">
+            <button id="actionBtn" data-action="action" class="px-4 py-2 bg-eni-yellow text-eni-dark font-semibold rounded-lg hover:bg-yellow-400 transition-colors hidden">
               <i class="fas fa-external-link-alt text-xs mr-2"></i>
               View Details
             </button>
-            <button onclick="closeNotificationModal()" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
+            <button data-action="close-modal" class="px-4 py-2 bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg transition-colors">
               Close
             </button>
           </div>
@@ -452,7 +458,6 @@
 
     // Close notification modal
     function closeNotificationModal(event) {
-      if (event && event.target !== event.currentTarget) return;
       document.getElementById('notificationModal').classList.add('hidden');
       currentNotificationId = null;
       currentNotificationActionUrl = null;
@@ -530,21 +535,49 @@
       }
     }
 
-    // Close filter menu when clicking outside
+    // Delegate UI actions for elements using data-action
     document.addEventListener('click', function(event) {
-      const menu = document.getElementById('filterMenu');
-      const button = event.target.closest('button[onclick="toggleFilter()"]');
-      
-      if (!button && !menu.contains(event.target)) {
-        menu.classList.add('hidden');
+      const el = event.target.closest('[data-action]');
+      if (!el) return;
+      const action = el.getAttribute('data-action');
+
+      if (action === 'mark-all-read') return markAllAsRead();
+      if (action === 'toggle-filter') return toggleFilter();
+      if (action === 'goto') {
+        const url = el.getAttribute('data-url');
+        if (url) window.location.href = url;
+        return;
       }
+      if (action === 'open-notification') {
+        const id = el.getAttribute('data-id');
+        const title = el.getAttribute('data-title') || '';
+        const message = el.getAttribute('data-message') || '';
+        const category = el.getAttribute('data-category') || '';
+        const date = el.getAttribute('data-date') || '';
+        const isRead = el.getAttribute('data-is-read') === 'true' || el.getAttribute('data-is-read') === '1';
+        const actionUrl = el.getAttribute('data-action-url') || '';
+        openNotificationModal(id, title, message, category, date, isRead, actionUrl);
+        return;
+      }
+      if (action === 'close-modal') return closeNotificationModal();
+      if (action === 'mark-read') return markNotificationAsRead();
+      if (action === 'action') return handleNotificationAction();
     });
+
+    // Modal overlay handling (click outside to close)
+    (function() {
+      const modal = document.getElementById('notificationModal');
+      const modalContent = document.getElementById('notificationModalContent');
+      if (!modal || !modalContent) return;
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) closeNotificationModal();
+      });
+      modalContent.addEventListener('click', function(e) { e.stopPropagation(); });
+    })();
 
     // Close modal with Escape key
     document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
-        closeNotificationModal();
-      }
+      if (event.key === 'Escape') closeNotificationModal();
     });
   </script>
 </body>

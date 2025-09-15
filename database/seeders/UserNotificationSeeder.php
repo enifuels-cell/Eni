@@ -58,15 +58,6 @@ class UserNotificationSeeder extends Seeder
                     'is_read' => false,
                     'created_at' => now()->subHours(2),
                 ],
-                [
-                    'title' => 'Referral Bonus Earned',
-                    'message' => 'You earned $50 referral bonus from a new signup. Thank you for spreading the word!',
-                    'category' => 'referral',
-                    'type' => 'success',
-                    'priority' => 'medium',
-                    'is_read' => false,
-                    'created_at' => now()->subMinutes(30),
-                ],
             ];
 
             foreach ($notifications as $notificationData) {

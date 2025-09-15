@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Receipt - ENI Platform</title>
     <!-- Force recompile: <?php echo date('Y-m-d H:i:s'); ?> -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
@@ -190,10 +188,10 @@
                         @endphp
                         
                         @if($isImage)
-                            <img src="{{ route('transaction.receipt.file', $transaction->id) }}" 
-                                 alt="Payment Receipt" 
-                                 class="w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
-                                 onclick="openReceiptModal(this.src)">
+                       <img src="{{ route('transaction.receipt.file', $transaction->id) }}" 
+                           alt="Payment Receipt" 
+                           class="receipt-image w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
+                           data-receipt-src="{{ route('transaction.receipt.file', $transaction->id) }}">
                         @else
                             <div class="p-6 text-center">
                                 <div class="mb-4">
@@ -257,7 +255,7 @@
     <!-- Receipt Image Modal -->
     <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Receipt image modal">
         <div class="relative max-w-4xl max-h-full">
-            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10" aria-label="Close modal">
+            <button data-action="close-receipt" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10" aria-label="Close modal">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -304,6 +302,21 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeReceiptModal();
+            }
+        });
+
+        // Delegated handlers: open receipt modal for images with .receipt-image and close via data-action
+        document.addEventListener('click', function (e) {
+            const openEl = e.target.closest && e.target.closest('.receipt-image');
+            if (openEl) {
+                const src = openEl.dataset.receiptSrc || openEl.src;
+                openReceiptModal(src);
+                return;
+            }
+            const closeBtn = e.target.closest && e.target.closest('[data-action="close-receipt"]');
+            if (closeBtn) {
+                closeReceiptModal();
+                return;
             }
         });
     </script>

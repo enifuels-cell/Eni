@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     
     <script>
         tailwind.config = {
@@ -56,7 +54,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-green-400">Total Deposits</h3>
-                    <p class="text-2xl font-bold">${{ number_format($totalDeposits ?? 0, 2) }}</p>
+                    <p class="text-2xl font-bold">$@money($totalDeposits ?? 0)</p>
                 </div>
             </div>
 
@@ -68,7 +66,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-red-400">Total Withdrawals</h3>
-                    <p class="text-2xl font-bold">${{ number_format($totalWithdrawals ?? 0, 2) }}</p>
+                    <p class="text-2xl font-bold">$@money($totalWithdrawals ?? 0)</p>
                 </div>
             </div>
 
@@ -80,7 +78,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-eni-yellow">Interest Earned</h3>
-                    <p class="text-2xl font-bold">${{ number_format($totalInterest ?? 0, 2) }}</p>
+                    <p class="text-2xl font-bold">$@money($totalInterest ?? 0)</p>
                 </div>
             </div>
 
@@ -92,7 +90,7 @@
                         </svg>
                     </div>
                     <h3 class="text-lg font-semibold text-blue-400">Referral Bonuses</h3>
-                    <p class="text-2xl font-bold">${{ number_format($totalReferralBonuses ?? 0, 2) }}</p>
+                    <p class="text-2xl font-bold">$@money($totalReferralBonuses ?? 0)</p>
                 </div>
             </div>
         </div>
@@ -100,26 +98,11 @@
         <!-- Filter Buttons -->
         <div class="mb-6">
             <div class="flex flex-wrap gap-3">
-                <button onclick="filterTransactions('all')" 
-                        class="filter-btn active bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold">
-                    All Transactions
-                </button>
-                <button onclick="filterTransactions('deposit')" 
-                        class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">
-                    Deposits
-                </button>
-                <button onclick="filterTransactions('withdrawal')" 
-                        class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">
-                    Withdrawals
-                </button>
-                <button onclick="filterTransactions('interest')" 
-                        class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">
-                    Interest
-                </button>
-                <button onclick="filterTransactions('referral')" 
-                        class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">
-                    Referrals
-                </button>
+                    <button type="button" data-filter="all" class="filter-btn active bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold">All</button>
+                    <button type="button" data-filter="deposit" class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">Deposits</button>
+                    <button type="button" data-filter="withdrawal" class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">Withdrawals</button>
+                    <button type="button" data-filter="interest" class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">Interest</button>
+                    <button type="button" data-filter="referral" class="filter-btn bg-white/10 text-white px-4 py-2 rounded-lg font-semibold hover:bg-white/20">Referral</button>
             </div>
         </div>
 
@@ -164,9 +147,9 @@
                                     @if($transaction->type === 'deposit' || $transaction->type === 'interest' || $transaction->type === 'referral') text-green-400
                                     @else text-red-400 @endif">
                                     @if($transaction->type === 'deposit' || $transaction->type === 'interest' || $transaction->type === 'referral')
-                                        +${{ number_format($transaction->amount, 2) }}
+                                        +$@money($transaction->amount)
                                     @else
-                                        -${{ number_format($transaction->amount, 2) }}
+                                        -$@money($transaction->amount)
                                     @endif
                                 </td>
                                 <td class="p-4 text-center">
@@ -179,27 +162,26 @@
                                     </span>
                                 </td>
                                 <td class="p-4 text-center">
-                                    @if($transaction->receipt_path)
-                                        @php
-                                            $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
-                                            $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
-                                        @endphp
+                                        @if($transaction->receipt_path)
+                                            @php
+                                                $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
+                                                $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
+                                            @endphp
                                         
-                                        @if($isImage)
-                                            <button onclick="openReceiptModal('{{ route('transaction.receipt.file', $transaction->id) }}')" 
-                                                    class="bg-eni-yellow/20 text-eni-yellow px-3 py-1 rounded-lg text-xs font-semibold hover:bg-eni-yellow/30 transition-colors">
-                                                View Receipt
-                                            </button>
+                                            @if($isImage)
+                                                <button type="button" data-receipt-src="{{ route('transaction.receipt.file', $transaction->id) }}" class="receipt-image bg-eni-yellow/20 text-eni-yellow px-3 py-1 rounded-lg text-xs font-semibold hover:bg-eni-yellow/30 transition-colors">
+                                                    View Receipt
+                                                </button>
+                                            @else
+                                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
+                                                   target="_blank" 
+                                                   class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-500/30 transition-colors">
+                                                    View PDF
+                                                </a>
+                                            @endif
                                         @else
-                                            <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
-                                               target="_blank" 
-                                               class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-500/30 transition-colors">
-                                                View PDF
-                                            </a>
+                                            <span class="text-white/40 text-xs">No receipt</span>
                                         @endif
-                                    @else
-                                        <span class="text-white/40 text-xs">No receipt</span>
-                                    @endif
                                 </td>
                             </tr>
                         @empty
@@ -282,6 +264,7 @@
     <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
         <div class="relative max-w-4xl max-h-full">
             <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
+                <button data-action="close-receipt" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

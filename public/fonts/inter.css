@@ -1,21 +1,20 @@
+/* Minimal local Inter fallback stylesheet
+   If you add local Inter font files, replace the src URLs below with the actual paths.
+*/
+:root {
+    --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+body, input, textarea, select, button {
+    font-family: var(--font-sans);
+}
+
+/* Example @font-face if you add local font files:
 @font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url(/fonts) format('truetype');
+  src: url('/fonts/Inter-Regular.woff2') format('woff2');
 }
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url(/fonts) format('truetype');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 800;
-  font-display: swap;
-  src: url(/fonts) format('truetype');
-}
+*/

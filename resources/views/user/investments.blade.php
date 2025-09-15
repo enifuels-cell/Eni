@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Packages - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     
     <script>
         tailwind.config = {
@@ -81,8 +79,12 @@
                             </div>
                         </div>
                         
-                        <button onclick="openInvestModal('{{ $package->id }}', '{{ e($package->name) }}', {{ $package->min_amount }}, {{ $package->max_amount }})" 
-                                class="w-full bg-eni-yellow text-eni-dark font-bold py-3 rounded-xl hover:bg-yellow-400 transition-colors">
+                        <button type="button"
+                                data-package-id="{{ $package->id }}"
+                                data-package-name="{{ e($package->name) }}"
+                                data-package-min="{{ $package->min_amount }}"
+                                data-package-max="{{ $package->max_amount }}"
+                                class="invest-btn w-full bg-eni-yellow text-eni-dark font-bold py-3 rounded-xl hover:bg-yellow-400 transition-colors">
                             Invest Now
                         </button>
                     </div>
@@ -200,6 +202,17 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        // Delegate clicks for invest buttons to reduce inline JS and Blade/JS mixing
+        document.addEventListener('click', function (e) {
+            const btn = e.target.closest && e.target.closest('.invest-btn');
+            if (!btn) return;
+            const packageId = btn.dataset.packageId;
+            const packageName = btn.dataset.packageName;
+            const minAmount = Number(btn.dataset.packageMin || 0);
+            const maxAmount = Number(btn.dataset.packageMax || 0);
+            openInvestModal(packageId, packageName, minAmount, maxAmount);
+        });
     </script>
 </body>
 </html>

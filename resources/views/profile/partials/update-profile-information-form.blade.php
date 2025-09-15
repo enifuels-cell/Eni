@@ -18,6 +18,12 @@
         @method('patch')
 
         <div>
+            <x-input-label for="account_id" :value="__('Account ID')" />
+            <x-text-input id="account_id" name="account_id" type="text" class="mt-1 block w-full bg-gray-100 dark:bg-gray-700 cursor-not-allowed" :value="$user->account_id" readonly />
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Your unique account identifier</p>
+        </div>
+
+        <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />

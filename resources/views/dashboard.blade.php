@@ -81,7 +81,7 @@
         <div id="profileMenu" class="absolute right-0 top-full mt-2 w-64 bg-eni-dark border border-white/20 rounded-lg shadow-lg z-50 hidden">
           <div class="p-4 border-b border-white/10">
             <p class="font-semibold">{{ Auth::user()->name }}</p>
-            <p class="text-sm text-white/60">{{ Auth::user()->email }}</p>
+            <p class="text-sm text-white/60">ID: {{ Auth::user()->account_id }}</p>
           </div>
           <div class="py-2">
             <a href="{{ route('profile.edit') }}#personal" class="block px-4 py-2 text-sm hover:bg-white/10 transition-colors">
@@ -146,10 +146,10 @@
   <!-- Hero Balance -->
   <section class="bg-gradient-to-br from-eni-yellow to-yellow-400 text-eni-dark rounded-b-3xl p-6 shadow-glow">
     <h2 class="text-sm uppercase font-bold tracking-wide">Account Balance</h2>
-    <p class="text-4xl font-extrabold mt-1">${{ number_format($account_balance ?? 0, 2) }}</p>
+    <p class="text-4xl font-extrabold mt-1">$@money($account_balance ?? 0)</p>
     <p class="text-sm text-eni-dark/70">
       @if(($total_interest ?? 0) > 0)
-        + ${{ number_format($total_interest, 2) }} Interest Earned
+        + $@money($total_interest) Interest Earned
       @else
         Ready to start investing
       @endif
@@ -170,13 +170,13 @@
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        ${{ number_format($total_invested ?? 0, 0) }}
+        $@money($total_invested ?? 0)
       </div>
       <p class="text-xs mt-2 text-white/70">Total Invested</p>
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        ${{ number_format($total_referral_bonus ?? 0, 0) }}
+        $@money($total_referral_bonus ?? 0)
       </div>
       <p class="text-xs mt-2 text-white/70">Referral Bonus</p>
     </div>
@@ -216,7 +216,7 @@
       @forelse($recent_transactions ?? [] as $transaction)
       <li class="flex items-center justify-between bg-white/5 p-4 rounded-xl">
         <div>
-          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format($transaction->amount, 2) }}</span>
+          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — $@money($transaction->amount)</span>
           @if($transaction->status !== 'completed')
             <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
           @endif

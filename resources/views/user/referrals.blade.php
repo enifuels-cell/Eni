@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Referrals - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
     
     <script>
         tailwind.config = {
@@ -93,8 +91,8 @@
                                value="{{ $referralLink }}" 
                                class="flex-1 bg-white/10 border border-white/20 rounded-l-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow text-sm" 
                                readonly>
-                        <button type="button" onclick="copyLink('referralLink', this)" 
-                                class="bg-eni-yellow text-eni-dark px-4 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
+            <button type="button" data-action="copy-link" data-target="referralLink"
+                class="bg-eni-yellow text-eni-dark px-4 py-3 rounded-r-lg font-semibold hover:bg-yellow-400 transition-colors">
                             Copy
                         </button>
                     </div>
@@ -122,14 +120,14 @@
                     </div>
                     
                     <!-- Generate QR Code Button -->
-                    <button type="button" id="generateQrBtn" onclick="toggleQrCode()" 
-                            class="bg-eni-yellow text-eni-dark font-semibold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors">
+            <button type="button" id="generateQrBtn" data-action="toggle-qr" 
+                class="bg-eni-yellow text-eni-dark font-semibold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors">
                         <i class="fas fa-qrcode mr-2"></i>Generate QR Code
                     </button>
                     
                     <!-- Hide QR Code Button (Initially Hidden) -->
-                    <button type="button" id="hideQrBtn" onclick="toggleQrCode()" 
-                            class="hidden bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-500 transition-colors">
+            <button type="button" id="hideQrBtn" data-action="toggle-qr" 
+                class="hidden bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-500 transition-colors">
                         <i class="fas fa-eye-slash mr-2"></i>Hide QR Code
                     </button>
                 </div>
@@ -164,7 +162,7 @@
                     </div>
                     <h3 class="text-lg font-semibold text-white/70 mb-2">No referrals yet</h3>
                     <p class="text-white/50 mb-4">Start sharing your referral link to earn commissions!</p>
-                    <button type="button" onclick="copyReferralLink(event)" 
+                    <button type="button" data-action="copy-referral" 
                             class="bg-eni-yellow text-eni-dark px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Copy Referral Link
                     </button>
@@ -243,6 +241,30 @@
                 hideBtn.classList.add('hidden');
             }
         }
+
+        // Delegate data-action buttons
+        document.addEventListener('click', function(e) {
+            const el = e.target.closest('[data-action]');
+            if (!el) return;
+            const action = el.getAttribute('data-action');
+
+            if (action === 'copy-link') {
+                const target = el.getAttribute('data-target');
+                copyLink(target, el);
+                return;
+            }
+
+            if (action === 'toggle-qr') {
+                toggleQrCode();
+                return;
+            }
+
+            if (action === 'copy-referral') {
+                const linkInput = document.getElementById('referralLink');
+                if (linkInput) copyLink('referralLink', el);
+                return;
+            }
+        });
     </script>
 </body>
 </html>
