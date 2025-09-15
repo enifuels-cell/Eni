@@ -5,6 +5,7 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
+        "cloud-build": "npm install --legacy-peer-deps && npm run build",
         "generate-icons": "node scripts/generate-icons.js"
     },
     "devDependencies": {

@@ -53,5 +53,18 @@
         
         <!-- Footer Modals -->
         @include('components.footer-modals')
+
+        <!-- Service Worker registration for PWA (Workbox generated at /build/sw.js) -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/build/sw.js').then(function(reg) {
+                        console.log('Service worker registered with scope:', reg.scope);
+                    }).catch(function(err) {
+                        console.warn('Service worker registration failed:', err);
+                    });
+                });
+            }
+        </script>
     </body>
 </html>
