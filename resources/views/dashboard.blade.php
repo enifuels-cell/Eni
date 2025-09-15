@@ -5,17 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ENI Dashboard — Investment Platform</title>
   <meta name="theme-color" content="#FFCD00" />
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('fonts/inter.css') }}">
-  <style>
-    body { font-family: 'Inter', ui-sans-serif, system-ui; }
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
+          colors: {
+            eni: {
+              yellow: '#FFCD00',
+              dark: '#0B2241',
+              charcoal: '#121417'
+            }
+          },
+          boxShadow: {
+            glow: '0 0 20px rgba(255,205,0,0.45)',
+          }
+        }
+      }
+    }
+  </script>
+  <style> 
+    body{font-family:Inter,ui-sans-serif,system-ui} 
+    
+    /* Mobile safe area considerations */
     @media (max-width: 640px) {
       #floatingNav {
         bottom: max(1rem, env(safe-area-inset-bottom, 0px));
       }
     }
+    
+    /* Ensure floating nav doesn't cause horizontal scroll */
     #floatingNav > div {
       max-width: calc(100vw - 2rem);
     }
@@ -25,7 +49,7 @@
   <!-- Header -->
   <header class="bg-eni-dark px-6 py-4 flex items-center justify-between shadow-md">
     <div class="flex items-center gap-4">
-  <img src="/images/eni-logo.svg" alt="ENI Logo" class="h-8 w-auto" />
+      <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
       <div>
         <h1 class="font-extrabold text-xl tracking-tight">Eni Members</h1>
         <p class="text-sm text-white/70">Welcome back, {{ Auth::user()->name }}</p>
@@ -36,7 +60,7 @@
         <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
           @php
-            $totalUnread = $unread_notifications_count + ((Auth::user() && !Auth::user()->pin_hash) ? 1 : 0);
+            $totalUnread = $unread_notifications_count + (!Auth::user()->pin_hash ? 1 : 0);
           @endphp
           @if($totalUnread > 0)
             @if($totalUnread > 9)
@@ -49,7 +73,7 @@
       </div>
       <div class="relative">
         <button onclick="toggleProfileMenu()" class="block hover:opacity-80 transition-opacity relative">
-      <img src="{{ asset('images/default-avatar.png') }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
+          <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
           <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
         </button>
         
@@ -122,10 +146,10 @@
   <!-- Hero Balance -->
   <section class="bg-gradient-to-br from-eni-yellow to-yellow-400 text-eni-dark rounded-b-3xl p-6 shadow-glow">
     <h2 class="text-sm uppercase font-bold tracking-wide">Account Balance</h2>
-  <p class="text-4xl font-extrabold mt-1">${{ number_format(is_object($account_balance) && method_exists($account_balance, 'toFloat') ? $account_balance->toFloat() : ($account_balance ?? 0), 2) }}</p>
+    <p class="text-4xl font-extrabold mt-1">${{ number_format($account_balance ?? 0, 2) }}</p>
     <p class="text-sm text-eni-dark/70">
       @if(($total_interest ?? 0) > 0)
-        + ${{ number_format(is_object($total_interest) && method_exists($total_interest, 'toFloat') ? $total_interest->toFloat() : $total_interest, 2) }} Interest Earned
+        + ${{ number_format($total_interest, 2) }} Interest Earned
       @else
         Ready to start investing
       @endif
@@ -146,13 +170,13 @@
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-  ${{ number_format(is_object($total_invested) && method_exists($total_invested, 'toFloat') ? $total_invested->toFloat() : ($total_invested ?? 0), 0) }}
+        ${{ number_format($total_invested ?? 0, 0) }}
       </div>
       <p class="text-xs mt-2 text-white/70">Total Invested</p>
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-  ${{ number_format(is_object($total_referral_bonus) && method_exists($total_referral_bonus, 'toFloat') ? $total_referral_bonus->toFloat() : ($total_referral_bonus ?? 0), 0) }}
+        ${{ number_format($total_referral_bonus ?? 0, 0) }}
       </div>
       <p class="text-xs mt-2 text-white/70">Referral Bonus</p>
     </div>
@@ -192,13 +216,9 @@
       @forelse($recent_transactions ?? [] as $transaction)
       <li class="flex items-center justify-between bg-white/5 p-4 rounded-xl">
         <div>
-          @if(is_object($transaction))
-            <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format(is_object($transaction->amount) && method_exists($transaction->amount, 'toFloat') ? $transaction->amount->toFloat() : $transaction->amount, 2) }}</span>
-            @if($transaction->status !== 'completed')
-              <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
-            @endif
-          @else
-            <span class="capitalize text-red-400">Invalid transaction data</span>
+          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format($transaction->amount, 2) }}</span>
+          @if($transaction->status !== 'completed')
+            <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
           @endif
         </div>
         <span class="text-xs {{ $transaction->type === 'withdrawal' ? 'text-red-400' : 'text-green-400' }}">
@@ -319,6 +339,96 @@
     </div>
   </div>
 
+  <script>
+    function toggleNotifications() {
+      const panel = document.getElementById('notificationsPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    function toggleProfileMenu() {
+      const menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Mark notification as read when clicked (for quick dropdown actions)
+    async function markNotificationAsRead(notificationId) {
+      try {
+        await fetch(`{{ route("user.notifications.mark-read", ":id") }}`.replace(':id', notificationId), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+        });
+      } catch (error) {
+        console.error('Error marking notification as read:', error);
+      }
+    }
+
+    // Close notifications when clicking outside
+    document.addEventListener('click', function(event) {
+      const panel = document.getElementById('notificationsPanel');
+      const button = event.target.closest('[aria-label="notifications"]');
+      
+      if (!panel.contains(event.target) && !button) {
+        panel.classList.add('hidden');
+      }
+    });
+    
+    // Close profile menu when clicking outside
+    document.addEventListener('click', function(event) {
+      const menu = document.getElementById('profileMenu');
+      const button = event.target.closest('button[onclick="toggleProfileMenu()"]');
+      
+      if (!button && !menu.contains(event.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // Auto-hide floating navigation on scroll
+    let lastScrollTop = 0;
+    let scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
+    let isScrolling = false;
+    
+    window.addEventListener('scroll', function() {
+      if (!isScrolling) {
+        window.requestAnimationFrame(function() {
+          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+          const floatingNav = document.getElementById('floatingNav');
+          
+          // Only react to significant scroll movements
+          if (Math.abs(currentScroll - lastScrollTop) > scrollThreshold) {
+            if (currentScroll > lastScrollTop && currentScroll > 100) {
+              // Scrolling down & past initial viewport - hide nav
+              floatingNav.style.transform = 'translateY(120%)';
+            } else {
+              // Scrolling up or near top - show nav
+              floatingNav.style.transform = 'translateY(0)';
+            }
+            lastScrollTop = currentScroll;
+          }
+          
+          isScrolling = false;
+        });
+      }
+      isScrolling = true;
+    });
+
+    // Show navigation when user stops scrolling for a moment
+    let scrollTimer = null;
+    window.addEventListener('scroll', function() {
+      const floatingNav = document.getElementById('floatingNav');
+      
+      // Clear the timer if it exists
+      if (scrollTimer !== null) {
+        clearTimeout(scrollTimer);
+      }
+      
+      // Set a timer to show nav after scrolling stops
+      scrollTimer = setTimeout(function() {
+        floatingNav.style.transform = 'translateY(0)';
+      }, 1500); // Show nav 1.5 seconds after scrolling stops
+    });
+  </script>
 </body>
-<script src="{{ asset('js/dashboard.js') }}" defer></script>
 </html>

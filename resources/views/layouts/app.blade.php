@@ -6,26 +6,30 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Eni Members') }}</title>
-    <meta name="theme-color" content="#FFCD00">
-    <link rel="manifest" href="/manifest.webmanifest">
-    <!-- Favicon / PWA icons -->
-    <link rel="icon" href="/eni.png" type="image/png">
-    <link rel="apple-touch-icon" href="/eni.png">
-    <meta name="application-name" content="{{ config('app.name', 'Eni Members') }}">
-    <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Eni Members') }}">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="msapplication-TileColor" content="#FFCD00">
-    <meta name="msapplication-TileImage" content="/eni.png">
+        <meta name="theme-color" content="#FFCD00">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="{{ asset('fonts/inter.css') }}">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.tailwindcss.com"></script>
+        
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            'eni-yellow': '#FFCD00',
+                            'eni-dark': '#1a1a1a'
+                        }
+                    }
+                }
+            }
+        </script>
     </head>
     <body class="font-sans antialiased bg-eni-dark">
         <div class="min-h-screen">
@@ -53,18 +57,5 @@
         
         <!-- Footer Modals -->
         @include('components.footer-modals')
-
-        <!-- Service Worker registration for PWA (Workbox generated at /build/sw.js) -->
-        <script>
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/build/sw.js').then(function(reg) {
-                        console.log('Service worker registered with scope:', reg.scope);
-                    }).catch(function(err) {
-                        console.warn('Service worker registration failed:', err);
-                    });
-                });
-            }
-        </script>
     </body>
 </html>
