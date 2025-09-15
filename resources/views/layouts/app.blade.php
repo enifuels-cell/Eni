@@ -6,7 +6,17 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>{{ config('app.name', 'Eni Members') }}</title>
-        <meta name="theme-color" content="#FFCD00">
+    <meta name="theme-color" content="#FFCD00">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <!-- Favicon / PWA icons -->
+    <link rel="icon" href="/eni.png" type="image/png">
+    <link rel="apple-touch-icon" href="/eni.png">
+    <meta name="application-name" content="{{ config('app.name', 'Eni Members') }}">
+    <meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Eni Members') }}">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="msapplication-TileColor" content="#FFCD00">
+    <meta name="msapplication-TileImage" content="/eni.png">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,5 +67,17 @@
         
         <!-- Footer Modals -->
         @include('components.footer-modals')
+
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                        console.log('Service worker registered.', reg);
+                    }).catch(function(err) {
+                        console.warn('Service worker registration failed:', err);
+                    });
+                });
+            }
+        </script>
     </body>
 </html>
