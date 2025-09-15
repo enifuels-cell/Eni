@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('receipt_code', 20)->unique()->nullable()->after('description');
-            $table->string('receipt_path')->nullable()->after('receipt_code');
+            // Check if receipt_path column doesn't exist before adding
+            if (!Schema::hasColumn('transactions', 'receipt_path')) {
+                $table->string('receipt_path')->nullable()->after('receipt_code');
+            }
         });
     }
 
@@ -23,7 +25,10 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->dropColumn(['receipt_code', 'receipt_path']);
+            // Check if receipt_path column exists before dropping
+            if (Schema::hasColumn('transactions', 'receipt_path')) {
+                $table->dropColumn('receipt_path');
+            }
         });
     }
 };
