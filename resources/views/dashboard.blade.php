@@ -146,10 +146,10 @@
   <!-- Hero Balance -->
   <section class="bg-gradient-to-br from-eni-yellow to-yellow-400 text-eni-dark rounded-b-3xl p-6 shadow-glow">
     <h2 class="text-sm uppercase font-bold tracking-wide">Account Balance</h2>
-    <p class="text-4xl font-extrabold mt-1">${{ number_format($account_balance ?? 0, 2) }}</p>
+  <p class="text-4xl font-extrabold mt-1">${{ number_format(is_object($account_balance) && method_exists($account_balance, 'toFloat') ? $account_balance->toFloat() : ($account_balance ?? 0), 2) }}</p>
     <p class="text-sm text-eni-dark/70">
       @if(($total_interest ?? 0) > 0)
-        + ${{ number_format($total_interest, 2) }} Interest Earned
+        + ${{ number_format(is_object($total_interest) && method_exists($total_interest, 'toFloat') ? $total_interest->toFloat() : $total_interest, 2) }} Interest Earned
       @else
         Ready to start investing
       @endif
@@ -170,13 +170,13 @@
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        ${{ number_format($total_invested ?? 0, 0) }}
+  ${{ number_format(is_object($total_invested) && method_exists($total_invested, 'toFloat') ? $total_invested->toFloat() : ($total_invested ?? 0), 0) }}
       </div>
       <p class="text-xs mt-2 text-white/70">Total Invested</p>
     </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
       <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        ${{ number_format($total_referral_bonus ?? 0, 0) }}
+  ${{ number_format(is_object($total_referral_bonus) && method_exists($total_referral_bonus, 'toFloat') ? $total_referral_bonus->toFloat() : ($total_referral_bonus ?? 0), 0) }}
       </div>
       <p class="text-xs mt-2 text-white/70">Referral Bonus</p>
     </div>
@@ -216,7 +216,7 @@
       @forelse($recent_transactions ?? [] as $transaction)
       <li class="flex items-center justify-between bg-white/5 p-4 rounded-xl">
         <div>
-          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format($transaction->amount, 2) }}</span>
+          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format(is_object($transaction->amount) && method_exists($transaction->amount, 'toFloat') ? $transaction->amount->toFloat() : $transaction->amount, 2) }}</span>
           @if($transaction->status !== 'completed')
             <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
           @endif
