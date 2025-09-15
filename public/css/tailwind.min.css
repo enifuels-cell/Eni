@@ -1,0 +1,36 @@
+/* Minimal Tailwind placeholder for local dev — not full Tailwind. This provides only the few color variables and font fallback used by the dashboard. */
+:root{
+  --eni-yellow:#FFCD00;
+  --eni-dark:#0B2241;
+  --eni-charcoal:#121417;
+}
+body{font-family:Inter,ui-sans-serif,system-ui;color:#fff;background:var(--eni-charcoal);} 
+.bg-eni-dark{background:var(--eni-dark);} 
+.bg-eni-charcoal{background:var(--eni-charcoal);} 
+.text-eni-dark{color:var(--eni-dark);} 
+.text-eni-yellow{color:var(--eni-yellow);} 
+.bg-eni-yellow{background:var(--eni-yellow);} 
+.shadow-glow{box-shadow:0 0 20px rgba(255,205,0,0.45);} 
+.rounded-2xl{border-radius:1rem;} 
+.p-6{padding:1.5rem;} 
+.p-4{padding:1rem;} 
+.text-sm{font-size:.875rem;} 
+.text-4xl{font-size:2.25rem;} 
+.flex{display:flex;} 
+.grid{display:grid;} 
+.gap-4{gap:1rem;} 
+.mt-6{margin-top:1.5rem;} 
+.mb-20{margin-bottom:5rem;} 
+.w-10{width:2.5rem;} 
+.h-10{height:2.5rem;} 
+.rounded-full{border-radius:9999px;} 
+.border-2{border-width:2px;} 
+.border-eni-yellow{border-color:var(--eni-yellow);} 
+.text-white\/70{color:rgba(255,255,255,0.7);} 
+.text-white\/60{color:rgba(255,255,255,0.6);} 
+.bg-white{background:#fff;} 
+.text-eni-yellow{color:var(--eni-yellow);} 
+.font-extrabold{font-weight:800;} 
+.font-bold{font-weight:700;} 
+.font-semibold{font-weight:600;} 
+.cursor-pointer{cursor:pointer;}

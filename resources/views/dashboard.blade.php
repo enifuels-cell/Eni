@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ENI Dashboard — Investment Platform</title>
   <meta name="theme-color" content="#FFCD00" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
   <link rel="stylesheet" href="{{ asset('fonts/inter.css') }}">
@@ -24,7 +25,7 @@
   <!-- Header -->
   <header class="bg-eni-dark px-6 py-4 flex items-center justify-between shadow-md">
     <div class="flex items-center gap-4">
-      <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
+  <img src="/images/eni-logo.svg" alt="ENI Logo" class="h-8 w-auto" />
       <div>
         <h1 class="font-extrabold text-xl tracking-tight">Eni Members</h1>
         <p class="text-sm text-white/70">Welcome back, {{ Auth::user()->name }}</p>
@@ -35,7 +36,7 @@
         <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
           @php
-            $totalUnread = $unread_notifications_count + (!Auth::user()->pin_hash ? 1 : 0);
+            $totalUnread = $unread_notifications_count + ((Auth::user() && !Auth::user()->pin_hash) ? 1 : 0);
           @endphp
           @if($totalUnread > 0)
             @if($totalUnread > 9)
@@ -191,9 +192,13 @@
       @forelse($recent_transactions ?? [] as $transaction)
       <li class="flex items-center justify-between bg-white/5 p-4 rounded-xl">
         <div>
-          <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format(is_object($transaction->amount) && method_exists($transaction->amount, 'toFloat') ? $transaction->amount->toFloat() : $transaction->amount, 2) }}</span>
-          @if($transaction->status !== 'completed')
-            <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
+          @if(is_object($transaction))
+            <span class="capitalize">{{ str_replace('_', ' ', $transaction->type) }} — ${{ number_format(is_object($transaction->amount) && method_exists($transaction->amount, 'toFloat') ? $transaction->amount->toFloat() : $transaction->amount, 2) }}</span>
+            @if($transaction->status !== 'completed')
+              <span class="ml-2 text-xs bg-yellow-600 px-2 py-1 rounded">{{ ucfirst($transaction->status) }}</span>
+            @endif
+          @else
+            <span class="capitalize text-red-400">Invalid transaction data</span>
           @endif
         </div>
         <span class="text-xs {{ $transaction->type === 'withdrawal' ? 'text-red-400' : 'text-green-400' }}">
@@ -314,96 +319,6 @@
     </div>
   </div>
 
-  <script>
-    function toggleNotifications() {
-      const panel = document.getElementById('notificationsPanel');
-      panel.classList.toggle('hidden');
-    }
-
-    function toggleProfileMenu() {
-      const menu = document.getElementById('profileMenu');
-      menu.classList.toggle('hidden');
-    }
-
-    // Mark notification as read when clicked (for quick dropdown actions)
-    async function markNotificationAsRead(notificationId) {
-      try {
-        await fetch(`{{ route("user.notifications.mark-read", ":id") }}`.replace(':id', notificationId), {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-          }
-        });
-      } catch (error) {
-        console.error('Error marking notification as read:', error);
-      }
-    }
-
-    // Close notifications when clicking outside
-    document.addEventListener('click', function(event) {
-      const panel = document.getElementById('notificationsPanel');
-      const button = event.target.closest('[aria-label="notifications"]');
-      
-      if (!panel.contains(event.target) && !button) {
-        panel.classList.add('hidden');
-      }
-    });
-    
-    // Close profile menu when clicking outside
-    document.addEventListener('click', function(event) {
-      const menu = document.getElementById('profileMenu');
-      const button = event.target.closest('button[onclick="toggleProfileMenu()"]');
-      
-      if (!button && !menu.contains(event.target)) {
-        menu.classList.add('hidden');
-      }
-    });
-
-    // Auto-hide floating navigation on scroll
-    let lastScrollTop = 0;
-    let scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
-    let isScrolling = false;
-    
-    window.addEventListener('scroll', function() {
-      if (!isScrolling) {
-        window.requestAnimationFrame(function() {
-          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-          const floatingNav = document.getElementById('floatingNav');
-          
-          // Only react to significant scroll movements
-          if (Math.abs(currentScroll - lastScrollTop) > scrollThreshold) {
-            if (currentScroll > lastScrollTop && currentScroll > 100) {
-              // Scrolling down & past initial viewport - hide nav
-              floatingNav.style.transform = 'translateY(120%)';
-            } else {
-              // Scrolling up or near top - show nav
-              floatingNav.style.transform = 'translateY(0)';
-            }
-            lastScrollTop = currentScroll;
-          }
-          
-          isScrolling = false;
-        });
-      }
-      isScrolling = true;
-    });
-
-    // Show navigation when user stops scrolling for a moment
-    let scrollTimer = null;
-    window.addEventListener('scroll', function() {
-      const floatingNav = document.getElementById('floatingNav');
-      
-      // Clear the timer if it exists
-      if (scrollTimer !== null) {
-        clearTimeout(scrollTimer);
-      }
-      
-      // Set a timer to show nav after scrolling stops
-      scrollTimer = setTimeout(function() {
-        floatingNav.style.transform = 'translateY(0)';
-      }, 1500); // Show nav 1.5 seconds after scrolling stops
-    });
-  </script>
 </body>
+<script src="{{ asset('js/dashboard.js') }}" defer></script>
 </html>

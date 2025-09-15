@@ -1,0 +1,4 @@
+/* Minimal subset placeholder for Font Awesome icons used in dashboard */
+.fas{font-family: 'Font Awesome 6 Free';font-weight:900;}
+.fas:before{content:'';}
+.i-fas{display:inline-block;width:1em;text-align:center;}
