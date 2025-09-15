@@ -679,7 +679,25 @@ class DashboardController extends Controller
         
         $notifications = $notificationsQuery->paginate(15);
 
-        return view('user.notifications', compact('notifications', 'categories', 'filter'));
+        // Attendance System Data for Raffle Modal
+        $currentMonthTickets = $user->getMonthlyTicketCount();
+        $currentMonthAttendance = $user->getMonthlyAttendance()->count();
+        $currentMonthDays = now()->daysInMonth;
+
+        // Get attendance dates for calendar
+        $attendanceDates = $user->getMonthlyAttendance()->pluck('attendance_date')->map(function($date) {
+            return $date->toDateString();
+        })->toArray();
+
+        return view('user.notifications', compact(
+            'notifications', 
+            'categories', 
+            'filter',
+            'currentMonthTickets',
+            'currentMonthAttendance',
+            'currentMonthDays',
+            'attendanceDates'
+        ));
     }
 
     public function markNotificationAsRead($id)

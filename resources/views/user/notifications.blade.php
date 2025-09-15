@@ -168,6 +168,36 @@
       </div>
       @endforelse
 
+      <!-- iPhone Air Raffle Notification -->
+      <div class="bg-gradient-to-r from-eni-yellow/10 to-eni-yellow/5 border border-eni-yellow/30 rounded-xl p-6 hover:bg-eni-yellow/10 transition-all duration-200 cursor-pointer" onclick="showAttendanceModal()">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-eni-yellow/20 border border-eni-yellow/40 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-trophy text-eni-yellow"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between mb-2">
+              <div class="flex items-center gap-3 flex-wrap">
+                <h3 class="font-semibold text-lg text-white truncate">🏆 iPhone Air Raffle Active!</h3>
+                <span class="px-2 py-1 bg-eni-yellow/20 text-eni-yellow text-xs rounded-full flex-shrink-0">Raffle</span>
+                <span class="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-full flex-shrink-0">Active</span>
+              </div>
+              <span class="text-white/50 text-sm flex-shrink-0 ml-2">Ongoing</span>
+            </div>
+            <p class="text-white/70 mb-3 line-clamp-2">Login daily to earn raffle tickets and win the iPhone Air this month! More consecutive logins = better chances of winning!</p>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-eni-yellow rounded-full animate-pulse"></div>
+                <span class="text-eni-yellow text-sm font-medium">{{ $currentMonthTickets ?? 0 }} tickets earned</span>
+              </div>
+              <div class="flex items-center gap-2 text-eni-yellow/80">
+                <span class="text-sm font-medium">Click to view calendar</span>
+                <i class="fas fa-chevron-right text-xs"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- PIN Setup Notification (if not set and no custom notification exists) -->
   @if(!Auth::user()->pin_hash && !$notifications->where('category', 'security')->where('title', 'like', '%PIN%')->count())
   <div class="bg-eni-dark/50 border border-eni-yellow/30 rounded-xl p-6 hover:bg-eni-dark/70 transition-all duration-200 cursor-pointer" data-action="goto" data-url="{{ route('pin.setup.form') }}">
@@ -579,6 +609,21 @@
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape') closeNotificationModal();
     });
+
+    // Attendance Modal Function
+    function showAttendanceModal() {
+      // Redirect to dashboard with attendance modal flag
+      window.location.href = '{{ route("user.dashboard") }}#attendance-modal';
+    }
   </script>
+
+  <!-- Include Attendance Modal -->
+  @include('components.attendance-modal', [
+      'showModal' => false,
+      'currentMonthTickets' => $currentMonthTickets ?? 0,
+      'currentMonthAttendance' => $currentMonthAttendance ?? 0,
+      'currentMonthDays' => $currentMonthDays ?? now()->daysInMonth,
+      'attendanceDates' => $attendanceDates ?? []
+  ])
 </body>
 </html>
