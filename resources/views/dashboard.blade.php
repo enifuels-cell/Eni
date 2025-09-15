@@ -298,6 +298,26 @@
         </div>
         @endif
 
+        <!-- Raffle Notification -->
+        <div class="bg-gradient-to-r from-eni-yellow/10 to-eni-yellow/5 border border-eni-yellow/30 rounded-lg p-4 cursor-pointer hover:bg-eni-yellow/10 transition-all duration-200" onclick="document.getElementById('attendance-modal')?.classList.remove('hidden')">
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-eni-yellow/20 border border-eni-yellow/40 rounded-full flex items-center justify-center">
+              <i class="fas fa-trophy text-eni-yellow text-xs"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-sm text-white">🏆 iPhone Air Raffle Active!</p>
+                <div class="w-2 h-2 bg-eni-yellow rounded-full animate-pulse flex-shrink-0"></div>
+              </div>
+              <p class="text-white/70 text-xs mt-1">Login daily to earn raffle tickets and win the iPhone Air this month!</p>
+              <div class="flex items-center gap-2 mt-2">
+                <div class="w-1 h-1 bg-eni-yellow rounded-full animate-pulse"></div>
+                <span class="text-eni-yellow text-xs font-medium">{{ $currentMonthTickets ?? 0 }} tickets earned</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         @forelse($recent_notifications as $notification)
         <div class="bg-white/5 border border-white/10 rounded-lg p-4 cursor-pointer hover:bg-white/10 transition-all duration-200" onclick="window.location.href='{{ route('user.notifications') }}'">
           <div class="flex items-start gap-3">

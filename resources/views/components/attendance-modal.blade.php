@@ -1,12 +1,12 @@
 <!-- Attendance Modal Component -->
 <div id="attendance-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-gradient-to-br from-blue-900/90 to-purple-900/90 backdrop-blur-xl border border-white/20 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
+        <div class="bg-gradient-to-br from-eni-dark/95 to-eni-charcoal/95 backdrop-blur-xl border border-eni-yellow/20 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl shadow-eni-yellow/10">
             <!-- Header -->
-            <div class="bg-gradient-to-r from-eni-yellow/20 to-yellow-400/20 p-6 border-b border-white/10">
+            <div class="bg-gradient-to-r from-eni-yellow/20 to-eni-yellow/10 p-6 border-b border-eni-yellow/10">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-eni-yellow/20 rounded-xl flex items-center justify-center">
+                        <div class="w-12 h-12 bg-eni-yellow/20 border border-eni-yellow/30 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-eni-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -16,7 +16,7 @@
                             <p class="text-white/70">You've earned a raffle ticket for the iPhone Air! 📱🎫</p>
                         </div>
                     </div>
-                    <button onclick="closeAttendanceModal()" class="text-white/60 hover:text-white transition-colors">
+                    <button onclick="closeAttendanceModal()" class="text-white/60 hover:text-eni-yellow transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
@@ -27,7 +27,7 @@
             <!-- Content -->
             <div class="p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
                 <!-- Current Month Stats -->
-                <div class="bg-black/20 rounded-2xl p-6 mb-6">
+                <div class="bg-eni-dark/30 rounded-2xl p-6 mb-6 border border-eni-yellow/10">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center">
                             <div class="text-3xl font-bold text-eni-yellow mb-2">{{ $currentMonthTickets }}</div>
@@ -45,7 +45,7 @@
                 </div>
 
                 <!-- Calendar View -->
-                <div class="bg-black/20 rounded-2xl p-6 mb-6">
+                <div class="bg-eni-dark/30 rounded-2xl p-6 mb-6 border border-eni-yellow/10">
                     <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
                         <svg class="w-5 h-5 text-eni-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -79,7 +79,7 @@
                                 $isFuture = $date->isFuture();
                         @endphp
 
-                        <div class="aspect-square rounded-xl border-2 {{ $isToday ? 'border-eni-yellow bg-eni-yellow/10' : ($hasAttendance ? 'border-green-400 bg-green-400/20' : ($isFuture ? 'border-white/10 bg-black/10' : 'border-red-400/20 bg-red-400/10 hover:border-blue-400 hover:bg-blue-400/10 cursor-pointer')) }} flex items-center justify-center text-sm font-medium transition-all hover:scale-105"
+                        <div class="aspect-square rounded-xl border-2 {{ $isToday ? 'border-eni-yellow bg-eni-yellow/10' : ($hasAttendance ? 'border-green-400 bg-green-400/20' : ($isFuture ? 'border-eni-yellow/10 bg-eni-dark/20' : 'border-eni-yellow/20 bg-eni-dark/30 hover:border-eni-yellow hover:bg-eni-yellow/10 cursor-pointer')) }} flex items-center justify-center text-sm font-medium transition-all hover:scale-105"
                              @if(!$isFuture && !$hasAttendance && !$isToday)
                                  data-date="{{ $date->format('Y-m-d') }}"
                                  data-clickable="true"
@@ -91,11 +91,11 @@
                                     <div class="text-xs text-green-400">✓</div>
                                 </div>
                             @elseif($isFuture)
-                                <div class="text-white/40">{{ $day }}</div>
+                                <div class="text-eni-yellow/40">{{ $day }}</div>
                             @else
                                 <div class="text-center">
-                                    <div class="text-red-400 font-bold">{{ $day }}</div>
-                                    <div class="text-xs text-red-400/60">Click to mark</div>
+                                    <div class="text-eni-yellow font-bold">{{ $day }}</div>
+                                    <div class="text-xs text-eni-yellow/60">Click to mark</div>
                                 </div>
                             @endif
                         </div>
@@ -107,7 +107,7 @@
                 </div>
 
                 <!-- Raffle Info -->
-                <div class="bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-2xl p-6">
+                <div class="bg-gradient-to-r from-eni-dark/40 to-eni-charcoal/40 rounded-2xl p-6 border border-eni-yellow/20">
                     <!-- Prize Image -->
                     <div class="text-center mb-4">
                         <img src="{{ asset('images/iPhone-17-Air.jpg') }}"
@@ -121,7 +121,7 @@
                     </div>
 
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-eni-yellow/20 rounded-xl flex items-center justify-center">
+                        <div class="w-10 h-10 bg-eni-yellow/20 border border-eni-yellow/30 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-eni-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
@@ -134,7 +134,7 @@
                         based on the number of tickets earned. More consecutive logins = more chances to win the iPhone Air!
                     </p>
 
-                    <div class="bg-gradient-to-r from-eni-yellow/10 to-yellow-400/10 rounded-xl p-4 border border-eni-yellow/20">
+                    <div class="bg-gradient-to-r from-eni-yellow/10 to-eni-yellow/5 rounded-xl p-4 border border-eni-yellow/20">
                         <div class="flex items-center justify-between">
                             <div>
                                 <div class="text-sm text-white/60">Next Draw</div>
@@ -157,12 +157,12 @@
             </div>
 
             <!-- Footer -->
-            <div class="bg-black/20 p-6 border-t border-white/10">
+            <div class="bg-eni-dark/30 p-6 border-t border-eni-yellow/10">
                 <div class="flex justify-between items-center">
                     <div class="text-white/60 text-sm">
                         🎯 Keep logging in daily to increase your chances of winning the iPhone Air!
                     </div>
-                    <button onclick="closeAttendanceModal()" class="bg-eni-yellow text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors">
+                    <button onclick="closeAttendanceModal()" class="bg-eni-yellow text-eni-dark px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors shadow-lg">
                         Continue
                     </button>
                 </div>
@@ -244,7 +244,7 @@ function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `fixed top-4 right-4 px-4 py-2 rounded-lg text-white z-50 ${
         type === 'success' ? 'bg-green-500' :
-        type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        type === 'error' ? 'bg-red-500' : 'bg-eni-yellow'
     }`;
     notification.textContent = message;
     document.body.appendChild(notification);
