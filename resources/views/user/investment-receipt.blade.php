@@ -5,24 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Receipt - ENI Platform</title>
     <!-- Force recompile: <?php echo date('Y-m-d H:i:s'); ?> -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'eni-yellow': '#FFCD00',
-                        'eni-dark': '#0B2241',
-                        'eni-charcoal': '#121417'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
         @media print {
@@ -70,7 +56,7 @@
                     <div class="text-right">
                         <div class="bg-eni-dark text-eni-yellow px-4 py-2 rounded-lg">
                             <span class="text-sm font-semibold">Receipt #</span>
-                            <div class="text-lg font-bold">{{ str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</div>
+                            <div class="text-lg font-bold">{{ $transaction->receipt_code ?? str_pad($transaction->id, 6, '0', STR_PAD_LEFT) }}</div>
                         </div>
                     </div>
                 </div>
@@ -108,8 +94,14 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Transaction ID:</span>
-                                <span class="font-mono font-semibold">{{ $transaction->id }}</span>
+                                <span class="font-mono font-semibold">{{ $transaction->receipt_code ?? $transaction->id }}</span>
                             </div>
+                            @if(isset($investment) && $investment->investment_code)
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Investment Code:</span>
+                                <span class="font-mono font-semibold">{{ $investment->investment_code }}</span>
+                            </div>
+                            @endif
                             <div class="flex justify-between">
                                 <span class="text-gray-600">Payment Method:</span>
                                 <span class="font-semibold">{{ ucwords(str_replace('_', ' ', $transaction->reference)) }}</span>
@@ -198,7 +190,7 @@
                         @endphp
                         
                         @if($isImage)
-                            <img src="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                            <img src="{{ route('transaction.receipt.file', $transaction->id) }}" 
                                  alt="Payment Receipt" 
                                  class="w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
                                  onclick="openReceiptModal(this.src)">
@@ -210,7 +202,7 @@
                                     </svg>
                                 </div>
                                 <p class="text-gray-600 font-semibold">PDF Receipt</p>
-                                <a href="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
                                    target="_blank" 
                                    class="inline-block mt-2 bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                                     View PDF
@@ -263,9 +255,9 @@
     </div>
 
     <!-- Receipt Image Modal -->
-    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Receipt image modal">
         <div class="relative max-w-4xl max-h-full">
-            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
+            <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10" aria-label="Close modal">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
@@ -275,15 +267,30 @@
     </div>
 
     <script>
+        let lastFocusedElement = null;
         function openReceiptModal(imageSrc) {
+            lastFocusedElement = document.activeElement;
+            const modal = document.getElementById('receiptModal');
             document.getElementById('modalReceiptImage').src = imageSrc;
-            document.getElementById('receiptModal').classList.remove('hidden');
+            modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
+            const focusable = modal.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])');
+            if (focusable.length) focusable[0].focus();
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            modal.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
+                    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+                    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+                }
+            });
         }
 
         function closeReceiptModal() {
-            document.getElementById('receiptModal').classList.add('hidden');
+            const modal = document.getElementById('receiptModal');
+            modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
+            if (lastFocusedElement) lastFocusedElement.focus();
         }
 
         // Close modal when clicking outside the image

@@ -42,8 +42,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|InvestmentPackage whereUpdatedAt($value)
  * @mixin \Eloquent
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class InvestmentPackage extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'name',
         'min_amount',

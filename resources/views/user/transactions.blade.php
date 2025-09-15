@@ -186,12 +186,12 @@
                                         @endphp
                                         
                                         @if($isImage)
-                                            <button onclick="openReceiptModal('{{ asset('storage/' . $transaction->receipt_path) }}')" 
+                                            <button onclick="openReceiptModal('{{ route('transaction.receipt.file', $transaction->id) }}')" 
                                                     class="bg-eni-yellow/20 text-eni-yellow px-3 py-1 rounded-lg text-xs font-semibold hover:bg-eni-yellow/30 transition-colors">
                                                 View Receipt
                                             </button>
                                         @else
-                                            <a href="{{ asset('storage/' . $transaction->receipt_path) }}" 
+                                            <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
                                                target="_blank" 
                                                class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-500/30 transition-colors">
                                                 View PDF

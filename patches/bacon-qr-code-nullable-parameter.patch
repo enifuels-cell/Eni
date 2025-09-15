@@ -1,0 +1,5 @@
+--- a/vendor/bacon/bacon-qr-code/src/Common/ReedSolomonCodec.php
++++ b/vendor/bacon/bacon-qr-code/src/Common/ReedSolomonCodec.php
+@@
+-    public function decode(SplFixedArray $data, SplFixedArray $erasures = null) : ?int
++    public function decode(SplFixedArray $data, ?SplFixedArray $erasures = null) : ?int

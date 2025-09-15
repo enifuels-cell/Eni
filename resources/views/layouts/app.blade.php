@@ -26,20 +26,6 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://cdn.tailwindcss.com"></script>
-        
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            'eni-yellow': '#FFCD00',
-                            'eni-dark': '#1a1a1a'
-                        }
-                    }
-                }
-            }
-        </script>
     </head>
     <body class="font-sans antialiased bg-eni-dark">
         <div class="min-h-screen">
@@ -67,17 +53,5 @@
         
         <!-- Footer Modals -->
         @include('components.footer-modals')
-
-        <script>
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                        console.log('Service worker registered.', reg);
-                    }).catch(function(err) {
-                        console.warn('Service worker registration failed:', err);
-                    });
-                });
-            }
-        </script>
     </body>
 </html>

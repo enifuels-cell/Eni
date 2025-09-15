@@ -160,7 +160,7 @@ class DashboardController extends Controller
                 'amount' => 'required|numeric|min:10',
                 'payment_method' => 'required|string',
                 'package_id' => 'nullable|exists:investment_packages,id',
-                'receipt' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
+                'receipt' => 'nullable|file|mimetypes:image/jpeg,image/png,application/pdf|max:2048',
                 'selected_bank' => 'nullable|string|in:landbank,bpi,rcbc'
             ]);
 
@@ -203,10 +203,37 @@ class DashboardController extends Controller
                 }
             }
             
-            // Handle receipt upload if provided
+            // Handle receipt upload if provided (hardened)
             $receiptPath = null;
             if ($request->hasFile('receipt')) {
-                $receiptPath = $request->file('receipt')->store('receipts', 'public');
+                $file = $request->file('receipt');
+                // Extra mime validation using PHP's Fileinfo
+                $finfoMime = finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file->getRealPath());
+                $allowed = ['image/jpeg','image/png','application/pdf'];
+                if (!in_array($finfoMime, $allowed)) {
+                    return back()->withErrors(['receipt' => 'Invalid file type. Only JPG, PNG or PDF allowed.']);
+                }
+                $randomName = 'rcpt_' . bin2hex(random_bytes(8)) . '.' . $file->getClientOriginalExtension();
+                // Store in private storage (local disk) not publicly accessible
+                $receiptPath = $file->storeAs('receipts', $randomName, 'local');
+
+                // Detailed logging for diagnostics
+                try {
+                    $fullPath = storage_path('app/' . $receiptPath);
+                    \Log::channel('investment')->info('Receipt stored', [
+                        'transaction_stage' => 'pre-create',
+                        'original_name' => $file->getClientOriginalName(),
+                        'stored_name' => $randomName,
+                        'relative_path' => $receiptPath,
+                        'size_bytes' => $file->getSize(),
+                        'mime_reported' => $file->getClientMimeType(),
+                        'mime_finfo' => $finfoMime,
+                        'hash_sha256' => (is_file($fullPath) ? hash_file('sha256', $fullPath) : null),
+                        'exists' => is_file($fullPath),
+                    ]);
+                } catch (\Throwable $logErr) {
+                    \Log::warning('Receipt logging failure', ['error' => $logErr->getMessage()]);
+                }
             }
 
             // Build reference string with bank info if bank transfer
@@ -231,10 +258,14 @@ class DashboardController extends Controller
                 'reference' => $reference,
                 'status' => 'pending',
                 'description' => $description,
-                'receipt_path' => $receiptPath,
+                'receipt_path' => $receiptPath, // stored in local disk (private)
             ]);
 
-            \Log::info('Transaction created', ['transaction_id' => $transaction->id]);
+            \Log::info('Transaction created', [
+                'transaction_id' => $transaction->id,
+                'has_receipt' => (bool)$receiptPath,
+                'receipt_path' => $receiptPath,
+            ]);
 
             // If this is a package investment, create the investment record
             if ($request->package_id) {

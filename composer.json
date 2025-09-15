@@ -20,7 +20,8 @@
         "laravel/sail": "^1.41",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
-        "phpunit/phpunit": "^11.5.3"
+        "phpunit/phpunit": "^11.5.3",
+        "cweagans/composer-patches": "^1.7"
     },
     "autoload": {
         "psr-4": {
@@ -62,6 +63,11 @@
     "extra": {
         "laravel": {
             "dont-discover": []
+        },
+        "patches": {
+            "bacon/bacon-qr-code": {
+                "PHP 8.2 deprecation - nullable parameter for decode()": "patches/bacon-qr-code-nullable-parameter.patch"
+            }
         }
     },
     "config": {
@@ -70,7 +76,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "cweagans/composer-patches": true
         }
     },
     "minimum-stability": "stable",

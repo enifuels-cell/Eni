@@ -35,8 +35,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Transaction whereUserId($value)
  * @mixin \Eloquent
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Transaction extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'type',
@@ -45,11 +48,12 @@ class Transaction extends Model
         'status',
         'description',
         'receipt_path',
-        'processed_at'
+        'processed_at',
+        'receipt_code',
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
         'processed_at' => 'datetime'
     ];
 
@@ -71,5 +75,25 @@ class Transaction extends Model
     public function scopeByType($query, string $type)
     {
         return $query->where('type', $type);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (!$model->receipt_code) {
+                $model->receipt_code = static::uniqueReceiptCode();
+            }
+        });
+    }
+
+    protected static function uniqueReceiptCode(int $length = 8): string
+    {
+        $tries = 0; $code = '';
+        do {
+            $tries++;
+            $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            $code = collect(range(1, $length))->map(fn() => $alphabet[random_int(0, strlen($alphabet)-1)])->implode('');
+        } while (self::where('receipt_code', $code)->exists() && $tries < 10);
+        return $code;
     }
 }

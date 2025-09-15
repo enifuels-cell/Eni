@@ -44,8 +44,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Investment whereUserId($value)
  * @mixin \Eloquent
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Investment extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'investment_package_id',
@@ -55,13 +58,15 @@ class Investment extends Model
         'total_interest_earned',
         'active',
         'started_at',
-        'ended_at'
+        'ended_at',
+        'investment_code'
     ];
 
     protected $casts = [
-        'amount' => 'decimal:2',
+        'amount' => \App\Casts\MoneyCast::class,
+        // Keep rate as decimal since it's a percentage, not an amount
         'daily_shares_rate' => 'decimal:2',
-        'total_interest_earned' => 'decimal:2',
+        'total_interest_earned' => \App\Casts\MoneyCast::class,
         'active' => 'boolean',
         'started_at' => 'datetime',
         'ended_at' => 'datetime'
@@ -110,6 +115,30 @@ class Investment extends Model
     public function daysRemaining(): int
     {
         return max(0, $this->remaining_days);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $model) {
+            if (!$model->investment_code) {
+                $model->investment_code = static::generateInvestmentCode();
+            }
+        });
+    }
+
+    protected static function generateInvestmentCode(int $length = 6): string
+    {
+        $tries = 0; $code = '';
+        do {
+            $tries++;
+            $alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+            $segment = '';
+            for ($i=0; $i<$length; $i++) {
+                $segment .= $alphabet[random_int(0, strlen($alphabet)-1)];
+            }
+            $code = 'INV-' . $segment;
+        } while (self::where('investment_code', $code)->exists() && $tries < 10);
+        return $code;
     }
 
     // Alias for status

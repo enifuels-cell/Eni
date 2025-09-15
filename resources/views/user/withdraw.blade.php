@@ -4,24 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdraw - ENI Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'eni-yellow': '#FFCD00',
-                        'eni-dark': '#0B2241',
-                        'eni-charcoal': '#121417'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
     </style>
