@@ -5,41 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ENI Dashboard — Investment Platform</title>
   <meta name="theme-color" content="#FFCD00" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter','ui-sans-serif','system-ui'] },
-          colors: {
-            eni: {
-              yellow: '#FFCD00',
-              dark: '#0B2241',
-              charcoal: '#121417'
-            }
-          },
-          boxShadow: {
-            glow: '0 0 20px rgba(255,205,0,0.45)',
-          }
-        }
-      }
-    }
-  </script>
-  <style> 
-    body{font-family:Inter,ui-sans-serif,system-ui} 
-    
-    /* Mobile safe area considerations */
+  <link rel="stylesheet" href="{{ asset('css/tailwind.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/fontawesome.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('fonts/inter.css') }}">
+  <style>
+    body { font-family: 'Inter', ui-sans-serif, system-ui; }
     @media (max-width: 640px) {
       #floatingNav {
         bottom: max(1rem, env(safe-area-inset-bottom, 0px));
       }
     }
-    
-    /* Ensure floating nav doesn't cause horizontal scroll */
     #floatingNav > div {
       max-width: calc(100vw - 2rem);
     }
@@ -73,7 +48,7 @@
       </div>
       <div class="relative">
         <button onclick="toggleProfileMenu()" class="block hover:opacity-80 transition-opacity relative">
-          <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
+      <img src="{{ asset('images/default-avatar.png') }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
           <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
         </button>
         
