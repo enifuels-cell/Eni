@@ -32,10 +32,10 @@ class UpdateTotalInterest extends Command
     {
         $isDryRun = $this->option('dry-run');
         $today = Carbon::today();
-        
+
     $this->info("Processing daily interest for: {$today->toDateString()}");
     \Log::channel('investment')->info('Daily interest run started', ['date' => $today->toDateString(), 'dry_run' => $isDryRun]);
-        
+
         // Get all active investments
         $activeInvestments = Investment::active()
             ->where('remaining_days', '>', 0)
@@ -45,9 +45,7 @@ class UpdateTotalInterest extends Command
         if ($activeInvestments->isEmpty()) {
             $this->info('No active investments found.');
             return 0;
-        }
-
-        $totalProcessed = 0;
+        }        $totalProcessed = 0;
         $totalInterest = 0;
 
         DB::transaction(function () use ($activeInvestments, $today, $isDryRun, &$totalProcessed, &$totalInterest) {
@@ -63,9 +61,7 @@ class UpdateTotalInterest extends Command
                         'date' => $today->toDateString()
                     ]);
                     continue;
-                }
-
-                $dailyInterest = $investment->calculateDailyInterest();
+                }                $dailyInterest = $investment->calculateDailyInterest();
                 $totalInterest += $dailyInterest;
                 $totalProcessed++;
 
@@ -90,8 +86,13 @@ class UpdateTotalInterest extends Command
                     }
 
                     // Update investment totals
+                    $currentTotalEarned = $investment->total_interest_earned;
+                    if ($currentTotalEarned instanceof \App\Support\Money) {
+                        $currentTotalEarned = $currentTotalEarned->toFloat();
+                    }
+
                     $investment->update([
-                        'total_interest_earned' => $investment->total_interest_earned + $dailyInterest,
+                        'total_interest_earned' => $currentTotalEarned + $dailyInterest,
                         'remaining_days' => $investment->remaining_days - 1,
                         'active' => $investment->remaining_days - 1 > 0,
                         'ended_at' => $investment->remaining_days - 1 <= 0 ? now() : null,
@@ -119,7 +120,7 @@ class UpdateTotalInterest extends Command
         $this->info("Summary:");
         $this->info("Total investments processed: {$totalProcessed}");
         $this->info("Total interest distributed: $" . number_format($totalInterest, 2));
-        
+
         \Log::channel('investment')->info('Daily interest run completed', [
             'date' => $today->toDateString(),
             'processed' => $totalProcessed,

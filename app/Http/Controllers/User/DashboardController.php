@@ -19,7 +19,7 @@ class DashboardController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        
+
         // Get user statistics
         $total_invested = $user->totalInvestedAmount();
         $total_interest = $user->totalInterestEarned();
@@ -59,10 +59,10 @@ class DashboardController extends Controller
             return $date->toDateString();
         })->toArray();
 
-        return view('dashboard', compact(
-            'total_invested', 
-            'total_interest', 
-            'total_referral_bonus', 
+        return view('mobile-dashboard', compact(
+            'total_invested',
+            'total_interest',
+            'total_referral_bonus',
             'account_balance',
             'active_investments',
             'recent_transactions',
@@ -79,7 +79,7 @@ class DashboardController extends Controller
     public function investments()
     {
         \Log::info('UserDashboardController investments() called');
-        
+
         $user = Auth::user();
         $investments = $user->investments()
             ->with(['investmentPackage', 'dailyInterestLogs'])
@@ -138,10 +138,10 @@ class DashboardController extends Controller
         }
 
         return view('user.transactions', compact(
-            'transactions', 
-            'totalDeposits', 
-            'totalWithdrawals', 
-            'totalInterest', 
+            'transactions',
+            'totalDeposits',
+            'totalWithdrawals',
+            'totalInterest',
             'totalReferralBonuses'
         ));
     }
@@ -188,7 +188,7 @@ class DashboardController extends Controller
                 'wants_json' => $request->wantsJson(),
                 'content_type' => $request->header('Content-Type')
             ]);
-            
+
             $request->validate([
                 'amount' => 'required|numeric|min:10',
                 'payment_method' => 'required|string',
@@ -198,44 +198,44 @@ class DashboardController extends Controller
             ]);
 
             $user = Auth::user();
-            
+
             // If package_id is provided, validate investment amount against package limits
             if ($request->package_id) {
                 $package = InvestmentPackage::findOrFail($request->package_id);
                 \Log::info('Package found', ['package' => $package->toArray()]);
-                
+
                 // Check if package is active
                 if (!$package->active) {
                     $errorMessage = "This investment package is currently not available.";
-                    
+
                     if ($request->ajax() || $request->wantsJson()) {
                         return response()->json([
                             'success' => false,
                             'message' => $errorMessage
                         ], 422);
                     }
-                    
+
                     return back()->withErrors([
                         'package_id' => $errorMessage
                     ]);
                 }
-                
+
                 if ($request->amount < $package->min_amount || $request->amount > $package->max_amount) {
                     $errorMessage = "Investment amount must be between $" . number_format($package->min_amount) . " and $" . number_format($package->max_amount) . " for this package.";
-                    
+
                     if ($request->ajax() || $request->wantsJson()) {
                         return response()->json([
                             'success' => false,
                             'message' => $errorMessage
                         ], 422);
                     }
-                    
+
                     return back()->withErrors([
                         'amount' => $errorMessage
                     ]);
                 }
             }
-            
+
             // Handle receipt upload if provided (hardened)
             $receiptPath = null;
             if ($request->hasFile('receipt')) {
@@ -280,7 +280,7 @@ class DashboardController extends Controller
                 $reference .= ' (' . $bankNames[$request->selected_bank] . ')';
             }
 
-            $description = $request->package_id 
+            $description = $request->package_id
                 ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
                 : 'Deposit request - awaiting approval';
 
@@ -303,7 +303,7 @@ class DashboardController extends Controller
             // If this is a package investment, create the investment record
             if ($request->package_id) {
                 $package = InvestmentPackage::find($request->package_id);
-                
+
                 $investment = $user->investments()->create([
                     'investment_package_id' => $request->package_id,
                     'amount' => $request->amount,
@@ -314,9 +314,9 @@ class DashboardController extends Controller
                     'started_at' => now(),
                     'ended_at' => null,
                 ]);
-                
+
                 \Log::info('Investment created', ['investment_id' => $investment->id]);
-                
+
                 // Check if this is an AJAX request
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
@@ -325,10 +325,10 @@ class DashboardController extends Controller
                         'redirect' => route('user.investment.receipt', $transaction->id)
                     ]);
                 }
-                
+
                 // Redirect to investment receipt for regular requests
                 \Log::info('Redirecting to investment receipt', ['transaction_id' => $transaction->id]);
-                
+
                 return redirect()->route('user.investment.receipt', $transaction->id)
                     ->with('success', 'Investment submitted successfully! Your transaction receipt is ready.');
             }
@@ -341,23 +341,23 @@ class DashboardController extends Controller
                     'redirect' => route('user.dashboard')
                 ]);
             }
-            
+
             return redirect()->route('user.dashboard')
                 ->with('success', 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id);
-                
+
         } catch (\Exception $e) {
             \Log::error('Deposit processing error', [
-                'error' => $e->getMessage(), 
+                'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
                 'user_id' => $user->id,
                 'request_data' => $request->all(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);
-            
+
             // More specific error messages based on the exception type
             $errorMessage = 'Server error. Please contact support.';
-            
+
             if (str_contains($e->getMessage(), 'SQLSTATE')) {
                 $errorMessage = 'Database error. Please try again or contact support.';
             } elseif (str_contains($e->getMessage(), 'file') || str_contains($e->getMessage(), 'upload')) {
@@ -367,7 +367,7 @@ class DashboardController extends Controller
             } elseif (str_contains($e->getMessage(), 'balance')) {
                 $errorMessage = 'Insufficient balance. Please check your account balance.';
             }
-            
+
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
@@ -375,7 +375,7 @@ class DashboardController extends Controller
                     'debug_info' => config('app.debug') ? $e->getMessage() : null
                 ], 422);
             }
-            
+
             return back()->withErrors([
                 'general' => $errorMessage
             ])->withInput();
@@ -385,10 +385,10 @@ class DashboardController extends Controller
     public function investmentReceipt($transactionId)
     {
         $user = Auth::user();
-        
+
         // Get the transaction and ensure it belongs to the authenticated user
         $transaction = $user->transactions()->findOrFail($transactionId);
-        
+
         // Get the associated investment if this was an investment transaction
         $investment = null;
         if ($transaction->description && str_contains($transaction->description, 'Investment in')) {
@@ -399,7 +399,7 @@ class DashboardController extends Controller
                 ->with('investmentPackage')
                 ->first();
         }
-        
+
         return view('user.investment-receipt', compact('transaction', 'investment'));
     }
 
@@ -407,7 +407,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $availableBalance = $user->accountBalance();
-        
+
         return view('user.withdraw', compact('availableBalance'));
     }
 
@@ -442,7 +442,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $existingApplication = $user->franchiseApplications()->latest()->first();
-        
+
         return view('user.franchise', compact('existingApplication'));
     }
 
@@ -477,7 +477,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $accountBalance = $user->accountBalance(); // Use calculated balance that excludes locked investments
-        
+
         return view('user.transfer', compact('accountBalance'));
     }
 
@@ -513,27 +513,27 @@ class DashboardController extends Controller
                          ->orWhere('username', $request->recipient)
                          ->orWhere('name', $request->recipient)
                          ->get();
-        
+
         if ($recipients->isEmpty()) {
             return back()->withErrors([
                 'recipient' => 'Recipient not found. Please check the email address, username, or full name.'
             ])->withInput();
         }
-        
+
         // If multiple users found with the same name, require more specific identifier
         if ($recipients->count() > 1) {
             // Check if exact email or username match exists
             $exactMatch = $recipients->filter(function ($user) use ($request) {
                 return $user->email === $request->recipient || $user->username === $request->recipient;
             })->first();
-            
+
             if ($exactMatch) {
                 $recipient = $exactMatch;
             } else {
                 $usersList = $recipients->map(function ($user) {
                     return $user->name . ' (' . $user->username . ', ' . $user->email . ')';
                 })->join(', ');
-                
+
                 return back()->withErrors([
                     'recipient' => 'Multiple users found with that name: ' . $usersList . '. Please use email or username for exact match.'
                 ])->withInput();
@@ -553,7 +553,7 @@ class DashboardController extends Controller
             \DB::transaction(function () use ($user, $recipient, $amount, $request) {
                 // Deduct from sender
                 $user->decrement('account_balance', $amount);
-                
+
                 // Add to recipient
                 $recipient->increment('account_balance', $amount);
 
@@ -578,7 +578,7 @@ class DashboardController extends Controller
                 // If package_id is provided, create investment automatically
                 if ($request->package_id) {
                     $package = InvestmentPackage::findOrFail($request->package_id);
-                    
+
                     // Validate investment amount against package limits
                     if ($amount >= $package->min_amount && $amount <= $package->max_amount) {
                         // Create investment for recipient (automatically active since paid from transfer)
@@ -604,7 +604,7 @@ class DashboardController extends Controller
 
                         // Deduct investment amount from recipient's balance
                         $recipient->decrement('account_balance', $amount);
-                        
+
                         // Update package slots if applicable
                         if ($package->available_slots !== null) {
                             $package->decrement('available_slots');
@@ -629,7 +629,7 @@ class DashboardController extends Controller
             ];
 
             return redirect()->route('dashboard.transfer')
-                ->with('success', 'Transfer completed successfully!' . 
+                ->with('success', 'Transfer completed successfully!' .
                     ($request->package_id ? ' Investment has been automatically activated.' : ''))
                 ->with('receipt', $receiptData);
 
@@ -641,7 +641,7 @@ class DashboardController extends Controller
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return back()->withErrors([
                 'transfer' => 'Transfer failed. Please try again. Error: ' . $e->getMessage()
             ])->withInput();
@@ -651,7 +651,7 @@ class DashboardController extends Controller
     public function notifications(Request $request)
     {
         $user = Auth::user();
-        
+
         // Define available categories
         $categories = [
             'all' => 'All Notifications',
@@ -665,18 +665,18 @@ class DashboardController extends Controller
             'announcement' => 'Announcement',
             'maintenance' => 'Maintenance'
         ];
-        
+
         // Get filter from request, default to 'all'
         $filter = $request->get('filter', 'all');
-        
+
         // Build notifications query
         $notificationsQuery = $user->userNotifications()->active()->latest();
-        
+
         // Apply filter if not 'all'
         if ($filter !== 'all' && array_key_exists($filter, $categories)) {
             $notificationsQuery->where('category', $filter);
         }
-        
+
         $notifications = $notificationsQuery->paginate(15);
 
         // Attendance System Data for Raffle Modal
@@ -690,8 +690,8 @@ class DashboardController extends Controller
         })->toArray();
 
         return view('user.notifications', compact(
-            'notifications', 
-            'categories', 
+            'notifications',
+            'categories',
             'filter',
             'currentMonthTickets',
             'currentMonthAttendance',
@@ -704,9 +704,9 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $notification = $user->userNotifications()->findOrFail($id);
-        
+
         $notification->markAsRead();
-        
+
         return response()->json(['success' => true]);
     }
 
@@ -714,7 +714,7 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $user->userNotifications()->unread()->update(['is_read' => true]);
-        
+
         return response()->json(['success' => true]);
     }
 

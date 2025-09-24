@@ -97,9 +97,18 @@ class Investment extends Model
         return $query->where('active', true);
     }
 
-    public function calculateDailyInterest(): float
+    public function calculateDailyInterest()
     {
-        return $this->amount * ($this->daily_shares_rate / 100);
+        $totalAmount = $this->amount;
+
+        // Handle Money cast
+        if ($totalAmount instanceof \App\Support\Money) {
+            $totalAmount = $totalAmount->toFloat();
+        }
+
+        $interestRate = $this->investmentPackage->daily_shares_rate / 100;
+
+        return $totalAmount * $interestRate;
     }
 
     public function isExpired(): bool
@@ -147,11 +156,11 @@ class Investment extends Model
         if (!$this->active) {
             return 'inactive';
         }
-        
+
         if ($this->remaining_days <= 0) {
             return 'completed';
         }
-        
+
         return 'active';
     }
 
@@ -162,7 +171,7 @@ class Investment extends Model
     {
         // Check if the user was referred by someone
         $referral = $this->user->referralReceived;
-        
+
         if (!$referral) {
             \Log::info('No referral found for user', ['user_id' => $this->user_id]);
             return;
@@ -172,7 +181,7 @@ class Investment extends Model
         $existingBonus = ReferralBonus::where('referral_id', $referral->id)
             ->where('investment_id', $this->id)
             ->first();
-            
+
         if ($existingBonus) {
             \Log::info('Referral bonus already exists', ['investment_id' => $this->id]);
             return;
