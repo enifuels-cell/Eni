@@ -1,13 +1,16 @@
 <!-- Footer -->
-<footer class="relative bg-gradient-to-br from-slate-900 via-blue-900/20 to-slate-900 border-t border-white/10 mt-16 overflow-hidden">
-    <!-- Background glass effect -->
-    <div class="absolute inset-0 bg-gradient-to-br from-eni-dark/90 via-eni-charcoal/80 to-eni-dark/90 backdrop-blur-sm"></div>
+<footer class="relative bg-transparent border-t border-white/20 mt-0 overflow-hidden">
+    <!-- Enhanced glass effect that works with split background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-black/20 via-eni-charcoal/10 to-black/30 backdrop-blur-md"></div>
 
-    <!-- Decorative elements -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-eni-yellow/5 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl"></div>
+    <!-- Decorative elements optimized for footer section -->
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-eni-yellow/8 rounded-full blur-3xl animate-pulse"></div>
+    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-500/6 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
 
-    <div class="relative container mx-auto px-6 py-12">
+    <!-- Subtle texture overlay for premium feel -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+    </div>    <div class="relative container mx-auto px-6 py-12">
         <!-- Main Footer Content -->
         <div class="grid md:grid-cols-4 gap-8 mb-12">
 
@@ -168,34 +171,34 @@
         </div>
 
         <!-- Trust Badges -->
-        <div class="flex flex-wrap justify-center items-center gap-8 mb-12 opacity-70">
-            <div class="flex items-center space-x-2 text-white/60 text-sm">
-                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24">
+        <div class="flex flex-wrap justify-center items-center gap-8 mb-12">
+            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
+                <div class="w-10 h-10 bg-green-500/20 hover:bg-green-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-green-500/20">
+                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
                     </svg>
                 </div>
                 <span>SSL Secured</span>
             </div>
-            <div class="flex items-center space-x-2 text-white/60 text-sm">
-                <div class="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
+                <div class="w-10 h-10 bg-blue-500/20 hover:bg-blue-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-blue-500/20">
+                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                     </svg>
                 </div>
                 <span>Regulated Platform</span>
             </div>
-            <div class="flex items-center space-x-2 text-white/60 text-sm">
-                <div class="w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
+                <div class="w-10 h-10 bg-eni-yellow/20 hover:bg-eni-yellow/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-eni-yellow/20">
+                    <svg class="w-5 h-5 text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                     </svg>
                 </div>
                 <span>Licensed & Insured</span>
             </div>
-            <div class="flex items-center space-x-2 text white/60 text-sm">
-                <div class="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center">
-                    <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
+            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
+                <div class="w-10 h-10 bg-purple-500/20 hover:bg-purple-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-purple-500/20">
+                    <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
                     </svg>
                 </div>

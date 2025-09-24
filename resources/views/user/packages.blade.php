@@ -220,28 +220,215 @@
             background-size: 468px 100%;
             animation: shimmer 1.5s infinite;
         }
+
+        /* 🔹 1. Gradient Background Enhancements */
+        .main-gradient-bg {
+            background: linear-gradient(180deg, #0B2241 0%, #1a365d 40%, #121417 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 🔹 2. Abstract Geometric Pattern */
+        .geometric-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.08;
+            background-image:
+                linear-gradient(45deg, rgba(255, 205, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(-45deg, rgba(255, 205, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 205, 0, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px, 60px 60px, 30px 30px;
+            animation: pattern-drift 60s linear infinite;
+        }
+
+        @keyframes pattern-drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* 🔹 3. Radial Glow / Spotlight for Cards */
+        .card-spotlight {
+            position: relative;
+        }
+
+        .card-spotlight::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 205, 0, 0.12) 0%, rgba(255, 205, 0, 0.05) 30%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+
+        .card-spotlight:hover::before {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* 🔹 4. Textured Background Overlay */
+        .texture-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+            background-size: 20px 20px;
+            opacity: 0.06;
+            animation: texture-drift 120s linear infinite;
+        }
+
+        @keyframes texture-drift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(20px, 20px); }
+        }
+
+        /* Additional texture layers for premium feel */
+        .metallic-texture {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                linear-gradient(135deg,
+                    transparent 25%,
+                    rgba(255, 255, 255, 0.02) 25%,
+                    rgba(255, 255, 255, 0.02) 50%,
+                    transparent 50%,
+                    transparent 75%,
+                    rgba(255, 255, 255, 0.02) 75%);
+            background-size: 40px 40px;
+            opacity: 0.5;
+        }
+
+        /* 🔹 5. Split Background Sections */
+        .header-packages-section {
+            background: linear-gradient(135deg, #0B2241 0%, #1e3a8a 50%, #0B2241 100%);
+            position: relative;
+        }
+
+        .footer-section {
+            background: linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%);
+            position: relative;
+        }
+
+        /* Enhanced ambient lighting */
+        .ambient-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at top left, rgba(255, 205, 0, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at top right, rgba(59, 130, 246, 0.03) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom center, rgba(255, 205, 0, 0.02) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Floating orbs for depth */
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: float-orb 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 205, 0, 0.08) 0%, transparent 70%);
+            top: 10%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+            top: 60%;
+            right: 15%;
+            animation-delay: -3s;
+        }
+
+        .orb-3 {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255, 205, 0, 0.05) 0%, transparent 70%);
+            bottom: 20%;
+            left: 60%;
+            animation-delay: -6s;
+        }
+
+        @keyframes float-orb {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+                opacity: 0.6;
+            }
+            33% {
+                transform: translate(30px, -20px) scale(1.1);
+                opacity: 0.8;
+            }
+            66% {
+                transform: translate(-20px, 10px) scale(0.9);
+                opacity: 0.4;
+            }
+        }
+
+        /* Enhanced depth shadows */
+        .depth-shadow {
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
-<body class="bg-eni-charcoal text-white min-h-screen">
-    <!-- Header -->
-    <header class="bg-eni-dark px-6 py-4 flex items-center justify-between shadow-md">
-        <div class="flex items-center gap-4">
-            <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
-            <div>
-                <h1 class="font-extrabold text-xl tracking-tight">Investment Packages</h1>
-                <p class="text-sm text-white/70">Choose your investment strategy</p>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <a href="{{ route('dashboard') }}" class="text-white/70 hover:text-white transition-colors" title="Back to Dashboard">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-            </a>
-        </div>
-    </header>
+<body class="text-white min-h-screen relative overflow-x-hidden">
+    <!-- Main Content Wrapper with Split Background Design -->
+    <div class="header-packages-section relative min-h-screen">
+        <!-- Background Enhancement Layers -->
+        <div class="geometric-pattern"></div>
+        <div class="texture-overlay"></div>
+        <div class="metallic-texture"></div>
+        <div class="ambient-glow"></div>
 
-    <div class="container mx-auto px-6 py-8">
+        <!-- Floating Orbs for Depth -->
+        <div class="floating-orb orb-1"></div>
+        <div class="floating-orb orb-2"></div>
+        <div class="floating-orb orb-3"></div>
+
+        <!-- Header -->
+        <header class="relative z-10 bg-black/20 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center justify-between depth-shadow">
+            <div class="flex items-center gap-4">
+                <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
+                <div>
+                    <h1 class="font-extrabold text-xl tracking-tight text-glow">Investment Packages</h1>
+                    <p class="text-sm text-white/70">Choose your investment strategy</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="{{ route('dashboard') }}" class="text-white/70 hover:text-eni-yellow transition-all duration-300 hover:scale-110" title="Back to Dashboard">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+            </div>
+        </header>
+
+        <div class="container mx-auto px-6 py-8 relative z-10">
         @if(session('success'))
             <div class="bg-green-500/20 border border-green-500/30 rounded-lg p-4 mb-6">
                 <p class="text-green-400">{{ session('success') }}</p>
@@ -287,13 +474,16 @@
         </div>
 
         <!-- Customer Testimonials -->
-        <div class="mb-16">
-            <div class="text-center mb-12">
-                <h3 class="text-3xl font-bold text-white mb-4">Trusted by Thousands</h3>
+        <div class="mb-16 relative">
+            <!-- Testimonials background enhancement -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-eni-yellow/5 to-transparent rounded-3xl blur-3xl"></div>
+
+            <div class="text-center mb-12 relative z-10">
+                <h3 class="text-3xl font-bold text-white mb-4 text-glow">Trusted by Thousands</h3>
                 <p class="text-white/70 max-w-2xl mx-auto">See what our investors are saying about their ENI experience</p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
                 <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
                     <div class="flex items-center mb-4">
                         <div class="flex text-eni-yellow">
@@ -401,7 +591,7 @@
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
 
                 @foreach($packages as $index => $package)
-                <div class="package-card group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4"
+                <div class="package-card card-spotlight group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4"
                      onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
 
                     @php
@@ -2729,8 +2919,23 @@
         </div>
     </div>
 
-    <!-- Global Footer -->
-    @include('components.footer')
+    <!-- Close Header-Packages Section -->
+    </div>
+
+    <!-- Footer Section with Enhanced Background -->
+    <div class="footer-section relative">
+        <!-- Footer Background Enhancement Layers -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-800/50 via-gray-800/30 to-slate-900/50 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform rotate-12"></div>
+        </div>
+
+        <!-- Enhanced ambient lighting for footer -->
+        <div class="absolute inset-0 bg-gradient-to-t from-eni-yellow/5 via-transparent to-transparent"></div>
+
+        <!-- Global Footer -->
+        @include('components.footer')
+    </div>
 
     <!-- Footer Modals -->
     @include('components.footer-modals')
