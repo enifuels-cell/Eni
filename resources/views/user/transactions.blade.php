@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transaction History - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    
+
+
     <script>
         tailwind.config = {
             theme: {
@@ -132,34 +132,54 @@
                                     <span class="text-xs text-white/60">{{ $transaction->created_at->format('h:i A') }}</span>
                                 </td>
                                 <td class="p-4">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
-                                        @if($transaction->type === 'deposit') bg-green-500/20 text-green-400
-                                        @elseif($transaction->type === 'withdrawal') bg-red-500/20 text-red-400
-                                        @elseif($transaction->type === 'interest') bg-eni-yellow/20 text-eni-yellow
-                                        @else bg-blue-500/20 text-blue-400 @endif">
-                                        {{ ucfirst($transaction->type) }}
-                                    </span>
+                                    @if($transaction->type === 'deposit')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                                            {{ ucfirst($transaction->type) }}
+                                        </span>
+                                    @elseif($transaction->type === 'withdrawal')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
+                                            {{ ucfirst($transaction->type) }}
+                                        </span>
+                                    @elseif($transaction->type === 'interest')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-eni-yellow/20 text-eni-yellow">
+                                            {{ ucfirst($transaction->type) }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400">
+                                            {{ ucfirst($transaction->type) }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-white/80">
                                     {{ $transaction->description ?? $transaction->reference }}
                                 </td>
-                                <td class="p-4 text-right font-semibold
-                                    @if($transaction->type === 'deposit' || $transaction->type === 'interest' || $transaction->type === 'referral') text-green-400
-                                    @else text-red-400 @endif">
-                                    @if($transaction->type === 'deposit' || $transaction->type === 'interest' || $transaction->type === 'referral')
+                                @if($transaction->type === 'deposit' || $transaction->type === 'interest' || $transaction->type === 'referral')
+                                    <td class="p-4 text-right font-semibold text-green-400">
                                         +$@money($transaction->amount)
-                                    @else
+                                    </td>
+                                @else
+                                    <td class="p-4 text-right font-semibold text-red-400">
                                         -$@money($transaction->amount)
-                                    @endif
-                                </td>
+                                    </td>
+                                @endif
                                 <td class="p-4 text-center">
-                                    <span class="px-2 py-1 rounded-full text-xs font-semibold
-                                        @if($transaction->status === 'completed') bg-green-500/20 text-green-400
-                                        @elseif($transaction->status === 'pending') bg-yellow-500/20 text-yellow-400
-                                        @elseif($transaction->status === 'processing') bg-blue-500/20 text-blue-400
-                                        @else bg-red-500/20 text-red-400 @endif">
-                                        {{ ucfirst($transaction->status) }}
-                                    </span>
+                                    @if($transaction->status === 'completed')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @elseif($transaction->status === 'pending')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @elseif($transaction->status === 'processing')
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 rounded-full text-xs font-semibold bg-red-500/20 text-red-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="p-4 text-center">
                                         @if($transaction->receipt_path)
@@ -167,14 +187,14 @@
                                                 $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
                                                 $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
                                             @endphp
-                                        
+
                                             @if($isImage)
                                                 <button type="button" data-receipt-src="{{ route('transaction.receipt.file', $transaction->id) }}" class="receipt-image bg-eni-yellow/20 text-eni-yellow px-3 py-1 rounded-lg text-xs font-semibold hover:bg-eni-yellow/30 transition-colors">
                                                     View Receipt
                                                 </button>
                                             @else
-                                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
-                                                   target="_blank" 
+                                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}"
+                                                   target="_blank"
                                                    class="bg-red-500/20 text-red-400 px-3 py-1 rounded-lg text-xs font-semibold hover:bg-red-500/30 transition-colors">
                                                     View PDF
                                                 </a>
@@ -194,7 +214,7 @@
                                     </div>
                                     <h3 class="text-lg font-semibold text-white/70 mb-2">No transactions yet</h3>
                                     <p class="text-white/50 mb-4">Your transaction history will appear here</p>
-                                    <a href="{{ route('dashboard.deposit') }}" 
+                                    <a href="{{ route('dashboard.deposit') }}"
                                        class="inline-block bg-eni-yellow text-eni-dark px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                                         Make Your First Deposit
                                     </a>
@@ -220,10 +240,10 @@
                 btn.classList.remove('active', 'bg-eni-yellow', 'text-eni-dark');
                 btn.classList.add('bg-white/10', 'text-white');
             });
-            
+
             event.target.classList.add('active', 'bg-eni-yellow', 'text-eni-dark');
             event.target.classList.remove('bg-white/10', 'text-white');
-            
+
             // Filter rows
             document.querySelectorAll('.transaction-row').forEach(row => {
                 if (type === 'all' || row.dataset.type === type) {
@@ -261,7 +281,7 @@
     </script>
 
     <!-- Receipt Image Modal -->
-    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 flex items-center justify-center p-4">
+    <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-75 hidden z-50 items-center justify-center p-4">
         <div class="relative max-w-4xl max-h-full">
             <button onclick="closeReceiptModal()" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">
                 <button data-action="close-receipt" class="absolute -top-4 -right-4 bg-white rounded-full p-2 hover:bg-gray-100 transition-colors z-10">

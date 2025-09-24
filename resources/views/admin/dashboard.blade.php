@@ -196,16 +196,19 @@
                                     @endif
                                     <div class="relative flex space-x-3">
                                         <div>
-                                            <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-eni-dark border
-                                                @if($transaction->type === 'deposit') border-green-500/40 bg-green-500/20
-                                                @elseif($transaction->type === 'withdrawal') border-red-500/40 bg-red-500/20
-                                                @else border-blue-500/40 bg-blue-500/20
-                                                @endif">
-                                                <i class="fas fa-{{ $transaction->type === 'deposit' ? 'arrow-down' : ($transaction->type === 'withdrawal' ? 'arrow-up' : 'exchange-alt') }}
-                                                    @if($transaction->type === 'deposit') text-green-400
-                                                    @elseif($transaction->type === 'withdrawal') text-red-400
-                                                    @else text-blue-400
-                                                    @endif text-xs"></i>
+                                            @if($transaction->type === 'deposit')
+                                                <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-eni-dark border border-green-500/40 bg-green-500/20">
+                                                    <i class="fas fa-arrow-down text-green-400 text-xs"></i>
+                                                </span>
+                                            @elseif($transaction->type === 'withdrawal')
+                                                <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-eni-dark border border-red-500/40 bg-red-500/20">
+                                                    <i class="fas fa-arrow-up text-red-400 text-xs"></i>
+                                                </span>
+                                            @else
+                                                <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-eni-dark border border-blue-500/40 bg-blue-500/20">
+                                                    <i class="fas fa-exchange-alt text-blue-400 text-xs"></i>
+                                                </span>
+                                            @endif
                                             </span>
                                         </div>
                                         <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
@@ -214,13 +217,19 @@
                                                     {{ $transaction->user->name }} -
                                                     <span class="font-medium text-white">{{ ucfirst($transaction->type) }}</span>
                                                     of ${{ number_format($transaction->amount->toFloat(), 2) }}
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border
-                                                        @if($transaction->status === 'pending') bg-yellow-500/10 text-yellow-400 border-yellow-500/40
-                                                        @elseif($transaction->status === 'approved') bg-green-500/10 text-green-400 border-green-500/40
-                                                        @else bg-red-500/10 text-red-400 border-red-500/40
-                                                        @endif">
-                                                        {{ ucfirst($transaction->status) }}
-                                                    </span>
+                                                    @if($transaction->status === 'pending')
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border bg-yellow-500/10 text-yellow-400 border-yellow-500/40">
+                                                            {{ ucfirst($transaction->status) }}
+                                                        </span>
+                                                    @elseif($transaction->status === 'approved')
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border bg-green-500/10 text-green-400 border-green-500/40">
+                                                            {{ ucfirst($transaction->status) }}
+                                                        </span>
+                                                    @else
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border bg-red-500/10 text-red-400 border-red-500/40">
+                                                            {{ ucfirst($transaction->status) }}
+                                                        </span>
+                                                    @endif
                                                 </p>
                                             </div>
                                             <div class="text-right text-sm whitespace-nowrap text-gray-400">

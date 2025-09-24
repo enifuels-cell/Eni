@@ -99,20 +99,23 @@
                 @forelse($recent_transactions ?? [] as $transaction)
                 <div class="bg-eni-gray rounded-xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center
-                            @if($transaction->type === 'deposit') bg-green-500/20
-                            @elseif($transaction->type === 'withdrawal') bg-red-500/20
-                            @elseif($transaction->type === 'interest') bg-eni-yellow/20
-                            @else bg-blue-500/20 @endif">
-                            @if($transaction->type === 'deposit')
+                        @if($transaction->type === 'deposit')
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-green-500/20">
                                 <i class="fas fa-arrow-down text-green-400"></i>
-                            @elseif($transaction->type === 'withdrawal')
+                            </div>
+                        @elseif($transaction->type === 'withdrawal')
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-red-500/20">
                                 <i class="fas fa-arrow-up text-red-400"></i>
-                            @elseif($transaction->type === 'interest')
+                            </div>
+                        @elseif($transaction->type === 'interest')
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-eni-yellow/20">
                                 <i class="fas fa-percentage text-eni-yellow"></i>
-                            @else
+                            </div>
+                        @else
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-blue-500/20">
                                 <i class="fas fa-exchange-alt text-blue-400"></i>
-                            @endif
+                            </div>
+                        @endif
                         </div>
                         <div>
                             <p class="text-white font-medium capitalize">{{ str_replace('_', ' ', $transaction->type) }}</p>
@@ -125,12 +128,19 @@
                                     @endif
                                 </span>
                                 @if($transaction->status !== 'completed')
-                                    <span class="px-2 py-1 rounded-full text-xs
-                                        @if($transaction->status === 'pending') bg-yellow-500/20 text-yellow-400
-                                        @elseif($transaction->status === 'processing') bg-blue-500/20 text-blue-400
-                                        @else bg-red-500/20 text-red-400 @endif">
-                                        {{ ucfirst($transaction->status) }}
-                                    </span>
+                                    @if($transaction->status === 'pending')
+                                        <span class="px-2 py-1 rounded-full text-xs bg-yellow-500/20 text-yellow-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @elseif($transaction->status === 'processing')
+                                        <span class="px-2 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @else
+                                        <span class="px-2 py-1 rounded-full text-xs bg-red-500/20 text-red-400">
+                                            {{ ucfirst($transaction->status) }}
+                                        </span>
+                                    @endif
                                 @endif
                             </div>
                         </div>

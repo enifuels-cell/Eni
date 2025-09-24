@@ -108,12 +108,19 @@
                                 <h3 class="font-semibold text-lg">{{ $investment->investmentPackage->name }}</h3>
                                 <p class="text-white/70 text-sm">Started: {{ $investment->created_at->format('M d, Y') }}</p>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold
-                                @if($investment->status === 'active') bg-green-500/20 text-green-400
-                                @elseif($investment->status === 'completed') bg-blue-500/20 text-blue-400
-                                @else bg-yellow-500/20 text-yellow-400 @endif">
-                                {{ ucfirst($investment->status) }}
-                            </span>
+                            @if($investment->status === 'active')
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-green-500/20 text-green-400">
+                                    {{ ucfirst($investment->status) }}
+                                </span>
+                            @elseif($investment->status === 'completed')
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400">
+                                    {{ ucfirst($investment->status) }}
+                                </span>
+                            @else
+                                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-yellow-500/20 text-yellow-400">
+                                    {{ ucfirst($investment->status) }}
+                                </span>
+                            @endif
                         </div>
 
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">

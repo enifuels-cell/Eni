@@ -220,14 +220,23 @@
                                     {{ ucfirst(str_replace('_', ' ', $withdrawal->payment_method)) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-3 py-1 text-xs font-semibold rounded-full
-                                        @if($withdrawal->status === 'completed') bg-green-500/20 text-green-400
-                                        @elseif($withdrawal->status === 'pending') bg-yellow-500/20 text-yellow-400
-                                        @elseif($withdrawal->status === 'processing') bg-blue-500/20 text-blue-400
-                                        @else bg-red-500/20 text-red-400
-                                        @endif">
-                                        {{ ucfirst($withdrawal->status) }}
-                                    </span>
+                                    @if($withdrawal->status === 'completed')
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-green-500/20 text-green-400">
+                                            {{ ucfirst($withdrawal->status) }}
+                                        </span>
+                                    @elseif($withdrawal->status === 'pending')
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-yellow-500/20 text-yellow-400">
+                                            {{ ucfirst($withdrawal->status) }}
+                                        </span>
+                                    @elseif($withdrawal->status === 'processing')
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-500/20 text-blue-400">
+                                            {{ ucfirst($withdrawal->status) }}
+                                        </span>
+                                    @else
+                                        <span class="px-3 py-1 text-xs font-semibold rounded-full bg-red-500/20 text-red-400">
+                                            {{ ucfirst($withdrawal->status) }}
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white/60">
                                     {{ $withdrawal->transaction_id }}

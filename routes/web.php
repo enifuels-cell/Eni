@@ -8,6 +8,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use Illuminate\Support\Facades\Route;
 
+// Include auth routes
+require __DIR__.'/auth.php';
+
 // Include debug routes
 require __DIR__.'/debug_investment.php';
 
@@ -35,12 +38,12 @@ Route::get('/clear-cache-temp', function () {
     \Artisan::call('cache:clear');
     \Artisan::call('route:clear');
     \Artisan::call('view:clear');
-    
+
     return response()->json([
         'message' => 'All caches cleared successfully!',
         'commands_run' => [
             'config:clear',
-            'cache:clear', 
+            'cache:clear',
             'route:clear',
             'view:clear'
         ]
@@ -53,10 +56,10 @@ Route::get('/debug-investment', function () {
     if (!$user) {
         return response()->json(['error' => 'Not authenticated']);
     }
-    
+
     $packages = \App\Models\InvestmentPackage::all();
     $activePackages = \App\Models\InvestmentPackage::where('active', true)->get();
-    
+
     return response()->json([
         'user_id' => $user->id,
         'user_balance' => $user->account_balance,
@@ -87,7 +90,7 @@ Route::get('/public-packages', function () {
 Route::get('/debug-packages', function () {
     $packages = App\Models\InvestmentPackage::all();
     $available = App\Models\InvestmentPackage::available()->get();
-    
+
     return response()->json([
         'total_packages' => $packages->count(),
         'available_packages' => $available->count(),
@@ -119,7 +122,7 @@ Route::get('/prod-debug', function () {
             ->where(function($q) {
                 $q->whereNull('available_slots')->orWhere('available_slots', '>', 0);
             })->count();
-            
+
         return response()->json([
             'status' => 'success',
             'total_packages' => $totalPackages,
@@ -188,10 +191,10 @@ Route::get('/dashboard', function () {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('user.dashboard');
-})->middleware(['auth', 'verified', 'check.suspended'])->name('dashboard');
+})->middleware(['auth', 'check.suspended'])->name('dashboard');
 
 // Dashboard action routes
-Route::middleware(['auth', 'verified', 'check.suspended', 'track.attendance'])->group(function () {
+Route::middleware(['auth', 'check.suspended', 'track.attendance'])->group(function () {
     Route::get('/dashboard/investments', [UserDashboardController::class, 'investments'])->name('dashboard.investments');
     Route::get('/dashboard/transactions', [UserDashboardController::class, 'transactions'])->name('dashboard.transactions');
     Route::get('/dashboard/referrals', [UserDashboardController::class, 'referrals'])->name('dashboard.referrals');
@@ -224,7 +227,7 @@ Route::middleware(['auth', 'check.suspended'])->group(function () {
 });
 
 // User Routes (Protected)
-Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
+Route::middleware(['auth', 'check.suspended'])->group(function () {
     // User Dashboard
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
@@ -234,19 +237,19 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
         Route::get('/notifications', [UserDashboardController::class, 'notifications'])->name('notifications');
         Route::post('/notifications/mark-all-read', [UserDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
         Route::post('/notifications/{id}/mark-read', [UserDashboardController::class, 'markNotificationAsRead'])->name('notifications.mark-read');
-        
+
         // Investment Packages
         Route::get('/packages', [UserDashboardController::class, 'packages'])->name('packages');
-        
+
         // Deposit & Withdrawal
         Route::get('/deposit', [UserDashboardController::class, 'deposit'])->name('deposit');
     Route::post('/deposit', [UserDashboardController::class, 'processDeposit'])->middleware('throttle:deposits')->name('deposit.process');
         Route::get('/withdraw', [UserDashboardController::class, 'withdraw'])->name('withdraw');
     Route::post('/withdraw', [UserDashboardController::class, 'processWithdraw'])->middleware('throttle:withdrawals')->name('withdraw.process');
-        
+
         // Investment Receipt
         Route::get('/investment/receipt/{transaction}', [UserDashboardController::class, 'investmentReceipt'])->name('investment.receipt');
-        
+
         // Franchise Applications
         Route::get('/franchise', [UserDashboardController::class, 'franchise'])->name('franchise');
         Route::post('/franchise', [UserDashboardController::class, 'processFranchise'])->name('franchise.process');
@@ -266,11 +269,11 @@ Route::middleware(['auth', 'verified', 'check.suspended'])->group(function () {
 //     Route::get('/investments', [AdminDashboardController::class, 'investments'])->name('investments');
 //     Route::get('/transactions', [AdminDashboardController::class, 'transactions'])->name('transactions');
 //     Route::get('/analytics', [AdminDashboardController::class, 'analytics'])->name('analytics');
-//     
+//
 //     // Transaction Management
 //     Route::patch('/transactions/{transaction}/approve', [AdminDashboardController::class, 'approveTransaction'])->name('transactions.approve');
 //     Route::patch('/transactions/{transaction}/reject', [AdminDashboardController::class, 'rejectTransaction'])->name('transactions.reject');
-//     
+//
 //     // Franchise Management
 //     Route::get('/franchise-applications', [AdminDashboardController::class, 'franchiseApplications'])->name('franchise.index');
 //     Route::patch('/franchise-applications/{application}/approve', [AdminDashboardController::class, 'approveFranchise'])->name('franchise.approve');

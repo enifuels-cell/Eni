@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -47,7 +46,7 @@ use Illuminate\Notifications\Notifiable;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUpdatedAt($value)
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -185,7 +184,7 @@ class User extends Authenticatable implements MustVerifyEmail
         $bonuses = \App\Models\ReferralBonus::whereHas('referral', function($query) {
             $query->where('referrer_id', $this->id);
         })->where('paid', true)->get();
-        
+
         $total = 0.0;
         foreach ($bonuses as $bonus) {
             $total += $bonus->bonus_amount instanceof \App\Support\Money ? $bonus->bonus_amount->toFloat() : (float)$bonus->bonus_amount;
@@ -200,7 +199,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->whereIn('type', ['deposit', 'interest', 'referral_bonus'])
             ->whereIn('status', ['completed', 'approved'])
             ->get();
-        
+
         $credits = 0.0;
         foreach ($creditTransactions as $transaction) {
             $credits += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
@@ -210,7 +209,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('type', 'transfer')
             ->where('status', 'completed')
             ->get();
-            
+
         $transfers = 0.0;
         foreach ($transferTransactions as $transaction) {
             $transfers += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
@@ -220,7 +219,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('type', 'withdrawal')
             ->where('status', 'completed')
             ->get();
-            
+
         $withdrawals = 0.0;
         foreach ($withdrawalTransactions as $transaction) {
             $withdrawals += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
@@ -230,7 +229,7 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('type', 'other')
             ->where('status', 'completed')
             ->get();
-            
+
         $other = 0.0;
         foreach ($otherTransactions as $transaction) {
             $other += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
@@ -289,13 +288,13 @@ class User extends Authenticatable implements MustVerifyEmail
         do {
             // Generate 5 random digits
             $digits = str_pad(random_int(10000, 99999), 5, '0', STR_PAD_LEFT);
-            
+
             // Generate 3 random uppercase letters
             $letters = '';
             for ($i = 0; $i < 3; $i++) {
                 $letters .= chr(random_int(65, 90)); // A-Z
             }
-            
+
             $accountId = $digits . $letters;
         } while (static::where('account_id', $accountId)->exists());
 
