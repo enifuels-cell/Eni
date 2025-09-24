@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Receipt - ENI Platform</title>
     <!-- Force recompile: <?php echo date('Y-m-d H:i:s'); ?> -->
-    
-    
+
+
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
         @media print {
@@ -142,7 +142,7 @@
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Investment Amount:</span>
-                                <span class="font-bold text-lg text-eni-dark">${{ number_format($investment->amount, 2) }}</span>
+                                <span class="font-bold text-lg text-eni-dark">${{ number_format($investment->amount->toFloat(), 2) }}</span>
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Daily Interest Rate:</span>
@@ -160,7 +160,7 @@
                             </div>
                             <div class="flex justify-between mb-2">
                                 <span class="text-gray-600">Total Expected Return:</span>
-                                <span class="font-bold text-lg text-green-600">${{ number_format($investment->amount * (1 + ($investment->daily_shares_rate / 100) * $investment->investmentPackage->effective_days), 2) }}</span>
+                                <span class="font-bold text-lg text-green-600">${{ number_format($investment->amount->toFloat() * (1 + ($investment->daily_shares_rate / 100) * $investment->investmentPackage->effective_days), 2) }}</span>
                             </div>
                         </div>
                     </div>
@@ -172,7 +172,7 @@
                     <div class="bg-gray-50 rounded-lg p-4">
                         <div class="flex justify-between items-center">
                             <span class="text-xl font-bold text-eni-dark">Total Amount:</span>
-                            <span class="text-2xl font-bold text-eni-dark">${{ number_format($transaction->amount, 2) }}</span>
+                            <span class="text-2xl font-bold text-eni-dark">${{ number_format($transaction->amount->toFloat(), 2) }}</span>
                         </div>
                     </div>
                 </div>
@@ -186,10 +186,10 @@
                             $extension = pathinfo($transaction->receipt_path, PATHINFO_EXTENSION);
                             $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']);
                         @endphp
-                        
+
                         @if($isImage)
-                       <img src="{{ route('transaction.receipt.file', $transaction->id) }}" 
-                           alt="Payment Receipt" 
+                       <img src="{{ route('transaction.receipt.file', $transaction->id) }}"
+                           alt="Payment Receipt"
                            class="receipt-image w-full max-w-md mx-auto block cursor-pointer hover:scale-105 transition-transform"
                            data-receipt-src="{{ route('transaction.receipt.file', $transaction->id) }}">
                         @else
@@ -200,8 +200,8 @@
                                     </svg>
                                 </div>
                                 <p class="text-gray-600 font-semibold">PDF Receipt</p>
-                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}" 
-                                   target="_blank" 
+                                <a href="{{ route('transaction.receipt.file', $transaction->id) }}"
+                                   target="_blank"
                                    class="inline-block mt-2 bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                                     View PDF
                                 </a>
@@ -219,7 +219,7 @@
                     <div class="flex">
                         <div class="ml-3">
                             <p class="text-sm text-blue-700">
-                                <strong>Important:</strong> 
+                                <strong>Important:</strong>
                                 @if($transaction->status === 'pending')
                                     Your investment is pending approval. You will receive an email confirmation once your payment has been verified and your investment is activated.
                                 @else

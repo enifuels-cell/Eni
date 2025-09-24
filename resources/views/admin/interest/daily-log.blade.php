@@ -14,7 +14,7 @@
         <form method="GET" action="{{ route('admin.interest.daily-log') }}" class="flex items-center space-x-4">
             <div>
                 <label for="date" class="block text-sm font-medium text-gray-700">Filter by Date</label>
-                <input type="date" name="date" id="date" value="{{ request('date') }}" 
+                <input type="date" name="date" id="date" value="{{ request('date') }}"
                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
             </div>
             <div class="pt-6">
@@ -64,11 +64,11 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">${{ number_format($log->investment->amount, 2) }}</div>
+                                <div class="text-sm text-gray-900">${{ number_format($log->investment->amount->toFloat(), 2) }}</div>
                                 <div class="text-sm text-gray-500">{{ $log->investment->investmentPackage->name ?? 'Package' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-green-600">${{ number_format($log->interest_amount, 2) }}</div>
+                                <div class="text-sm font-medium text-green-600">${{ number_format($log->interest_amount->toFloat(), 2) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $log->created_at->format('M d, Y g:i A') }}

@@ -27,7 +27,7 @@
                     </div>
                 </div>
             @endif
-            
+
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
@@ -36,21 +36,21 @@
                         <div class="text-2xl font-bold text-eni-yellow">$@money($stats['total_invested'])</div>
                     </div>
                 </div>
-                
+
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Total Interest</div>
                         <div class="text-2xl font-bold text-green-400">$@money($stats['total_interest'])</div>
                     </div>
                 </div>
-                
+
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Referral Bonus</div>
                         <div class="text-2xl font-bold text-blue-400">$@money($stats['total_referral_bonus'])</div>
                     </div>
                 </div>
-                
+
                 <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-white">
                         <div class="text-sm font-medium text-gray-400">Account Balance</div>
@@ -66,7 +66,7 @@
                     <h3 class="text-lg font-semibold mb-2">New Investment</h3>
                     <p class="text-eni-dark/80">Browse investment packages and start earning daily interest</p>
                 </a>
-                
+
                 <a href="{{ route('user.deposit') }}" class="bg-gradient-to-r from-green-500 to-green-600 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                     <h3 class="text-lg font-semibold mb-2">Deposit Funds</h3>
                     <p class="text-green-100">Add money to your account balance</p>
@@ -105,7 +105,7 @@
                     <h3 class="text-lg font-semibold mb-2">Refer & Earn</h3>
                     <p class="text-blue-100">Share your referral link and earn bonuses</p>
                 </a>
-                
+
                 <a href="{{ route('profile.edit') }}" class="bg-gradient-to-r from-gray-600 to-gray-700 text-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                     <div class="flex items-center mb-2">
                         <i class="fas fa-user-cog text-gray-300 mr-2"></i>
@@ -119,7 +119,7 @@
             <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg mb-8">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-eni-yellow mb-4">Active Investments</h3>
-                    
+
                     @if($activeInvestments->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-eni-yellow/20">
@@ -155,7 +155,7 @@
             <div class="bg-gray-800 border border-eni-yellow/20 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-eni-yellow mb-4">Recent Transactions</h3>
-                    
+
                     @if($recentTransactions->count() > 0)
                         <div class="space-y-3">
                             @foreach($recentTransactions as $transaction)
@@ -165,8 +165,8 @@
                                     <div class="text-sm text-gray-400">{{ $transaction->created_at->format('M d, Y - H:i') }}</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-medium {{ $transaction->amount > 0 ? 'text-green-400' : 'text-red-400' }}">
-                                        {{ $transaction->amount > 0 ? '+' : '' }}$@money($transaction->amount)
+                                    <div class="font-medium {{ ($transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : $transaction->amount) > 0 ? 'text-green-400' : 'text-red-400' }}">
+                                        {{ ($transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : $transaction->amount) > 0 ? '+' : '' }}$@money($transaction->amount)
                                     </div>
                                     <div class="text-sm text-gray-400">{{ ucfirst($transaction->status) }}</div>
                                 </div>

@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Investment Packages - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    
+
+
     <script>
         tailwind.config = {
             theme: {
@@ -23,53 +23,162 @@
     </script>
     <style>
         body { font-family: Inter, ui-sans-serif, system-ui; }
-        
+
         /* Payment Modal Animations */
         #paymentNotAvailableModal {
             transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
         }
-        
+
         #paymentNotAvailableModal.hidden {
             opacity: 0;
             pointer-events: none;
         }
-        
+
         #paymentNotAvailableModal > div {
             transition: transform 0.3s ease, opacity 0.3s ease;
         }
-        
+
         #paymentNotAvailableModal.hidden > div {
             transform: scale(0.95) translateY(-10px);
             opacity: 0;
         }
-        
+
         /* Pulse animation for unavailable options */
         .payment-unavailable {
             animation: pulse-eni 0.6s ease-in-out;
         }
-        
+
+        /* Enhanced animations for modern SaaS feel */
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .float-delayed {
+            animation: float 6s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+
+        .gradient-shift {
+            background: linear-gradient(-45deg, #0B2241, #1e3a8a, #0B2241, #374151);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        .card-hover-lift {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-hover-lift:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 205, 0, 0.1);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(255, 205, 0, 0.5);
+        }
+
+        .border-glow {
+            box-shadow: 0 0 20px rgba(255, 205, 0, 0.3);
+        }
+
         @keyframes pulse-eni {
-            0%, 100% { 
+            0%, 100% {
                 box-shadow: 0 0 0 0 rgba(255, 205, 0, 0.7);
             }
-            50% { 
+            50% {
                 box-shadow: 0 0 0 10px rgba(255, 205, 0, 0);
             }
         }
-        
+
         .package-card {
-            transition: all 0.3s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
+            transform-origin: center;
         }
+
         .package-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(255, 205, 0, 0.2);
+            transform: translateY(-16px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(255, 205, 0, 0.3), 0 0 30px rgba(255, 205, 0, 0.2);
         }
+
         .package-card.selected {
             border: 2px solid #FFCD00;
-            box-shadow: 0 0 20px rgba(255, 205, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 205, 0, 0.4);
+            transform: scale(1.03);
         }
-        
+
+        /* Glass morphism effect */
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Enhanced button animations */
+        .btn-enhanced {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-enhanced:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-enhanced:hover:before {
+            left: 100%;
+        }
+
+        /* Floating animation for badges */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Pulse glow for pricing */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(255, 205, 0, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(255, 205, 0, 0.8);
+                transform: scale(1.05);
+            }
+        }
+
+        .pricing-pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+
         /* Loading animation enhancements */
         .bank-option {
             transition: all 0.3s ease;
@@ -77,17 +186,17 @@
         .bank-option:hover {
             transform: translateY(-2px);
         }
-        
+
         /* Pulse animation for loading states */
         @keyframes pulse-glow {
             0%, 100% { opacity: 1; box-shadow: 0 0 5px rgba(255, 205, 0, 0.5); }
             50% { opacity: 0.7; box-shadow: 0 0 20px rgba(255, 205, 0, 0.8); }
         }
-        
+
         .loading-pulse {
             animation: pulse-glow 1.5s ease-in-out infinite;
         }
-        
+
         /* Enhanced bounce animation */
         @keyframes enhanced-bounce {
             0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
@@ -95,17 +204,17 @@
             70% { transform: translate3d(0,-4px,0); }
             90% { transform: translate3d(0,-2px,0); }
         }
-        
+
         .enhanced-bounce {
             animation: enhanced-bounce 1.4s ease-in-out infinite;
         }
-        
+
         /* Shimmer effect for loading */
         @keyframes shimmer {
             0% { background-position: -468px 0; }
             100% { background-position: 468px 0; }
         }
-        
+
         .shimmer {
             background: linear-gradient(90deg, transparent 0%, rgba(255, 205, 0, 0.2) 50%, transparent 100%);
             background-size: 468px 100%;
@@ -149,39 +258,243 @@
             </div>
         @endif
 
-        <!-- Investment Packages Grid -->
-        <div class="mb-8">
-            <h2 class="text-3xl font-bold text-eni-yellow mb-2">Investment Packages</h2>
-            <p class="text-white/70 mb-8">Click any package image to start investing</p>
-            
-            <!-- Dynamic Packages from Database -->
+        <!-- Hero Section -->
+        <div class="text-center mb-16">
+            <h2 class="text-5xl font-bold text-eni-yellow mb-6 text-glow">Investment Packages</h2>
+            <p class="text-white/80 text-xl max-w-3xl mx-auto leading-relaxed">Choose the perfect investment strategy for your financial goals. Start earning daily interest with our secure and proven packages.</p>
+        </div>
+
+        <!-- Trust Indicators & Quick Stats -->
+        <div class="mb-16">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">50K+</div>
+                    <div class="text-white/70 text-sm">Active Investors</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">98.5%</div>
+                    <div class="text-white/70 text-sm">Success Rate</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">$2.5B+</div>
+                    <div class="text-white/70 text-sm">Total Returns</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">24/7</div>
+                    <div class="text-white/70 text-sm">Support</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Testimonials -->
+        <div class="mb-16">
+            <div class="text-center mb-12">
+                <h3 class="text-3xl font-bold text-white mb-4">Trusted by Thousands</h3>
+                <p class="text-white/70 max-w-2xl mx-auto">See what our investors are saying about their ENI experience</p>
+            </div>
+
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-                
-                @foreach($packages as $package)
-                <div class="package-card cursor-pointer hover:scale-105 transition-all duration-300" 
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"ENI has completely transformed my investment strategy. The daily returns are consistent and the platform is incredibly reliable. I started with the Growth package and I'm already seeing excellent results!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-eni-yellow to-yellow-500 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-eni-dark font-bold text-sm">SM</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">Sarah Martinez</div>
+                            <div class="text-white/60 text-sm">Growth Package Investor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"The Premium package has exceeded all my expectations. ENI's transparency and professional approach to investment management is unmatched. The referral system is also fantastic!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-sm">DJ</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">David Johnson</div>
+                            <div class="text-white/60 text-sm">Premium Package Investor</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"As a newcomer to investing, ENI made everything simple and secure. The Basic package was perfect to start with, and the customer support team is always available to help. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-sm">EC</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">Emily Chen</div>
+                            <div class="text-white/60 text-sm">Basic Package Investor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Investment Packages Grid -->
+        <div class="mb-16 relative">
+            <!-- Subtle gradient background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-eni-yellow/5 via-transparent to-eni-dark/20 rounded-3xl -mx-4 -my-8"></div>
+
+            <!-- Dynamic Packages from Database -->
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
+
+                @foreach($packages as $index => $package)
+                <div class="package-card group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4"
                      onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
-                    
-                    <div class="text-center relative min-h-[400px]">
-                        <!-- Elevated loading placeholder -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md rounded-2xl border-2 border-eni-yellow/40 shadow-2xl flex items-center justify-center z-10" id="placeholder-{{ $package->id }}">
-                            <div class="text-center p-12 bg-eni-dark/60 rounded-xl border border-eni-yellow/30">
-                                <div class="w-20 h-20 bg-gradient-to-br from-eni-yellow to-eni-yellow/60 rounded-full mb-6 mx-auto flex items-center justify-center shadow-xl">
-                                    <div class="animate-pulse w-12 h-12 bg-white/30 rounded-full"></div>
-                                </div>
-                                <div class="text-eni-yellow font-bold text-lg">Investment Package</div>
-                                <div class="text-white/80 text-sm mt-2">Loading your options...</div>
-                                <div class="mt-4 px-6 py-2 bg-eni-yellow/20 rounded-full border border-eni-yellow/50">
-                                    <span class="text-eni-yellow text-xs font-semibold">ENI Platform</span>
+
+                    @php
+                        // Visual hierarchy based on package tier
+                        $cardClasses = match($index) {
+                            0 => 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-slate-600/50', // Starter - Light navy
+                            1 => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30', // Mid - Deeper navy
+                            2 => 'bg-gradient-to-br from-eni-dark/95 to-black/90 border-eni-yellow/80', // Premium - Dark navy with gold
+                            default => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30'
+                        };
+
+                        $shadowClasses = match($index) {
+                            1 => 'shadow-xl hover:shadow-eni-yellow/30', // Most popular gets extra glow
+                            2 => 'shadow-2xl hover:shadow-eni-yellow/40', // Premium gets strongest shadow
+                            default => 'shadow-lg hover:shadow-eni-yellow/20'
+                        };
+                    @endphp
+
+                    <!-- Most Popular Badge -->
+                    @if($index === 1)
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                        <div class="bg-gradient-to-r from-eni-yellow to-yellow-400 text-eni-dark px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                            🔥 Most Popular
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="relative h-full {{ $cardClasses }} {{ $shadowClasses }} rounded-2xl border-2 backdrop-blur-sm overflow-hidden group-hover:shadow-2xl transition-all duration-500">
+                        <!-- Glass effect overlay -->
+                        <div class="absolute inset-0 bg-white/5 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                        <!-- Card Content -->
+                        <div class="relative z-10 p-8 h-full flex flex-col">
+                            <!-- Package Header -->
+                            <div class="text-center mb-6">
+                                <h3 class="text-2xl font-bold text-white mb-2">{{ $package->name }}</h3>
+                                <p class="text-white/70 text-sm">{{ $package->daily_shares_rate }}% Daily Interest</p>
+                            </div>
+
+                            <!-- Pricing Circle with 3D effect -->
+                            <div class="mx-auto mb-6 relative">
+                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-eni-yellow via-yellow-400 to-yellow-500 p-1 shadow-lg">
+                                    <div class="w-full h-full rounded-full bg-eni-dark flex flex-col items-center justify-center shadow-inner">
+                                        <div class="text-center">
+                                            <div class="text-eni-yellow text-xs font-semibold">Starts at</div>
+                                            <div class="text-white text-lg font-bold">${{ number_format($package->min_amount) }}</div>
+                                            <div class="text-eni-yellow/80 text-xs">to ${{ number_format($package->max_amount) }}</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Package Features -->
+                            <div class="flex-grow space-y-3 mb-6">
+                                <div class="flex items-center text-white/80 text-sm">
+                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Daily Interest Payouts
+                                </div>
+                                <div class="flex items-center text-white/80 text-sm">
+                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    Secure Investment
+                                </div>
+                                <div class="flex items-center text-white/80 text-sm">
+                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    24/7 Support
+                                </div>
+                            </div>
+
+                            <!-- Slots Remaining Badge -->
+                            @if($package->available_slots)
+                            <div class="mb-4 text-center">
+                                <span class="inline-block bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
+                                    🔥 {{ $package->available_slots }} Slots Remaining
+                                </span>
+                            </div>
+                            @endif
+
+                            <!-- CTA Button with enhanced hover effect -->
+                            <button class="w-full bg-gradient-to-r from-eni-yellow to-yellow-400 text-eni-dark font-bold py-4 px-6 rounded-xl hover:from-yellow-400 hover:to-eni-yellow transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl group-hover:animate-pulse">
+                                Select Plan
+                            </button>
                         </div>
-                        
-                        <!-- Direct image from database with no text overlay -->
-                        <img src="{{ asset($package->image) }}" 
-                             alt="{{ $package->name }} Investment Package" 
-                             class="w-full max-w-sm mx-auto rounded-lg object-contain shadow-lg hover:opacity-80 transition-opacity duration-300 relative z-20"
-                             onload="setTimeout(function(){ document.getElementById('placeholder-{{ $package->id }}').style.display='none'; }, 1000)"
-                             onerror="document.getElementById('placeholder-{{ $package->id }}').innerHTML='<div class=\'text-center p-12 bg-eni-dark/60 rounded-xl border border-eni-yellow/30\'><div class=\'w-20 h-20 bg-gradient-to-br from-eni-yellow/30 to-eni-yellow/10 rounded-xl mx-auto mb-6 flex items-center justify-center shadow-lg border border-eni-yellow/30\'><div class=\'w-8 h-8 bg-eni-yellow/60 rounded-lg\'></div></div><div class=\'text-eni-yellow font-bold text-lg\'>Investment Package</div><div class=\'text-white/60 text-sm mt-2\'>Preview unavailable</div></div>'">
+
+                        <!-- Hover glow effect -->
+                        <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-eni-yellow/20 via-transparent to-eni-yellow/20 blur-xl"></div>
+                        </div>
                     </div>
                 </div>
                 @endforeach
@@ -190,7 +503,7 @@
         </div>        <!-- Investment Form -->
         <div id="investment-form" class="bg-white/5 rounded-2xl p-8 backdrop-blur" style="display: none;">
             <h3 class="text-2xl font-bold text-eni-yellow mb-6">Complete Your Investment</h3>
-            
+
             <!-- Error Messages -->
             @if ($errors->any())
                 <div class="bg-red-500/20 border border-red-500/50 rounded-lg p-4 mb-6">
@@ -208,24 +521,24 @@
                     <p class="text-red-300">{{ session('error') }}</p>
                 </div>
             @endif
-            
+
             <!-- Selected Package Info -->
             <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-6">
                 <h4 class="font-semibold text-eni-yellow mb-2">Selected Package</h4>
                 <div id="package-info" class="text-white/80 text-sm"></div>
             </div>
-            
+
             <!-- Account Balance Info -->
             <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
                 <h4 class="font-semibold text-blue-400 mb-2">Your Account Balance</h4>
                 <div class="text-white/80 text-lg font-semibold">${{ number_format($accountBalance ?? 0, 2) }}</div>
                 <p class="text-white/60 text-sm">Available for instant investment</p>
             </div>
-            
+
             <form id="investment-form-element" method="POST" action="{{ route('user.deposit.process') }}" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="package_id" id="selected_package_id">
-                
+
                 <!-- Investment Amount -->
                 <div class="mb-6">
                     <label class="block text-white/80 font-semibold mb-3">Investment Amount</label>
@@ -244,37 +557,37 @@
                     <div class="relative">
                         <!-- Hidden input for form submission -->
                         <input type="hidden" name="payment_method" id="paymentMethodInput" required>
-                        
+
                         <!-- Custom dropdown trigger -->
-                        <div id="paymentMethodDropdown" onclick="togglePaymentDropdown()" 
+                        <div id="paymentMethodDropdown" onclick="togglePaymentDropdown()"
                              class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white focus:ring-2 focus:ring-eni-yellow focus:border-transparent cursor-pointer flex items-center justify-between min-h-[50px]">
                             <span id="selectedPaymentText" class="text-white/60">Select payment method</span>
                             <svg class="w-5 h-5 text-white/60 transform transition-transform" id="dropdownArrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </div>
-                        
+
                         <!-- Dropdown options -->
                         <div id="paymentMethodOptions" class="absolute top-full left-0 right-0 bg-eni-dark border border-white/20 rounded-lg mt-1 z-50 hidden max-h-64 overflow-y-auto">
                             <div class="p-2 space-y-1">
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('', 'Select payment method', '')">
                                     <span class="text-white/60">Select payment method</span>
                                 </div>
-                                
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('account_balance', '💰 Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)', '')">
                                     <span class="text-2xl mr-3">💰</span>
                                     <span class="text-white">Account Balance (${{ number_format($accountBalance ?? 0, 2) }} available)</span>
                                 </div>
-                                
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('bank_transfer', '🏦 Bank Transfer', '')">
                                     <span class="text-2xl mr-3">🏦</span>
                                     <span class="text-white">Bank Transfer</span>
                                 </div>
-                                
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('credit_card', 'Credit Card', '')">
                                     <svg class="w-6 h-4 mr-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
@@ -282,14 +595,14 @@
                                     </svg>
                                     <span class="text-white">Credit Card</span>
                                 </div>
-                                
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('paypal', 'PayPal', '{{ asset('Paypal.png') }}')">
                                     <img src="{{ asset('Paypal.png') }}" alt="PayPal" class="w-8 h-6 mr-3 object-contain">
                                     <span class="text-white">PayPal</span>
                                 </div>
-                                
-                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors" 
+
+                                <div class="payment-option flex items-center p-3 hover:bg-white/10 rounded-lg cursor-pointer transition-colors"
                                      onclick="selectPaymentMethod('cryptocurrency', 'Cryptocurrency', '{{ asset('crypto.jpg') }}')">
                                     <img src="{{ asset('crypto.jpg') }}" alt="Cryptocurrency" class="w-8 h-6 mr-3 object-contain rounded">
                                     <span class="text-white">Cryptocurrency</span>
@@ -332,7 +645,7 @@
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" 
+                <button type="submit"
                         class="w-full bg-eni-yellow text-eni-dark font-bold py-4 rounded-lg hover:bg-yellow-400 transition-colors text-lg">
                     Proceed with Investment
                 </button>
@@ -344,7 +657,7 @@
     <div id="termsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -352,11 +665,11 @@
                     </h2>
                     <button onclick="closeTermsModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-4 text-sm leading-relaxed">
-                        
+
                         <div class="text-white/80 mb-6">
                             <p><strong>Effective Date:</strong> September 1, 2025</p>
                             <p><strong>Last Updated:</strong> September 1, 2025</p>
@@ -371,7 +684,7 @@
                         </p>
 
                         <div class="space-y-6 mt-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">1. Eligibility & Client Verification</h3>
                                 <ul class="space-y-2 text-white/80 ml-4">
@@ -484,14 +797,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeTermsModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -500,7 +813,7 @@
     <div id="privacyModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -508,11 +821,11 @@
                     </h2>
                     <button onclick="closePrivacyModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-4 text-sm leading-relaxed">
-                        
+
                         <div class="text-white/80 mb-6">
                             <p><strong>Effective Date:</strong> September 1, 2025</p>
                             <p><strong>Last Updated:</strong> September 1, 2025</p>
@@ -527,7 +840,7 @@
                         </p>
 
                         <div class="space-y-6 mt-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">1. Information We Collect</h3>
                                 <p class="text-white/80 mb-2">We may collect the following categories of information:</p>
@@ -635,14 +948,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closePrivacyModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -651,7 +964,7 @@
     <div id="riskModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -659,11 +972,11 @@
                     </h2>
                     <button onclick="closeRiskModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-4 text-sm leading-relaxed">
-                        
+
                         <div class="text-white/80 mb-6">
                             <p><strong>Effective Date:</strong> September 1, 2025</p>
                             <p><strong>Last Updated:</strong> September 1, 2025</p>
@@ -674,7 +987,7 @@
                         </p>
 
                         <div class="space-y-6 mt-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">1. General Investment Risk</h3>
                                 <ul class="space-y-2 text-white/80 ml-4">
@@ -777,14 +1090,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeRiskModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -793,7 +1106,7 @@
     <div id="amlModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -801,11 +1114,11 @@
                     </h2>
                     <button onclick="closeAmlModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-4 text-sm leading-relaxed">
-                        
+
                         <div class="text-white/80 mb-6">
                             <p><strong>Effective Date:</strong> September 1, 2025</p>
                             <p><strong>Last Updated:</strong> September 1, 2025</p>
@@ -816,7 +1129,7 @@
                         </p>
 
                         <div class="space-y-6 mt-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">1. Policy Objective</h3>
                                 <p class="text-white/80 mb-2">The purpose of this AML Policy is to:</p>
@@ -926,14 +1239,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeAmlModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -942,7 +1255,7 @@
     <div id="guidelinesModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -950,11 +1263,11 @@
                     </h2>
                     <button onclick="closeGuidelinesModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-4 text-sm leading-relaxed">
-                        
+
                         <div class="text-white/80 mb-6">
                             <p><strong>Effective Date:</strong> September 1, 2025</p>
                             <p><strong>Last Updated:</strong> September 1, 2025</p>
@@ -965,7 +1278,7 @@
                         </p>
 
                         <div class="space-y-6 mt-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">1. Purpose</h3>
                                 <ul class="space-y-2 text-white/80 ml-4">
@@ -1090,14 +1403,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeGuidelinesModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -1106,7 +1419,7 @@
     <div id="aboutModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -1114,17 +1427,17 @@
                     </h2>
                     <button onclick="closeAboutModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
                     <div class="space-y-6 text-sm leading-relaxed">
-                        
+
                         <p class="text-white/90 text-base">
                             ENI Investment Platform operates as part of ENI's global strategy to integrate traditional energy expertise with forward-looking, sustainable investment opportunities. As a multinational energy company, ENI S.p.A. is headquartered in Italy and maintains operations across more than 60 countries, supported by a workforce of over 30,000 professionals.
                         </p>
 
                         <div class="space-y-6">
-                            
+
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">Corporate Profile</h3>
                                 <p class="text-white/80 mb-3">
@@ -1188,14 +1501,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeAboutModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                         Close
                     </button>
                 </div>
-                
+
             </div>
         </div>
     </div>
@@ -1204,7 +1517,7 @@
     <div id="supportModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-eni-charcoal border border-white/20 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-eni-dark px-6 py-4 border-b border-white/10 flex items-center justify-between">
                     <h2 class="text-2xl font-bold text-eni-yellow flex items-center gap-2">
@@ -1212,10 +1525,10 @@
                     </h2>
                     <button onclick="closeSupportModal()" class="text-white/60 hover:text-white text-2xl">×</button>
                 </div>
-                
+
                 <!-- Modal Content -->
                 <div class="p-6 overflow-y-auto max-h-[75vh] text-white">
-                    
+
                     <div class="mb-6">
                         <p class="text-white/90 text-lg mb-4">Welcome to the ENI Help Center</p>
                         <p class="text-white/80 mb-6">Here, you will find answers to frequently asked questions, guides on using our platform, and resources for account, investment, and compliance support.</p>
@@ -1223,7 +1536,7 @@
 
                     <!-- Help Center Content -->
                     <div class="space-y-8">
-                        
+
                         <!-- 1. Getting Started -->
                         <div class="bg-white/5 rounded-lg p-6 border border-white/10">
                             <h4 class="text-eni-yellow font-bold text-lg mb-4 flex items-center">
@@ -1515,16 +1828,16 @@
                     <!-- Policy Links -->
                     <div class="mt-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
                         <p class="text-blue-400 text-sm text-center">
-                            📌 The ENI Help Center is continuously updated. For the most recent policies, refer to our 
-                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openTermsModal()">Terms of Service</span>, 
-                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openPrivacyModal()">Privacy Policy</span>, 
-                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openAmlModal()">AML Policy</span>, and 
+                            📌 The ENI Help Center is continuously updated. For the most recent policies, refer to our
+                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openTermsModal()">Terms of Service</span>,
+                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openPrivacyModal()">Privacy Policy</span>,
+                            <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openAmlModal()">AML Policy</span>, and
                             <span class="text-eni-yellow cursor-pointer hover:underline" onclick="closeSupportModal(); openRiskModal()">Risk Disclosure</span>.
                         </p>
                     </div>
 
                 </div>
-                
+
                 <!-- Modal Footer -->
                 <div class="bg-eni-dark px-6 py-4 border-t border-white/10 flex justify-end">
                     <button onclick="closeSupportModal()" class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
@@ -1535,7 +1848,7 @@
             </div>
         </div>
     </div>
-                
+
             </div>
         </div>
     </div>
@@ -1545,38 +1858,38 @@
         <div class="flex justify-center items-start min-h-screen p-4 overflow-y-auto">
             <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10 relative max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
                 <!-- Close Button -->
-                <button type="button" onclick="closeQrModal()" 
+                <button type="button" onclick="closeQrModal()"
                         class="absolute top-4 right-4 text-white/60 hover:text-white text-2xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
                     &times;
                 </button>
-                
+
                 <div class="text-center">
                     <h3 class="text-xl font-bold mb-6 text-eni-yellow">Bank Transfer Payment</h3>
-                    
+
                     <div id="qrContent">
                         <!-- QR Code will be displayed here -->
                     </div>
-                    
+
                     <div class="mt-6">
                         <p class="text-white/60 text-xs mb-6">
                             After completing the transfer, upload your payment receipt below.
                         </p>
-                        
+
                         <!-- Receipt Upload Section -->
                         <div class="mb-6">
                             <label class="block text-white/80 text-sm font-medium mb-2">Upload Payment Receipt</label>
-                            <input type="file" id="receiptInput" name="receipt" 
+                            <input type="file" id="receiptInput" name="receipt"
                                    accept=".jpg,.jpeg,.png,.pdf"
                                    class="w-full text-sm text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-eni-yellow file:text-eni-dark hover:file:bg-yellow-400 bg-white/10 border border-white/20 rounded-lg">
                             <p class="text-white/50 text-xs mt-1">Accepted formats: JPG, PNG, PDF (Max 2MB)</p>
                         </div>
-                        
+
                         <div class="flex gap-3">
-                            <button type="button" onclick="uploadReceipt()" 
+                            <button type="button" onclick="uploadReceipt()"
                                     class="flex-1 bg-white/10 text-white py-3 rounded-lg hover:bg-white/20 transition-colors">
                                 Upload Receipt
                             </button>
-                            <button type="button" onclick="confirmBankTransfer()" 
+                            <button type="button" onclick="confirmBankTransfer()"
                                     class="flex-1 bg-eni-yellow text-eni-dark font-bold py-3 rounded-lg hover:bg-yellow-400 transition-colors">
                                 Complete Investment
                             </button>
@@ -1593,7 +1906,7 @@
         function togglePaymentDropdown() {
             const dropdown = document.getElementById('paymentMethodOptions');
             const arrow = document.getElementById('dropdownArrow');
-            
+
             if (dropdown.classList.contains('hidden')) {
                 dropdown.classList.remove('hidden');
                 arrow.style.transform = 'rotate(180deg)';
@@ -1602,15 +1915,15 @@
                 arrow.style.transform = 'rotate(0deg)';
             }
         }
-        
+
         function selectPaymentMethod(value, displayText, logoUrl) {
             const input = document.getElementById('paymentMethodInput');
             const displayElement = document.getElementById('selectedPaymentText');
             const dropdown = document.getElementById('paymentMethodOptions');
             const arrow = document.getElementById('dropdownArrow');
-            
+
             input.value = value;
-            
+
             // Update display text with logo if available
             if (logoUrl && logoUrl !== '') {
                 displayElement.innerHTML = '<div class="flex items-center"><img src="' + logoUrl + '" alt="' + displayText + '" class="w-6 h-4 mr-3 object-contain' + (value === 'cryptocurrency' ? ' rounded' : '') + '"><span>' + displayText.replace(/^[^a-zA-Z]*\s*/, '') + '</span></div>';
@@ -1623,21 +1936,21 @@
             } else {
                 displayElement.textContent = displayText;
             }
-            
+
             // Close dropdown
             dropdown.classList.add('hidden');
             arrow.style.transform = 'rotate(0deg)';
-            
+
             // Handle payment method logic
             handlePaymentMethodChange(value);
         }
-        
+
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('paymentMethodDropdown');
             const options = document.getElementById('paymentMethodOptions');
             const arrow = document.getElementById('dropdownArrow');
-            
+
             if (dropdown && options && !dropdown.contains(event.target) && !options.contains(event.target)) {
                 options.classList.add('hidden');
                 arrow.style.transform = 'rotate(0deg)';
@@ -1649,9 +1962,9 @@
             if (!paymentMethod) {
                 paymentMethod = document.getElementById('paymentMethodInput').value;
             }
-            
+
             const bankSelection = document.getElementById('bankSelection');
-            
+
             // Check for unavailable payment methods
             const unavailableMethods = {
                 'credit_card': {
@@ -1667,7 +1980,7 @@
                     reason: 'Cryptocurrency payments are not supported in your region due to regulatory compliance.'
                 }
             };
-            
+
             if (unavailableMethods[paymentMethod]) {
                 // Show not available modal
                 showPaymentNotAvailableModal(
@@ -1680,7 +1993,7 @@
                 bankSelection.classList.add('hidden');
                 return;
             }
-            
+
             // Handle available payment methods
             if (paymentMethod === 'bank_transfer') {
                 bankSelection.classList.remove('hidden');
@@ -1695,18 +2008,18 @@
         function selectBank(bankName) {
             // Clear previous selections
             clearBankSelection();
-            
+
             // Mark selected bank and add immediate loading effect
             const bankOptions = document.querySelectorAll('.bank-option');
             let selectedBankElement = null;
-            
+
             bankOptions.forEach(option => {
                 if (option.onclick.toString().includes(bankName)) {
                     option.classList.add('ring-2', 'ring-eni-yellow', 'bg-white/20');
                     selectedBankElement = option;
                 }
             });
-            
+
             // Add loading effect to the selected bank card
             if (selectedBankElement) {
                 const originalContent = selectedBankElement.innerHTML;
@@ -1721,16 +2034,16 @@
                         <div class="text-white/60 text-sm">Preparing QR Code</div>
                     </div>
                 `;
-                
+
                 // Restore original content after 2 seconds
                 setTimeout(() => {
                     selectedBankElement.innerHTML = originalContent;
                 }, 2000);
             }
-            
+
             // Set hidden input value
             document.getElementById('selectedBank').value = bankName;
-            
+
             // Show loading effect and generate QR code
             showQrLoadingThenGenerate(bankName);
         }
@@ -1769,7 +2082,7 @@
                         </div>
                         <h4 class="text-xl font-bold text-white mb-2">Generating QR Code</h4>
                         <p class="text-white/70 text-sm mb-4">Please wait while we prepare your ${bankDisplayName} payment QR code...</p>
-                        
+
                         <!-- Enhanced loading dots -->
                         <div class="flex justify-center space-x-2 mb-6">
                             <div class="w-3 h-3 bg-eni-yellow rounded-full enhanced-bounce" style="animation-delay: 0ms;"></div>
@@ -1777,7 +2090,7 @@
                             <div class="w-3 h-3 bg-eni-yellow rounded-full enhanced-bounce" style="animation-delay: 400ms;"></div>
                         </div>
                     </div>
-                    
+
                     <!-- Simulated progress steps with enhanced styling -->
                     <div class="text-left max-w-sm mx-auto">
                         <div class="space-y-3 text-sm">
@@ -1797,17 +2110,17 @@
                     </div>
                 </div>
             `;
-            
+
             // Show the modal
             document.getElementById('qrModal').classList.remove('hidden');
-            
+
             // Simulate loading steps with delays
             setTimeout(() => {
                 // Step 2: Generating secure payment code
                 const step2 = document.getElementById('loading-step-2');
                 const dot2 = document.getElementById('loading-dot-2');
                 const text2 = document.getElementById('loading-text-2');
-                
+
                 step2.classList.remove('shimmer');
                 step2.classList.add('bg-green-500/10');
                 dot2.classList.remove('bg-white/30');
@@ -1815,17 +2128,17 @@
                 text2.classList.remove('text-white/40');
                 text2.classList.add('text-green-400');
                 text2.innerHTML = '✓ Generating secure payment code...';
-                
+
                 // Add shimmer to step 3
                 document.getElementById('loading-step-3').classList.add('shimmer');
             }, 800);
-            
+
             setTimeout(() => {
                 // Step 3: Creating QR code
                 const step3 = document.getElementById('loading-step-3');
                 const dot3 = document.getElementById('loading-dot-3');
                 const text3 = document.getElementById('loading-text-3');
-                
+
                 step3.classList.remove('shimmer');
                 step3.classList.add('bg-green-500/10');
                 dot3.classList.remove('bg-white/30');
@@ -1834,7 +2147,7 @@
                 text3.classList.add('text-green-400');
                 text3.innerHTML = '✓ Creating QR code...';
             }, 1600);
-            
+
             // After loading animation (2.5 seconds), show the actual QR code
             setTimeout(() => {
                 showQrCode(bankName);
@@ -1845,7 +2158,7 @@
             const qrContent = document.getElementById('qrContent');
             let qrImagePath = '';
             let bankDisplayName = '';
-            
+
             switch(bankName) {
                 case 'landbank':
                     qrImagePath = '/Landbank QR.png';
@@ -1860,7 +2173,7 @@
                     bankDisplayName = 'RCBC';
                     break;
             }
-            
+
             // Create QR content with fade-in animation
             qrContent.innerHTML = `
                 <div class="opacity-0 transform scale-95 transition-all duration-500 ease-out" id="qrCodeContent">
@@ -1876,12 +2189,12 @@
                         <h4 class="text-xl font-bold text-white mb-2">QR Code Ready!</h4>
                         <p class="text-eni-yellow font-semibold mb-4">${bankDisplayName}</p>
                     </div>
-                    
+
                     <div class="mb-4 p-4 bg-white rounded-lg">
-                        <img src="${qrImagePath}" alt="${bankDisplayName} QR Code for Bank Transfer" 
+                        <img src="${qrImagePath}" alt="${bankDisplayName} QR Code for Bank Transfer"
                              class="mx-auto w-full max-w-xs h-auto object-contain">
                     </div>
-                    
+
                     <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-4">
                         <p class="text-eni-yellow text-sm font-medium text-center">
                             📱 Scan this QR code with your banking app to transfer to ${bankDisplayName}
@@ -1889,7 +2202,7 @@
                     </div>
                 </div>
             `;
-            
+
             // Trigger fade-in animation
             setTimeout(() => {
                 const qrCodeContent = document.getElementById('qrCodeContent');
@@ -1898,7 +2211,7 @@
                     qrCodeContent.classList.add('opacity-100', 'scale-100');
                 }
             }, 100);
-            
+
             const modal = document.getElementById('qrModal');
             modal.classList.remove('hidden');
             document.body.style.overflow = 'hidden';
@@ -1930,12 +2243,12 @@
 
         function confirmBankTransfer() {
             const receiptInput = document.getElementById('receiptInput');
-            
+
             if (!receiptInput.files.length) {
                 alert('Please upload your payment receipt before completing the investment.');
                 return;
             }
-            
+
             // Submit the form with the uploaded receipt
             submitInvestmentWithReceipt();
         }
@@ -1948,41 +2261,41 @@
         function submitInvestmentWithReceipt() {
             const form = document.getElementById('investment-form-element');
             const receiptInput = document.getElementById('receiptInput');
-            
+
             // Validate required fields before submission
             const packageId = document.getElementById('selected_package_id').value;
             const amount = document.getElementById('investment_amount').value;
             const paymentMethod = document.getElementById('paymentMethodInput').value;
-            
+
             console.log('Form validation:', {
                 packageId: packageId,
                 amount: amount,
                 paymentMethod: paymentMethod
             });
-            
+
             if (!packageId) {
                 alert('Please select an investment package first.');
                 return;
             }
-            
+
             if (!amount || parseFloat(amount) < 10) {
                 alert('Please enter a valid investment amount.');
                 return;
             }
-            
+
             if (!paymentMethod) {
                 alert('Please select a payment method.');
                 return;
             }
-            
+
             // Create FormData to handle file upload
             const formData = new FormData(form);
-            
+
             // Add the receipt file if selected
             if (receiptInput.files.length > 0) {
                 formData.set('receipt', receiptInput.files[0]);
             }
-            
+
             // Submit via fetch
             fetch(form.action, {
                 method: 'POST',
@@ -1996,7 +2309,7 @@
             .then(response => {
                 console.log('Response status:', response.status);
                 console.log('Response headers:', response.headers);
-                
+
                 if (response.ok) {
                     // Check if response is JSON
                     const contentType = response.headers.get('content-type');
@@ -2039,7 +2352,7 @@
             })
             .catch(error => {
                 console.error('Investment submission error:', error);
-                
+
                 // Show more specific error message
                 let errorMessage = 'Error submitting investment: ';
                 if (error.message.includes('422')) {
@@ -2051,7 +2364,7 @@
                 } else {
                     errorMessage += error.message;
                 }
-                
+
                 alert(errorMessage);
             });
         }
@@ -2060,7 +2373,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('investment-form-element');
             const receiptInput = document.getElementById('receiptInput');
-            
+
             // Add file change listener for visual feedback
             if (receiptInput) {
                 receiptInput.addEventListener('change', function() {
@@ -2076,54 +2389,54 @@
                     }
                 });
             }
-            
+
             if (form) {
                 form.addEventListener('submit', function(e) {
                     // Validate all required fields first
                     const packageId = document.getElementById('selected_package_id').value;
                     const amount = document.getElementById('investment_amount').value;
                     const paymentMethod = document.getElementById('paymentMethodInput').value;
-                    
+
                     console.log('Form submission validation:', { packageId, amount, paymentMethod });
-                    
+
                     if (!packageId) {
                         e.preventDefault();
                         alert('Please select an investment package first.');
                         return;
                     }
-                    
+
                     if (!amount) {
                         e.preventDefault();
                         alert('Please enter an investment amount.');
                         return;
                     }
-                    
+
                     if (!paymentMethod) {
                         e.preventDefault();
                         alert('Please select a payment method.');
                         return;
                     }
-                    
+
                     // Additional validation for amount
                     const amountValue = parseFloat(amount);
                     const minAmount = parseFloat(document.getElementById('investment_amount').min);
                     const maxAmount = parseFloat(document.getElementById('investment_amount').max);
-                    
+
                     if (isNaN(amountValue) || amountValue < minAmount || amountValue > maxAmount) {
                         e.preventDefault();
                         alert(`Please enter a valid amount between $${minAmount.toLocaleString()} and $${maxAmount.toLocaleString()}.`);
                         return;
                     }
-                    
+
                     if (paymentMethod === 'bank_transfer') {
                         const selectedBank = document.getElementById('selectedBank').value;
-                        
+
                         if (!selectedBank) {
                             e.preventDefault();
                             alert('Please select a bank for transfer.');
                             return;
                         }
-                        
+
                         // Show loading animation then QR code instead of submitting immediately
                         e.preventDefault();
                         showQrLoadingThenGenerate(selectedBank);
@@ -2138,16 +2451,16 @@
             document.getElementById('investment_amount').min = minAmount;
             document.getElementById('investment_amount').max = maxAmount;
             document.getElementById('investment_amount').placeholder = `Enter amount (min: $${minAmount.toLocaleString()})`;
-            
+
             // Update package info display
             document.getElementById('package-info').innerHTML = `
                 <strong>${packageName}</strong><br>
                 Daily Returns: ${dailyRate}% | Range: $${minAmount.toLocaleString()} - $${maxAmount.toLocaleString()}
             `;
-            
+
             // Update amount limits text
             document.getElementById('amount-limits').textContent = `Minimum: $${minAmount.toLocaleString()} - Maximum: $${maxAmount.toLocaleString()}`;
-            
+
             // Show investment form
             document.getElementById('investment-form').style.display = 'block';
             document.getElementById('investment-form').scrollIntoView({ behavior: 'smooth' });
@@ -2279,7 +2592,7 @@
                 closePaymentModal();
             }
         });
-        
+
         // Debug form submission
         document.getElementById('investment-form-element').addEventListener('submit', function(e) {
             console.log('Form submission attempted');
@@ -2287,19 +2600,19 @@
             console.log('Package ID:', document.getElementById('selected_package_id').value);
             console.log('Amount:', document.getElementById('investment_amount').value);
             console.log('Payment Method:', document.getElementById('paymentMethodInput').value);
-            
+
             // Check if required fields are filled
             const packageId = document.getElementById('selected_package_id').value;
             const amount = document.getElementById('investment_amount').value;
             const paymentMethod = document.getElementById('paymentMethodInput').value;
-            
+
             if (!packageId || !amount || !paymentMethod) {
                 console.error('Missing required fields');
                 e.preventDefault();
                 alert('Please fill in all required fields');
                 return false;
             }
-            
+
             console.log('Form validation passed, submitting...');
         });
 
@@ -2307,32 +2620,32 @@
         function showPaymentNotAvailableModal(paymentMethodName, reason) {
             const modal = document.getElementById('paymentNotAvailableModal');
             const paymentSelect = document.getElementById('paymentMethodInput');
-            
+
             // Update modal content
             document.getElementById('paymentMethodName').textContent = paymentMethodName;
             document.getElementById('paymentMethodReason').textContent = reason || 'This payment method is currently not available in your region.';
-            
+
             // Add pulse animation to the select dropdown
             paymentSelect.classList.add('payment-unavailable');
             setTimeout(() => {
                 paymentSelect.classList.remove('payment-unavailable');
             }, 600);
-            
+
             // Show modal with animation
             modal.classList.remove('hidden');
             // Force a reflow to ensure the initial state is rendered
             modal.offsetHeight;
-            
+
             // Prevent body scroll
             document.body.style.overflow = 'hidden';
         }
 
         function closePaymentModal() {
             const modal = document.getElementById('paymentNotAvailableModal');
-            
+
             // Add hidden class to trigger animation
             modal.classList.add('hidden');
-            
+
             // Restore body scroll
             document.body.style.overflow = 'auto';
         }
@@ -2367,7 +2680,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Modal Body -->
             <div class="p-6 text-eni-dark">
                 <div class="text-center mb-4">
@@ -2379,7 +2692,7 @@
                     <h4 class="text-lg font-semibold mb-2 text-eni-dark" id="paymentMethodName">Payment Method</h4>
                     <p class="text-gray-600 mb-4 text-sm" id="paymentMethodReason">This payment method is currently not available in your region.</p>
                 </div>
-                
+
                 <div class="bg-eni-yellow/10 border border-eni-yellow/30 rounded-lg p-4 mb-4">
                     <div class="flex items-start">
                         <svg class="w-5 h-5 text-eni-dark mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -2401,14 +2714,14 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Modal Footer -->
             <div class="bg-gray-50 px-6 py-4 rounded-b-2xl flex gap-3 justify-center">
-                <button onclick="closePaymentModal()" 
+                <button onclick="closePaymentModal()"
                         class="bg-eni-yellow text-eni-dark px-6 py-2 rounded-lg font-semibold hover:bg-eni-yellow/90 transition-colors">
                     I Understand
                 </button>
-                <button onclick="closePaymentModal(); openSupportModal();" 
+                <button onclick="closePaymentModal(); openSupportModal();"
                         class="bg-eni-dark text-white px-6 py-2 rounded-lg font-semibold hover:bg-eni-charcoal transition-colors">
                     Contact Support
                 </button>

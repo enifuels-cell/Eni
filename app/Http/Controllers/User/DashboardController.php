@@ -59,6 +59,67 @@ class DashboardController extends Controller
             return $date->toDateString();
         })->toArray();
 
+        return view('dashboard', compact(
+            'total_invested',
+            'total_interest',
+            'total_referral_bonus',
+            'account_balance',
+            'active_investments',
+            'recent_transactions',
+            'recent_notifications',
+            'unread_notifications_count',
+            'showAttendanceModal',
+            'currentMonthTickets',
+            'currentMonthAttendance',
+            'currentMonthDays',
+            'attendanceDates'
+        ));
+    }
+
+    public function mobileIndex()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        // Get user statistics
+        $total_invested = $user->totalInvestedAmount();
+        $total_interest = $user->totalInterestEarned();
+        $total_referral_bonus = $user->totalReferralBonuses();
+        $account_balance = $user->accountBalance();
+
+        // Count active investments
+        $active_investments = $user->investments()->active()->count();
+
+        // Get recent transactions
+        $recent_transactions = $user->transactions()
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Get recent notifications for dropdown
+        $recent_notifications = $user->userNotifications()
+            ->active()
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Get unread notifications count
+        $unread_notifications_count = $user->userNotifications()
+            ->unread()
+            ->active()
+            ->count();
+
+        // Attendance System Data
+        $showAttendanceModal = $user->shouldShowAttendanceModal();
+        $currentMonthTickets = $user->getMonthlyTicketCount();
+        $currentMonthAttendance = $user->getMonthlyAttendance()->count();
+        $currentMonthDays = now()->daysInMonth;
+
+        // Get attendance dates for calendar
+        $attendanceDates = $user->getMonthlyAttendance()->pluck('attendance_date')->map(function($date) {
+            return $date->toDateString();
+        })->toArray();
+
         return view('mobile-dashboard', compact(
             'total_invested',
             'total_interest',

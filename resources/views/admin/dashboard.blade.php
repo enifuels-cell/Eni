@@ -133,7 +133,7 @@
                             </span>
                         @endif
                     </a>
-                    
+
                     <a href="{{ route('admin.withdrawals.pending') }}" class="inline-flex items-center px-4 py-2 border border-red-500/40 text-sm font-medium rounded-md text-red-400 bg-red-500/10 hover:bg-red-500/20 transition-colors">
                         <i class="fas fa-arrow-up mr-2"></i>Review Withdrawals
                         @if(($pendingWithdrawals ?? 0) > 0)
@@ -142,11 +142,11 @@
                             </span>
                         @endif
                     </a>
-                    
+
                     <a href="{{ route('admin.users.manage') }}" class="inline-flex items-center px-4 py-2 border border-eni-yellow/40 text-sm font-medium rounded-md text-eni-yellow bg-eni-yellow/10 hover:bg-eni-yellow/20 transition-colors">
                         <i class="fas fa-users mr-2"></i>Manage Users
                     </a>
-                    
+
                     <a href="{{ route('admin.interest.daily') }}" class="inline-flex items-center px-4 py-2 border border-purple-500/40 text-sm font-medium rounded-md text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 transition-colors">
                         <i class="fas fa-chart-line mr-2"></i>Interest Log
                     </a>
@@ -198,10 +198,10 @@
                                         <div>
                                             <span class="h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-eni-dark border
                                                 @if($transaction->type === 'deposit') border-green-500/40 bg-green-500/20
-                                                @elseif($transaction->type === 'withdrawal') border-red-500/40 bg-red-500/20  
+                                                @elseif($transaction->type === 'withdrawal') border-red-500/40 bg-red-500/20
                                                 @else border-blue-500/40 bg-blue-500/20
                                                 @endif">
-                                                <i class="fas fa-{{ $transaction->type === 'deposit' ? 'arrow-down' : ($transaction->type === 'withdrawal' ? 'arrow-up' : 'exchange-alt') }} 
+                                                <i class="fas fa-{{ $transaction->type === 'deposit' ? 'arrow-down' : ($transaction->type === 'withdrawal' ? 'arrow-up' : 'exchange-alt') }}
                                                     @if($transaction->type === 'deposit') text-green-400
                                                     @elseif($transaction->type === 'withdrawal') text-red-400
                                                     @else text-blue-400
@@ -211,9 +211,9 @@
                                         <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                                             <div>
                                                 <p class="text-sm text-gray-300">
-                                                    {{ $transaction->user->name }} - 
+                                                    {{ $transaction->user->name }} -
                                                     <span class="font-medium text-white">{{ ucfirst($transaction->type) }}</span>
-                                                    of ${{ number_format($transaction->amount, 2) }}
+                                                    of ${{ number_format($transaction->amount->toFloat(), 2) }}
                                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border
                                                         @if($transaction->status === 'pending') bg-yellow-500/10 text-yellow-400 border-yellow-500/40
                                                         @elseif($transaction->status === 'approved') bg-green-500/10 text-green-400 border-green-500/40
@@ -257,7 +257,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="border border-blue-500/40 rounded-lg p-4 bg-blue-500/10">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -269,7 +269,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="border border-eni-yellow/40 rounded-lg p-4 bg-eni-yellow/10">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">

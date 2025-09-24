@@ -42,11 +42,11 @@
                                     <h3 class="text-white font-semibold text-lg">{{ $deposit->user->name }}</h3>
                                     <span class="text-white/60 text-sm">({{ $deposit->user->email }})</span>
                                 </div>
-                                
+
                                 <!-- Amount & Reference -->
                                 <div class="flex items-center space-x-4 mb-3">
                                     <div class="bg-white/10 border border-white/20 rounded-lg px-3 py-1">
-                                        <span class="text-white font-bold text-xl">${{ number_format($deposit->amount, 2) }}</span>
+                                        <span class="text-white font-bold text-xl">${{ number_format($deposit->amount->toFloat(), 2) }}</span>
                                     </div>
                                     <div class="text-white/60 text-sm">
                                         <i class="fas fa-hashtag mr-1 text-white/40"></i>{{ $deposit->reference }}
@@ -77,31 +77,31 @@
                         <!-- Action Buttons -->
                         <div class="flex items-center space-x-3">
                             @if($deposit->receipt_path)
-                                <a href="{{ Storage::url($deposit->receipt_path) }}" target="_blank" 
+                                <a href="{{ Storage::url($deposit->receipt_path) }}" target="_blank"
                                    class="bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                     <i class="fas fa-eye mr-2 text-white/60"></i>View Receipt
                                 </a>
                             @endif
-                            
+
                             <!-- Approve Button -->
                             <form method="POST" action="{{ route('admin.deposits.approve', $deposit) }}" class="inline">
                                 @csrf
                                 @method('PATCH')
-                                <button type="submit" 
+                                <button type="submit"
                                         onclick="return confirm('Are you sure you want to approve this deposit?')"
                                         class="bg-green-600/80 hover:bg-green-600 border border-green-600/50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                     <i class="fas fa-check mr-2"></i>Approve
                                 </button>
                             </form>
-                            
+
                             <!-- Deny Button -->
-                            <button onclick="openDenyModal('{{ $deposit->id }}')" 
+                            <button onclick="openDenyModal('{{ $deposit->id }}')"
                                     class="bg-red-600/80 hover:bg-red-600 border border-red-600/50 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                 <i class="fas fa-times mr-2"></i>Deny
                             </button>
-                            
+
                             <!-- Delete Button -->
-                            <button onclick="openDeleteModal('{{ $deposit->id }}')" 
+                            <button onclick="openDeleteModal('{{ $deposit->id }}')"
                                     class="bg-white/10 hover:bg-white/20 border border-white/20 text-white/80 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center">
                                 <i class="fas fa-trash mr-2 text-white/60"></i>Delete
                             </button>
@@ -110,7 +110,7 @@
                 </div>
             @endforeach
         </div>
-        
+
         <!-- Pagination -->
         <div class="eni-card rounded-xl p-6">
             {{ $deposits->links() }}
@@ -141,17 +141,17 @@
                 </h3>
                 <button onclick="closeDenyModal()" class="text-white/60 hover:text-white text-2xl">×</button>
             </div>
-            
+
             <form id="denyForm" method="POST">
                 @csrf
                 @method('PATCH')
                 <div class="mb-6">
                     <label for="reason" class="block text-white/80 font-medium mb-3">Reason for denial</label>
-                    <textarea name="reason" id="reason" required rows="4" 
+                    <textarea name="reason" id="reason" required rows="4"
                               class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/40 focus:ring-2 focus:ring-red-400 focus:border-transparent"
                               placeholder="Please provide a detailed reason for denying this deposit..."></textarea>
                 </div>
-                
+
                 <div class="bg-white/10 border border-white/20 rounded-lg p-4 mb-6">
                     <div class="flex items-start">
                         <i class="fas fa-exclamation-triangle text-white/60 mt-1 mr-3"></i>
@@ -162,13 +162,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeDenyModal()" 
+                    <button type="button" onclick="closeDenyModal()"
                             class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all">
                         Cancel
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all">
                         <i class="fas fa-times mr-2"></i>Deny Deposit
                     </button>
@@ -189,7 +189,7 @@
                 </h3>
                 <button onclick="closeDeleteModal()" class="text-white/60 hover:text-white text-2xl">×</button>
             </div>
-            
+
             <form id="deleteForm" method="POST">
                 @csrf
                 @method('DELETE')
@@ -197,11 +197,11 @@
                     <label for="admin_password" class="block text-white/80 font-medium mb-3">
                         Admin Password <span class="text-red-400">*</span>
                     </label>
-                    <input type="password" name="admin_password" id="admin_password" required 
+                    <input type="password" name="admin_password" id="admin_password" required
                            class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/40 focus:ring-2 focus:ring-red-400 focus:border-transparent"
                            placeholder="Enter your admin password">
                 </div>
-                
+
                 <div class="bg-white/10 border border-white/20 rounded-lg p-4 mb-6">
                     <div class="flex items-start">
                         <i class="fas fa-exclamation-triangle text-white/60 mt-1 mr-3"></i>
@@ -213,13 +213,13 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="flex justify-end space-x-3">
-                    <button type="button" onclick="closeDeleteModal()" 
+                    <button type="button" onclick="closeDeleteModal()"
                             class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all">
                         Cancel
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                             class="px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all">
                         <i class="fas fa-trash mr-2"></i>Delete Permanently
                     </button>
@@ -258,7 +258,7 @@ function closeDeleteModal() {
 window.onclick = function(event) {
     const denyModal = document.getElementById('denyModal');
     const deleteModal = document.getElementById('deleteModal');
-    
+
     if (event.target === denyModal) {
         closeDenyModal();
     }

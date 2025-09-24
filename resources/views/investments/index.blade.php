@@ -26,8 +26,8 @@
             <!-- Debug Info -->
             @if(config('app.debug'))
                 <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
-                    <strong>Debug Info:</strong> 
-                    Packages count: {{ $packages->count() }} | 
+                    <strong>Debug Info:</strong>
+                    Packages count: {{ $packages->count() }} |
                     User investments: {{ $userInvestments->count() }}
                     @if($packages->count() == 0)
                         <br><strong>No packages available!</strong> Check if packages are active and have available slots.
@@ -43,7 +43,7 @@
                         <h3 class="text-xl font-bold">{{ $package->name }}</h3>
                         <p class="text-blue-100 mt-2">Daily Rate: {{ $package->daily_shares_rate }}%</p>
                     </div>
-                    
+
                     <div class="p-6">
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
@@ -73,23 +73,23 @@
                         <form action="{{ route('investments.store') }}" method="POST" class="space-y-4">
                             @csrf
                             <input type="hidden" name="investment_package_id" value="{{ $package->id }}">
-                            
+
                             <div>
                                 <label for="amount_{{ $package->id }}" class="block text-sm font-medium text-gray-700">Investment Amount</label>
-                                <input type="number" step="0.01" min="{{ $package->min_amount }}" max="{{ $package->max_amount }}" 
-                                       name="amount" id="amount_{{ $package->id }}" 
+                                <input type="number" step="0.01" min="{{ $package->min_amount }}" max="{{ $package->max_amount }}"
+                                       name="amount" id="amount_{{ $package->id }}"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                        placeholder="${{ number_format($package->min_amount) }}" required>
                             </div>
-                            
+
                             <div>
                                 <label for="referral_code_{{ $package->id }}" class="block text-sm font-medium text-gray-700">Referral Code (Optional)</label>
-                                <input type="text" name="referral_code" id="referral_code_{{ $package->id }}" 
+                                <input type="text" name="referral_code" id="referral_code_{{ $package->id }}"
                                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                                        placeholder="Enter referral code">
                             </div>
 
-                            <button type="submit" 
+                            <button type="submit"
                                     class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition-colors">
                                 Invest Now
                             </button>
@@ -111,7 +111,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">My Investments</h3>
-                    
+
                     @if($userInvestments->count() > 0)
                         <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
@@ -130,7 +130,7 @@
                                     @foreach($userInvestments as $investment)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $investment->investmentPackage->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($investment->amount, 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($investment->amount->toFloat(), 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $investment->active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
                                                 {{ $investment->active ? 'Active' : 'Completed' }}

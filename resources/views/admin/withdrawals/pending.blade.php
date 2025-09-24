@@ -51,7 +51,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">${{ number_format($withdrawal->amount, 2) }}</div>
+                                <div class="text-sm font-medium text-gray-900">${{ number_format($withdrawal->amount->toFloat(), 2) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">{{ $withdrawal->reference ?? 'N/A' }}</div>
@@ -64,7 +64,7 @@
                                     <form action="{{ route('admin.withdrawals.approve', $withdrawal) }}" method="POST" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
                                                 onclick="return confirm('Are you sure you want to approve this withdrawal?')">
                                             Approve
@@ -73,7 +73,7 @@
                                     <form action="{{ route('admin.withdrawals.reject', $withdrawal) }}" method="POST" class="inline">
                                         @csrf
                                         @method('PATCH')
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 class="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
                                                 onclick="return confirm('Are you sure you want to reject this withdrawal?')">
                                             Reject

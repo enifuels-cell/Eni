@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deposit - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    
+
+
     <script>
         tailwind.config = {
             theme: {
@@ -63,10 +63,10 @@
         <!-- Deposit Form -->
         <div class="bg-white/5 rounded-2xl p-8 backdrop-blur">
             <h2 class="text-2xl font-bold text-eni-yellow mb-6">Deposit Funds</h2>
-            
+
             <form method="POST" action="{{ route('dashboard.deposit') }}" enctype="multipart/form-data">
                 @csrf
-                
+
                 <!-- Amount Input -->
                 <div class="mb-6">
                     <label class="block text-white/80 font-semibold mb-3">Deposit Amount</label>
@@ -106,13 +106,13 @@
                 <!-- Receipt Upload -->
                 <div class="mb-8">
                     <label class="block text-white/80 font-semibold mb-3">Payment Receipt (Optional)</label>
-                    <input type="file" name="receipt" accept=".jpg,.jpeg,.png,.pdf" 
+                    <input type="file" name="receipt" accept=".jpg,.jpeg,.png,.pdf"
                            class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-eni-yellow file:text-eni-dark file:font-semibold hover:file:bg-yellow-400">
                     <p class="text-white/60 text-sm mt-2">Upload proof of payment (JPG, PNG, PDF - Max 2MB)</p>
                 </div>
 
                 <!-- Submit Button -->
-                <button type="submit" 
+                <button type="submit"
                         class="w-full bg-eni-yellow text-eni-dark font-bold py-4 rounded-lg hover:bg-yellow-400 transition-colors text-lg">
                     Submit Deposit Request
                 </button>
@@ -133,7 +133,7 @@
         <!-- Recent Deposits -->
         <div class="mt-8 bg-white/5 rounded-2xl p-8 backdrop-blur">
             <h3 class="text-xl font-bold text-eni-yellow mb-4">Recent Deposits</h3>
-            
+
             @php
                 $recentDeposits = Auth::user()->transactions()
                     ->where('type', 'deposit')
@@ -146,13 +146,13 @@
                 @forelse($recentDeposits as $deposit)
                     <div class="flex justify-between items-center p-4 bg-white/5 rounded-lg">
                         <div>
-                            <div class="font-medium text-white">${{ number_format($deposit->amount, 2) }}</div>
+                            <div class="font-medium text-white">${{ number_format($deposit->amount->toFloat(), 2) }}</div>
                             <div class="text-sm text-white/60">{{ $deposit->created_at->format('M d, Y - H:i') }}</div>
                             <div class="text-sm text-white/60">{{ $deposit->reference }}</div>
                         </div>
                         <div class="text-right">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full 
-                                {{ $deposit->status == 'completed' ? 'bg-green-500/20 text-green-400' : 
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full
+                                {{ $deposit->status == 'completed' ? 'bg-green-500/20 text-green-400' :
                                    ($deposit->status == 'pending' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400') }}">
                                 {{ ucfirst($deposit->status) }}
                             </span>

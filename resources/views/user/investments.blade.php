@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Investment Packages - ENI Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    
+
+
     <script>
         tailwind.config = {
             theme: {
@@ -47,7 +47,7 @@
         <!-- Available Investment Packages -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold mb-6 text-eni-yellow">Available Investment Packages</h2>
-            
+
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($investmentPackages ?? [] as $package)
                     <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal rounded-2xl p-6 border border-white/10 hover:border-eni-yellow/50 transition-all">
@@ -55,7 +55,7 @@
                             <h3 class="text-xl font-bold text-eni-yellow">{{ $package->name }}</h3>
                             <p class="text-white/70 text-sm">{{ $package->daily_shares_rate }}% Daily Interest</p>
                         </div>
-                        
+
                         <div class="space-y-3 mb-6">
                             <div class="flex justify-between">
                                 <span class="text-white/70">Minimum:</span>
@@ -78,7 +78,7 @@
                                 <span class="font-semibold">{{ $package->available_slots ?? 'Unlimited' }}</span>
                             </div>
                         </div>
-                        
+
                         <button type="button"
                                 data-package-id="{{ $package->id }}"
                                 data-package-name="{{ e($package->name) }}"
@@ -99,7 +99,7 @@
         <!-- Your Active Investments -->
         <div>
             <h2 class="text-2xl font-bold mb-6 text-eni-yellow">Your Active Investments</h2>
-            
+
             <div class="bg-eni-dark rounded-2xl overflow-hidden">
                 @forelse($investments ?? [] as $investment)
                     <div class="border-b border-white/10 p-6">
@@ -108,18 +108,18 @@
                                 <h3 class="font-semibold text-lg">{{ $investment->investmentPackage->name }}</h3>
                                 <p class="text-white/70 text-sm">Started: {{ $investment->created_at->format('M d, Y') }}</p>
                             </div>
-                            <span class="px-3 py-1 rounded-full text-xs font-semibold 
+                            <span class="px-3 py-1 rounded-full text-xs font-semibold
                                 @if($investment->status === 'active') bg-green-500/20 text-green-400
                                 @elseif($investment->status === 'completed') bg-blue-500/20 text-blue-400
                                 @else bg-yellow-500/20 text-yellow-400 @endif">
                                 {{ ucfirst($investment->status) }}
                             </span>
                         </div>
-                        
+
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                                 <p class="text-white/70">Investment</p>
-                                <p class="font-semibold">${{ number_format($investment->amount, 2) }}</p>
+                                <p class="font-semibold">${{ number_format($investment->amount->toFloat(), 2) }}</p>
                             </div>
                             <div>
                                 <p class="text-white/70">Daily Interest</p>
@@ -149,25 +149,25 @@
     <div id="investModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-eni-dark rounded-2xl p-8 m-4 max-w-md w-full border border-white/10">
             <h3 id="modalTitle" class="text-xl font-bold mb-6 text-eni-yellow">Invest in Package</h3>
-            
+
             <form method="POST" action="{{ route('investments.store') }}">
                 @csrf
                 <input type="hidden" id="packageId" name="investment_package_id">
-                
+
                 <div class="mb-6">
                     <label class="block text-white/80 mb-2">Investment Amount ($)</label>
-                    <input type="number" id="investAmount" name="amount" step="0.01" 
-                           class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow" 
+                    <input type="number" id="investAmount" name="amount" step="0.01"
+                           class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-eni-yellow"
                            placeholder="Enter amount" required>
                     <p id="amountRange" class="text-white/60 text-sm mt-1"></p>
                 </div>
-                
+
                 <div class="flex gap-3">
-                    <button type="button" onclick="closeInvestModal()" 
+                    <button type="button" onclick="closeInvestModal()"
                             class="flex-1 bg-white/10 text-white py-3 rounded-lg hover:bg-white/20 transition-colors">
                         Cancel
                     </button>
-                    <button type="submit" 
+                    <button type="submit"
                             class="flex-1 bg-eni-yellow text-eni-dark font-bold py-3 rounded-lg hover:bg-yellow-400 transition-colors">
                         Confirm Investment
                     </button>

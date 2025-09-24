@@ -119,9 +119,9 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-white font-semibold">
                                     @if($transaction->type === 'withdrawal')
-                                        -${{ number_format($transaction->amount, 2) }}
+                                        -${{ number_format($transaction->amount->toFloat(), 2) }}
                                     @else
-                                        +${{ number_format($transaction->amount, 2) }}
+                                        +${{ number_format($transaction->amount->toFloat(), 2) }}
                                     @endif
                                 </span>
                                 @if($transaction->status !== 'completed')
@@ -187,7 +187,7 @@
                 <i class="fas fa-gas-pump text-xl"></i>
                 <span class="text-xs">Fuel</span>
             </a>
-            <a href="{{ route('user.transfer') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('user.transfer') ? 'text-eni-yellow' : 'text-gray-400' }}">
+            <a href="{{ route('dashboard.transfer') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('dashboard.transfer') ? 'text-eni-yellow' : 'text-gray-400' }}">
                 <i class="fas fa-exchange-alt text-xl"></i>
                 <span class="text-xs">Send</span>
             </a>

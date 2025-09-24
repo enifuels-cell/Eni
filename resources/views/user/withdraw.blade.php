@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Withdraw - ENI Platform</title>
     <meta name="theme-color" content="#FFCD00" />
-    
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -90,12 +90,12 @@
 
             <form method="POST" action="{{ route('dashboard.withdraw.process') }}">
                 @csrf
-                
+
                 <!-- Amount -->
                 <div class="mb-6">
                     <label class="block text-white/80 font-semibold mb-3">Withdrawal Amount ($)</label>
                     <input type="number" name="amount" step="0.01" min="10" max="{{ $availableBalance ?? 0 }}"
-                           class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white text-lg focus:outline-none focus:border-eni-yellow" 
+                           class="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-4 text-white text-lg focus:outline-none focus:border-eni-yellow"
                            placeholder="Enter amount to withdraw" value="{{ old('amount') }}" required>
                     <p class="text-white/60 text-sm mt-2">
                         Minimum: $10.00 | Maximum: ${{ number_format($availableBalance ?? 0, 2) }}
@@ -114,7 +114,7 @@
                         <p class="text-white/80 mb-4">
                             You need to add your bank details to your profile before you can make withdrawals.
                         </p>
-                        <a href="{{ route('profile.edit') }}#bank" 
+                        <a href="{{ route('profile.edit') }}#bank"
                            class="inline-flex items-center bg-eni-yellow text-eni-dark px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -128,7 +128,7 @@
                         <div class="bg-white/5 border border-white/20 rounded-lg p-4">
                             <div class="flex items-center justify-between mb-4">
                                 <h4 class="font-semibold text-eni-yellow">Your Bank Account</h4>
-                                <a href="{{ route('profile.edit') }}#bank" 
+                                <a href="{{ route('profile.edit') }}#bank"
                                    class="text-sm text-eni-yellow hover:text-yellow-300 transition-colors">
                                     Edit Details
                                 </a>
@@ -160,7 +160,7 @@
                                 @endif
                             </div>
                         </div>
-                        
+
                         <!-- Hidden bank details field for form submission -->
                         <input type="hidden" name="bank_details" value="{{ auth()->user()->bank_name }} - {{ auth()->user()->account_holder_name }} - **** {{ substr(auth()->user()->account_number, -4) }}">
                     </div>
@@ -173,7 +173,7 @@
                         Complete Bank Details to Enable Withdrawals
                     </button>
                 @else
-                    <button type="submit" 
+                    <button type="submit"
                             class="w-full bg-eni-yellow text-eni-dark font-bold py-4 rounded-lg hover:bg-yellow-400 transition-colors text-lg">
                         Submit Withdrawal Request
                     </button>
@@ -214,7 +214,7 @@
                                     {{ $withdrawal->created_at->format('M d, Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-400">
-                                    -${{ number_format($withdrawal->amount, 2) }}
+                                    -${{ number_format($withdrawal->amount->toFloat(), 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {{ ucfirst(str_replace('_', ' ', $withdrawal->payment_method)) }}
