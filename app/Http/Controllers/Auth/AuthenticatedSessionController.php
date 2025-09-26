@@ -19,12 +19,12 @@ class AuthenticatedSessionController extends Controller
     {
         // Check if user has PIN device cookie and should use PIN login
         $pinDevice = $request->cookie('pin_device');
-        
+
         if ($pinDevice) {
             try {
                 $deviceData = decrypt($pinDevice);
                 $user = \App\Models\User::find($deviceData['user_id']);
-                
+
                 if ($user && $user->pin_hash) {
                     return redirect()->route('pin.login.form');
                 }
@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
                 \Illuminate\Support\Facades\Cookie::queue(\Illuminate\Support\Facades\Cookie::forget('pin_device'));
             }
         }
-        
+
         return view('auth.login');
     }
 
@@ -62,7 +62,7 @@ class AuthenticatedSessionController extends Controller
             session()->flash('success', 'Welcome! Set up a 4-digit PIN for faster login next time.');
         }
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->route('home');
     }
 
     /**
@@ -71,7 +71,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         $user = Auth::user();
-        
+
         // If user has PIN set, create device cookie for future PIN login
         if ($user && $user->pin_hash) {
             $deviceData = [
@@ -82,7 +82,7 @@ class AuthenticatedSessionController extends Controller
 
             Cookie::queue('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
         }
-        
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
