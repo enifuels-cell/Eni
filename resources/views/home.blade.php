@@ -595,7 +595,7 @@
 
                 <div class="text-center p-6 bg-gradient-to-br from-green-500/10 to-green-500/5 rounded-xl border border-green-500/20">
                     <div class="text-2xl font-bold text-green-400 mb-2">
-                        {{ auth()->user()->investments()->where('status', 'active')->count() }}
+                        {{ auth()->user()->investments()->where('active', true)->count() }}
                     </div>
                     <div class="text-gray-300">Active Investments</div>
                 </div>
