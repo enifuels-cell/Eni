@@ -111,6 +111,7 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             transform-origin: center;
+            min-height: 400px; /* Taller cards for better video display */
         }
 
         .package-card:hover {
@@ -247,6 +248,76 @@
         @keyframes pattern-drift {
             0% { transform: translate(0, 0); }
             100% { transform: translate(60px, 60px); }
+        }
+
+        /* 🔹 VIP Video Package Enhancements - Clean Video Display */
+        .vip-video-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .vip-video-card video {
+            transition: all 0.5s ease;
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        .vip-video-card:hover video {
+            filter: brightness(1.1) contrast(1.2);
+            transform: scale(1.02);
+        }
+
+        /* Removed heavy video overlay - keeping video clean */
+
+        /* Crypto image enhancements - Clean Display */
+        .crypto-card .crypto-bg {
+            transition: all 0.5s ease;
+            filter: saturate(1.0) brightness(0.8);
+        }
+
+        .crypto-card:hover .crypto-bg {
+            filter: saturate(1.3) brightness(1.0);
+            transform: scale(1.02);
+        }
+
+        /* VIP Badge Animation */
+        .vip-badge {
+            animation: vip-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes vip-pulse {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+                transform: scale(1.05);
+            }
+        }
+
+        /* Video Package Border Glow */
+        .vip-video-card .package-card-inner {
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+        }
+
+        .vip-video-card:hover .package-card-inner {
+            border-color: rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Crypto Badge Animation */
+        .crypto-badge {
+            animation: crypto-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes crypto-glow {
+            0%, 100% {
+                box-shadow: 0 0 8px rgba(37, 99, 235, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 16px rgba(37, 99, 235, 0.7);
+            }
         }
 
         /* 🔹 3. Radial Glow / Spotlight for Cards */
@@ -449,6 +520,22 @@
         <div class="text-center mb-16">
             <h2 class="text-5xl font-bold text-eni-yellow mb-6 text-glow">Investment Packages</h2>
             <p class="text-white/80 text-xl max-w-3xl mx-auto leading-relaxed">Choose the perfect investment strategy for your financial goals. Start earning daily interest with our secure and proven packages.</p>
+
+            <!-- VIP & Crypto Package Highlights -->
+            <div class="flex justify-center items-center mt-8 space-x-6">
+                <div class="flex items-center bg-gradient-to-r from-red-600/20 to-red-500/20 px-4 py-2 rounded-full border border-red-500/30">
+                    <svg class="w-5 h-5 mr-2 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M15 10l-3-3v2H6v2h6v2l3-3zM4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4z"/>
+                    </svg>
+                    <span class="text-red-400 font-semibold">VIP Video Packages Available</span>
+                </div>
+                <div class="flex items-center bg-gradient-to-r from-blue-600/20 to-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30">
+                    <svg class="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V13H13V11C14.1 11 15 10.1 15 9ZM11 9H13V7H11V9Z"/>
+                    </svg>
+                    <span class="text-blue-400 font-semibold">Crypto-Backed Investments</span>
+                </div>
+            </div>
         </div>
 
         <!-- Trust Indicators & Quick Stats -->
@@ -591,11 +678,11 @@
             <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
 
                 @foreach($packages as $index => $package)
-                <div class="package-card card-spotlight group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4"
+                <div class="package-card card-spotlight group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4 h-96"
                      onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
 
                     @php
-                        // Visual hierarchy based on package tier
+                        // Visual hierarchy based on package tier with media backgrounds
                         $cardClasses = match($index) {
                             0 => 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-slate-600/50', // Starter - Light navy
                             1 => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30', // Mid - Deeper navy
@@ -608,83 +695,45 @@
                             2 => 'shadow-2xl hover:shadow-eni-yellow/40', // Premium gets strongest shadow
                             default => 'shadow-lg hover:shadow-eni-yellow/20'
                         };
+
+                        // Media backgrounds for packages
+                        $mediaBackground = match($index) {
+                            0 => 'crypto.jpg', // Crypto image for first package
+                            1 => 'VIP.mp4', // VIP video for most popular
+                            2 => 'VIP1.mp4', // VIP1 video for premium
+                            default => 'crypto.jpg'
+                        };
+
+                        $isVideo = in_array($mediaBackground, ['VIP.mp4', 'VIP1.mp4']);
                     @endphp
 
-                    <!-- Most Popular Badge -->
-                    @if($index === 1)
-                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                        <div class="bg-gradient-to-r from-eni-yellow to-yellow-400 text-eni-dark px-6 py-2 rounded-full text-sm font-bold shadow-lg">
-                            🔥 Most Popular
-                        </div>
-                    </div>
-                    @endif
+                    <!-- No badges - Pure media display -->
 
-                    <div class="relative h-full {{ $cardClasses }} {{ $shadowClasses }} rounded-2xl border-2 backdrop-blur-sm overflow-hidden group-hover:shadow-2xl transition-all duration-500">
-                        <!-- Glass effect overlay -->
-                        <div class="absolute inset-0 bg-white/5 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500 {{ $isVideo ? 'vip-video-card' : 'crypto-card' }}">
 
-                        <!-- Card Content -->
-                        <div class="relative z-10 p-8 h-full flex flex-col">
-                            <!-- Package Header -->
-                            <div class="text-center mb-6">
-                                <h3 class="text-2xl font-bold text-white mb-2">{{ $package->name }}</h3>
-                                <p class="text-white/70 text-sm">{{ $package->daily_shares_rate }}% Daily Interest</p>
+                        <!-- Pure Media Display - No Text Overlays -->
+                        @if($isVideo)
+                            <!-- Pure VIP Video Display -->
+                            <video
+                                class="absolute inset-0 w-full h-full object-contain bg-black"
+                                autoplay
+                                muted
+                                loop
+                                playsinline
+                                poster="">
+                                <source src="{{ asset($mediaBackground) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        @else
+                            <!-- Pure Crypto Image Display -->
+                            <div
+                                class="absolute inset-0 w-full h-full bg-cover bg-center crypto-bg"
+                                style="background-image: url('{{ asset($mediaBackground) }}');">
                             </div>
+                        @endif
 
-                            <!-- Pricing Circle with 3D effect -->
-                            <div class="mx-auto mb-6 relative">
-                                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-eni-yellow via-yellow-400 to-yellow-500 p-1 shadow-lg">
-                                    <div class="w-full h-full rounded-full bg-eni-dark flex flex-col items-center justify-center shadow-inner">
-                                        <div class="text-center">
-                                            <div class="text-eni-yellow text-xs font-semibold">Starts at</div>
-                                            <div class="text-white text-lg font-bold">${{ number_format($package->min_amount) }}</div>
-                                            <div class="text-eni-yellow/80 text-xs">to ${{ number_format($package->max_amount) }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Package Features -->
-                            <div class="flex-grow space-y-3 mb-6">
-                                <div class="flex items-center text-white/80 text-sm">
-                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Daily Interest Payouts
-                                </div>
-                                <div class="flex items-center text-white/80 text-sm">
-                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    Secure Investment
-                                </div>
-                                <div class="flex items-center text-white/80 text-sm">
-                                    <svg class="w-4 h-4 text-eni-yellow mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                    </svg>
-                                    24/7 Support
-                                </div>
-                            </div>
-
-                            <!-- Slots Remaining Badge -->
-                            @if($package->available_slots)
-                            <div class="mb-4 text-center">
-                                <span class="inline-block bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md">
-                                    🔥 {{ $package->available_slots }} Slots Remaining
-                                </span>
-                            </div>
-                            @endif
-
-                            <!-- CTA Button with enhanced hover effect -->
-                            <button class="w-full bg-gradient-to-r from-eni-yellow to-yellow-400 text-eni-dark font-bold py-4 px-6 rounded-xl hover:from-yellow-400 hover:to-eni-yellow transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl group-hover:animate-pulse">
-                                Select Plan
-                            </button>
-                        </div>
-
-                        <!-- Hover glow effect -->
-                        <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                            <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-eni-yellow/20 via-transparent to-eni-yellow/20 blur-xl"></div>
-                        </div>
+                        <!-- Invisible Click Area for Functionality -->
+                        <div class="absolute inset-0 z-10 cursor-pointer"></div>                        <!-- Pure content - no overlay effects -->
                     </div>
                 </div>
                 @endforeach

@@ -19,7 +19,7 @@ class PinLoginController extends Controller
     public function showPinLoginForm(Request $request)
     {
         $pinDevice = $request->cookie('pin_device');
-        
+
         if (!$pinDevice) {
             return redirect()->route('login');
         }
@@ -27,7 +27,7 @@ class PinLoginController extends Controller
         try {
             $deviceData = decrypt($pinDevice);
             $user = User::find($deviceData['user_id']);
-            
+
             if (!$user || !$user->pin_hash) {
                 // Clear invalid cookie
                 Cookie::queue(Cookie::forget('pin_device'));
@@ -54,7 +54,7 @@ class PinLoginController extends Controller
         ]);
 
         $userId = $request->user_id;
-        
+
         // Handle both string and array PIN formats
         if (is_array($request->pin)) {
             // Old format: array of individual digits
@@ -63,7 +63,7 @@ class PinLoginController extends Controller
             // New format: single string
             $pin = $request->pin;
         }
-        
+
         // Validate PIN format
         if (!preg_match('/^\d{4}$/', $pin)) {
             throw ValidationException::withMessages([
@@ -73,20 +73,20 @@ class PinLoginController extends Controller
 
         // Rate limiting
         $key = 'pin-login:' . $userId . ':' . $request->ip();
-        
+
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
-            
+
             throw ValidationException::withMessages([
                 'pin' => ['Too many login attempts. Please try again in ' . ceil($seconds / 60) . ' minutes.'],
             ]);
         }
 
         $user = User::find($userId);
-        
+
         if (!$user || !$user->pin_hash || !Hash::check($pin, $user->pin_hash)) {
             RateLimiter::hit($key, 300); // 5 minute lockout
-            
+
             throw ValidationException::withMessages([
                 'pin' => ['Invalid PIN. Please try again.'],
             ]);
@@ -95,7 +95,7 @@ class PinLoginController extends Controller
         // Check if user is suspended
         if ($user->isSuspended()) {
             RateLimiter::hit($key, 300); // Rate limit suspended users too
-            
+
             throw ValidationException::withMessages([
                 'pin' => ['Your account has been suspended. Please contact administrator.'],
             ]);
@@ -116,7 +116,7 @@ class PinLoginController extends Controller
         // Regenerate session
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->route('home');
     }
 
     /**
@@ -132,10 +132,10 @@ class PinLoginController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         // Check for common/weak PINs
         $weakPins = ['0000', '1111', '2222', '3333', '4444', '5555', '6666', '7777', '8888', '9999', '1234', '4321', '1122', '2211'];
-        
+
         if (in_array($request->pin, $weakPins)) {
             throw ValidationException::withMessages([
                 'pin' => ['Please choose a more secure PIN. Avoid sequential or repeated numbers.'],
@@ -156,7 +156,7 @@ class PinLoginController extends Controller
 
         Cookie::queue('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
 
-        return redirect()->route('dashboard')->with('success', 'PIN setup completed successfully!');
+        return redirect()->route('home')->with('success', 'PIN setup completed successfully!');
     }
 
     /**

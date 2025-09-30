@@ -17,8 +17,8 @@ require __DIR__.'/debug_investment.php';
 Route::get('/', function () {
     // Check if the user is authenticated
     if (auth()->check()) {
-        // If authenticated, redirect immediately to the dashboard
-        return redirect()->route('dashboard');
+        // If authenticated, redirect to the ENI corporate homepage
+        return redirect()->route('home');
     }
 
     // If not authenticated, show the splash screen
@@ -184,6 +184,11 @@ Route::get('/session-test', function () {
 Route::get('/demo-splash', function () {
     return view('splash-screen');
 })->name('demo.splash');
+
+// ENI Corporate Homepage for authenticated users
+Route::get('/home', function () {
+    return view('home');
+})->middleware(['auth', 'check.suspended'])->name('home');
 
 // Redirect /dashboard based on user role
 Route::get('/dashboard', function () {

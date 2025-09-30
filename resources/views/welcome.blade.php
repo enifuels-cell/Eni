@@ -48,7 +48,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         .eni-logo img {
             width: 100%;
             height: auto;
@@ -136,7 +136,7 @@
                 <div class="spinner-segment"></div>
             @endfor
         </div>
-        
+
         {{-- Loading message with countdown --}}
         <div style="margin-top: 30px; color: #cccccc; font-size: 14px; text-align: center;">
             <div id="loading-message">Initializing secure connection...</div>
@@ -152,20 +152,20 @@
             console.log('ENI Investment Platform loaded successfully');
             // Check if user is already authenticated (handled server-side)
             @if(auth()->check())
-                // If authenticated, redirect to dashboard
+                // If authenticated, redirect to home page
                 setTimeout(function() {
-                    window.location.href = '{{ url('/dashboard') }}';
+                    window.location.href = '{{ route('home') }}';
                 }, 2000);
             @else
                 // If not authenticated, redirect to login
                 let countdown = 2;
                 const countdownElement = document.getElementById('countdown');
                 const messageElement = document.getElementById('loading-message');
-                
+
                 const timer = setInterval(function() {
                     countdown--;
                     countdownElement.textContent = countdown;
-                    
+
                     if (countdown <= 0) {
                         clearInterval(timer);
                         messageElement.textContent = 'Redirecting to login...';
