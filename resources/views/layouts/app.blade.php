@@ -8,6 +8,9 @@
         <title>{{ config('app.name', 'Eni Members') }}</title>
         <meta name="theme-color" content="#FFCD00">
 
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="/manifest.webmanifest">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,20 +19,6 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://cdn.tailwindcss.com"></script>
-        
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            'eni-yellow': '#FFCD00',
-                            'eni-dark': '#1a1a1a'
-                        }
-                    }
-                }
-            }
-        </script>
     </head>
     <body class="font-sans antialiased bg-eni-dark">
         <div class="min-h-screen">
@@ -50,12 +39,27 @@
             <main>
                 {{ $slot }}
             </main>
-            
+
             <!-- Global Footer -->
             @include('components.footer')
         </div>
-        
+
         <!-- Footer Modals -->
         @include('components.footer-modals')
+
+        <!-- PWA Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(function(registration) {
+                            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                        })
+                        .catch(function(error) {
+                            console.log('ServiceWorker registration failed: ', error);
+                        });
+                });
+            }
+        </script>
     </body>
 </html>

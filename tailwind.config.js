@@ -14,6 +14,10 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                'eni-yellow': '#FFCD00',
+                'eni-dark': '#1a1a1a',
+            },
         },
     },
 

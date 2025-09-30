@@ -16,7 +16,7 @@ class InvestmentPackageSeeder extends Seeder
         // Clear existing packages first to avoid duplicates
         $this->command->info('Cleaning existing packages...');
         InvestmentPackage::truncate();
-        
+
         $packages = [
             [
                 'name' => 'Energy Saver',
