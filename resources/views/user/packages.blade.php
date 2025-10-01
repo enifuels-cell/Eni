@@ -836,14 +836,16 @@
                     @if($isVideo)
                         <!-- VIDEO IS the package card - Autoplay, loop, no controls -->
                         <video
-                            src="{{ asset($mediaBackground) }}"
                             class="w-full h-auto rounded-3xl cursor-pointer {{ $gifCardClass }}-img"
                             autoplay
                             loop
                             muted
                             playsinline
                             preload="{{ $index === 0 ? 'auto' : 'metadata' }}"
-                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'></video>
+                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
+                            <source src="{{ asset($mediaBackground) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
                     @else
                         <!-- Fallback for non-video packages -->
                         <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500">
@@ -2729,6 +2731,20 @@
 
         // Modify form submission to handle bank transfer
         document.addEventListener('DOMContentLoaded', function() {
+            // Ensure all videos autoplay
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.muted = true; // Ensure muted for autoplay to work
+                video.play().catch(error => {
+                    console.log('Video autoplay failed:', error);
+                    // Try again on user interaction
+                    document.addEventListener('click', function playOnClick() {
+                        video.play();
+                        document.removeEventListener('click', playOnClick);
+                    }, { once: true });
+                });
+            });
+
             const form = document.getElementById('investment-form-element');
             const receiptInput = document.getElementById('receiptInput');
 

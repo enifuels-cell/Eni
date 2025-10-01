@@ -1798,6 +1798,20 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure all videos autoplay
+    const videos = document.querySelectorAll('video');
+    videos.forEach(video => {
+        video.muted = true; // Ensure muted for autoplay to work
+        video.play().catch(error => {
+            console.log('Video autoplay failed:', error);
+            // Try again on user interaction
+            document.addEventListener('click', function playOnClick() {
+                video.play();
+                document.removeEventListener('click', playOnClick);
+            }, { once: true });
+        });
+    });
+
     // Animate numbers
     const statNumbers = document.querySelectorAll('[data-target]');
 
