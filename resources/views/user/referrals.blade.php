@@ -406,14 +406,14 @@
                         <div class="flex items-center justify-between gap-3">
                             <p class="text-white/80 text-sm flex-1">
                                 @if(Auth::user()->username)
-                                    <span class="text-eni-yellow font-semibold">Easy to remember:</span> 
+                                    <span class="text-eni-yellow font-semibold">Easy to remember:</span>
                                     <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->username }}</span>
                                 @else
-                                    <span class="text-eni-yellow font-semibold">Your referral code:</span> 
+                                    <span class="text-eni-yellow font-semibold">Your referral code:</span>
                                     <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->id }}</span>
                                 @endif
                             </p>
-                            <button onclick="copyReferralCode()" 
+                            <button onclick="copyReferralCode()"
                                     id="copy-referral-btn"
                                     class="flex items-center gap-2 px-4 py-2 bg-eni-yellow text-eni-dark font-semibold rounded-lg hover:bg-eni-yellow/90 transition-all duration-200 whitespace-nowrap">
                                 <svg id="copy-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
