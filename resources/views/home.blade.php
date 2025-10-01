@@ -723,6 +723,316 @@
     </div>
 </section>
 
+<!-- ENI Philippines Expansion Section -->
+<section id="philippines-expansion" class="py-20 bg-gradient-to-br from-eni-charcoal via-eni-dark to-eni-charcoal relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-20 right-0 w-96 h-96 bg-eni-yellow rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-20 left-0 w-96 h-96 bg-eni-yellow rounded-full filter blur-3xl"></div>
+    </div>
+
+    <div class="container mx-auto px-6 relative z-10">
+        <!-- Section Header -->
+        <div class="text-center mb-16 animate-on-scroll">
+            <div class="inline-block mb-4">
+                <span class="px-6 py-2 bg-eni-yellow/10 border border-eni-yellow/30 rounded-full text-eni-yellow font-semibold text-sm uppercase tracking-wider">
+                    Our Journey in the Philippines
+                </span>
+            </div>
+            <h2 class="text-5xl md:text-6xl font-bold text-white mb-6">
+                ENI's <span class="text-eni-yellow">Philippine Expansion</span>
+            </h2>
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                Building a sustainable energy future in the Philippines, starting with premium lubricant distribution and expanding into comprehensive energy solutions
+            </p>
+        </div>
+
+        <!-- Story Timeline -->
+        <div class="grid lg:grid-cols-2 gap-12 mb-16 items-center">
+            <!-- Left: Story Content -->
+            <div class="animate-on-scroll">
+                <div class="bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-2xl p-8 backdrop-blur-sm">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 bg-eni-yellow rounded-full flex items-center justify-center">
+                            <i class="fas fa-flag text-eni-dark text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold text-white">The Beginning</h3>
+                            <p class="text-eni-yellow font-semibold">Lubricant Distribution Pioneer</p>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                        ENI's Philippine journey began with a strategic focus on distributing premium lubricants across the nation. Recognizing the growing demand for high-quality energy products, we established a robust distribution network to serve Filipino industries and consumers.
+                    </p>
+
+                    <div class="space-y-4">
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-eni-yellow/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-eni-yellow"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Premium Quality Products</h4>
+                                <p class="text-gray-400 text-sm">World-class lubricants engineered for tropical climates and demanding conditions</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-eni-yellow/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-eni-yellow"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Nationwide Distribution Network</h4>
+                                <p class="text-gray-400 text-sm">Strategic partnerships ensuring product availability across all major islands</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-eni-yellow/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-eni-yellow"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Technical Support & Service</h4>
+                                <p class="text-gray-400 text-sm">Expert teams providing consultation and after-sales support to customers</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 bg-eni-yellow/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <i class="fas fa-check text-eni-yellow"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-1">Community Engagement</h4>
+                                <p class="text-gray-400 text-sm">Creating jobs and supporting local communities through sustainable business practices</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Featured Image -->
+            <div class="animate-on-scroll">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-eni-yellow to-yellow-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
+                    <div class="relative">
+                        <img src="{{ asset('548003252_122223226046091369_1383863442854504664_n.jpg') }}"
+                             alt="ENI Philippines Lubricant Distribution"
+                             class="w-full h-[500px] object-cover rounded-2xl shadow-2xl">
+                        <div class="absolute inset-0 bg-gradient-to-t from-eni-dark/80 via-transparent to-transparent rounded-2xl"></div>
+                        <div class="absolute bottom-6 left-6 right-6">
+                            <p class="text-white font-semibold text-lg">ENI Lubricants in the Philippines</p>
+                            <p class="text-gray-300 text-sm">Premium quality for Filipino industries</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Photo Gallery Grid -->
+        <div class="animate-on-scroll mb-12">
+            <h3 class="text-3xl font-bold text-white text-center mb-8">
+                <span class="text-eni-yellow">Our Operations</span> in Action
+            </h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Gallery Image 1 -->
+                <div class="group relative overflow-hidden rounded-xl">
+                    <img src="{{ asset('546961280_122223226226091369_6117151309338851552_n.jpg') }}"
+                         alt="ENI Philippines Operations"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-eni-dark/90 via-eni-dark/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <p class="text-white font-semibold">Distribution Excellence</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 2 -->
+                <div class="group relative overflow-hidden rounded-xl">
+                    <img src="{{ asset('550909789_122224593830091369_1310127139799660935_n.jpg') }}"
+                         alt="ENI Philippines Team"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-eni-dark/90 via-eni-dark/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <p class="text-white font-semibold">Quality Assurance</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Image 3 -->
+                <div class="group relative overflow-hidden rounded-xl">
+                    <img src="{{ asset('550995072_122224593836091369_820995601659429653_n.jpg') }}"
+                         alt="ENI Philippines Growth"
+                         class="w-full h-64 object-cover transform group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-gradient-to-t from-eni-dark/90 via-eni-dark/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                        <p class="text-white font-semibold">Customer Service</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Future Vision -->
+        <div class="text-center animate-on-scroll mb-12">
+            <div class="bg-gradient-to-r from-eni-yellow/10 via-eni-yellow/5 to-eni-yellow/10 border border-eni-yellow/30 rounded-2xl p-10 max-w-4xl mx-auto">
+                <div class="w-20 h-20 bg-eni-yellow rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-rocket text-eni-dark text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-white mb-4">Looking Forward</h3>
+                <p class="text-gray-300 text-lg leading-relaxed mb-6">
+                    Our Philippine expansion represents just the beginning. Building on our success in lubricant distribution,
+                    we're committed to expanding our energy solutions portfolio, investing in renewable energy projects,
+                    and contributing to the Philippines' sustainable energy transition.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div class="px-6 py-3 bg-eni-dark border border-eni-yellow/30 rounded-lg">
+                        <div class="text-2xl font-bold text-eni-yellow">50+</div>
+                        <div class="text-sm text-gray-400">Distribution Points</div>
+                    </div>
+                    <div class="px-6 py-3 bg-eni-dark border border-eni-yellow/30 rounded-lg">
+                        <div class="text-2xl font-bold text-eni-yellow">1,000+</div>
+                        <div class="text-sm text-gray-400">Business Partners</div>
+                    </div>
+                    <div class="px-6 py-3 bg-eni-dark border border-eni-yellow/30 rounded-lg">
+                        <div class="text-2xl font-bold text-eni-yellow">100%</div>
+                        <div class="text-sm text-gray-400">Customer Satisfaction</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gas Station Expansion Plan -->
+        <div class="animate-on-scroll">
+            <div class="bg-gradient-to-br from-eni-dark to-eni-charcoal border-2 border-eni-yellow/40 rounded-2xl overflow-hidden max-w-5xl mx-auto shadow-2xl">
+                <div class="bg-gradient-to-r from-eni-yellow to-yellow-500 px-8 py-4">
+                    <div class="flex items-center justify-center gap-3">
+                        <i class="fas fa-gas-pump text-eni-dark text-2xl"></i>
+                        <h3 class="text-2xl font-bold text-eni-dark">Next Milestone: ENI Fuel Stations</h3>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <p class="text-gray-300 text-lg text-center mb-8 leading-relaxed">
+                        We are excited to announce our strategic plan to establish <span class="text-eni-yellow font-bold">ENI-branded fuel stations</span> across the Philippines,
+                        bringing world-class fuel quality and service excellence directly to Filipino motorists and businesses.
+                    </p>
+
+                    <!-- Fuel Station Image -->
+                    <div class="mb-8 animate-on-scroll">
+                        <div class="relative group max-w-4xl mx-auto">
+                            <div class="absolute -inset-1 bg-gradient-to-r from-eni-yellow to-yellow-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
+                            <div class="relative">
+                                <img src="{{ asset('Fuel.png') }}"
+                                     alt="ENI Fuel Station"
+                                     class="w-full h-auto rounded-2xl shadow-2xl">
+                                <div class="absolute inset-0 bg-gradient-to-t from-eni-dark/60 via-transparent to-transparent rounded-2xl"></div>
+                                <div class="absolute bottom-6 left-6 right-6 text-center">
+                                    <p class="text-white font-bold text-xl mb-1">ENI Fuel Station</p>
+                                    <p class="text-gray-200 text-sm">Coming Soon to the Philippines</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <!-- Left: Key Features -->
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <h4 class="text-xl font-bold text-eni-yellow mb-4 flex items-center gap-2">
+                                <i class="fas fa-star"></i>
+                                Premium Fuel Offerings
+                            </h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">High-performance gasoline and diesel formulations</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">Advanced engine cleaning additives</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">Premium lubricants available on-site</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">Eco-friendly fuel options</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Right: Station Features -->
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <h4 class="text-xl font-bold text-eni-yellow mb-4 flex items-center gap-2">
+                                <i class="fas fa-building"></i>
+                                Modern Station Amenities
+                            </h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">State-of-the-art fueling infrastructure</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">Convenience stores and cafés</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">EV charging stations (future-ready)</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <i class="fas fa-check-circle text-eni-yellow mt-1"></i>
+                                    <span class="text-gray-300">24/7 customer service and security</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Rollout Timeline -->
+                    <div class="bg-gradient-to-r from-eni-yellow/5 to-transparent border-l-4 border-eni-yellow rounded-lg p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-eni-yellow rounded-full flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-calendar-alt text-eni-dark text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold text-white mb-2">Rollout Timeline</h4>
+                                <p class="text-gray-300 mb-3">
+                                    Our phased expansion plan aims to establish a network of ENI fuel stations across key metropolitan areas
+                                    and strategic highways, with the first stations planned for Metro Manila and major provincial cities.
+                                </p>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    <div class="text-center p-3 bg-eni-dark rounded-lg">
+                                        <div class="text-eni-yellow font-bold text-lg">Phase 1</div>
+                                        <div class="text-gray-400 text-sm">2026-2027</div>
+                                        <div class="text-white text-xs mt-1">5-10 Stations</div>
+                                    </div>
+                                    <div class="text-center p-3 bg-eni-dark rounded-lg">
+                                        <div class="text-eni-yellow font-bold text-lg">Phase 2</div>
+                                        <div class="text-gray-400 text-sm">2028-2029</div>
+                                        <div class="text-white text-xs mt-1">25+ Stations</div>
+                                    </div>
+                                    <div class="text-center p-3 bg-eni-dark rounded-lg">
+                                        <div class="text-eni-yellow font-bold text-lg">Phase 3</div>
+                                        <div class="text-gray-400 text-sm">2030+</div>
+                                        <div class="text-white text-xs mt-1">50+ Stations</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA -->
+                    <div class="text-center mt-8">
+                        <p class="text-gray-400 mb-4">Interested in partnership opportunities or franchise information?</p>
+                        <a href="#" class="inline-flex items-center gap-2 px-8 py-4 bg-eni-yellow text-eni-dark font-bold rounded-lg hover:bg-yellow-400 transition-all shadow-lg hover:shadow-eni-yellow/30 hover:scale-105">
+                            <i class="fas fa-handshake"></i>
+                            <span>Become a Partner</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Sustainability & ESG Section -->
 <section id="sustainability" class="py-20 bg-eni-dark relative overflow-hidden">
     <!-- Background Elements -->
