@@ -1,43 +1,43 @@
-<!-- Three-Tier Professional Footer -->
+<!-- Professional Corporate Footer -->
 <footer class="relative bg-[#0B1B3D] border-t border-eni-yellow/20 mt-0 overflow-hidden">
     <!-- Background Elements -->
-    <div class="absolute inset-0 bg-gradient-to-br from-[#0B1B3D]/80 via-[#0B1B3D]/90 to-[#0B1B3D]"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0B2241] via-[#0B1B3D] to-[#0B1B3D]"></div>
 
-    <div class="relative container mx-auto px-6">
+    <div class="relative container mx-auto px-6 lg:px-12">
 
-        <!-- TIER 1: Quick Access Links (Slim Top Row) -->
-        <div class="py-6 border-b border-white/10">
-            <div class="flex flex-wrap justify-center items-center gap-2 md:gap-6 text-sm">
-                <a href="#about" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+        <!-- TIER 1: Quick Navigation Links -->
+        <div class="py-5 border-b border-white/10">
+            <div class="flex flex-wrap justify-center items-center gap-1 md:gap-4 text-sm">
+                <a href="#about" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-3 py-2">
                     About ENI
                 </a>
-                <span class="hidden md:inline text-white/20">|</span>
-                <a href="#investors" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                <span class="hidden md:inline text-white/30">|</span>
+                <a href="#investors" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-3 py-2">
                     Investors
                 </a>
-                <span class="hidden md:inline text-white/20">|</span>
-                <a href="#sustainability" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                <span class="hidden md:inline text-white/30">|</span>
+                <a href="#sustainability" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-3 py-2">
                     Sustainability
                 </a>
-                <span class="hidden md:inline text-white/20">|</span>
-                <a href="#careers" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                <span class="hidden md:inline text-white/30">|</span>
+                <a href="#careers" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-3 py-2">
                     Careers
                 </a>
-                <span class="hidden md:inline text-white/20">|</span>
-                <a href="#contact" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                <span class="hidden md:inline text-white/30">|</span>
+                <a href="#contact" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-3 py-2">
                     Contact
                 </a>
             </div>
         </div>
 
-        <!-- TIER 2: Main Footer Sections (5-Column Grid) -->
-        <div class="py-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-6">
+        <!-- TIER 2: Main Footer Content Grid (5 Columns) -->
+        <div class="py-12 lg:py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
 
                 <!-- Company Column -->
                 <div class="footer-column">
-                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
-                        <i class="fas fa-building mr-2"></i>
+                    <h4 class="text-eni-yellow font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <i class="fas fa-building text-base"></i>
                         Company
                     </h4>
                     <ul class="space-y-3">
@@ -51,8 +51,8 @@
 
                 <!-- Legal & Compliance Column -->
                 <div class="footer-column">
-                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
-                        <i class="fas fa-gavel mr-2"></i>
+                    <h4 class="text-eni-yellow font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <i class="fas fa-gavel text-base"></i>
                         Legal & Compliance
                     </h4>
                     <ul class="space-y-3">
@@ -66,8 +66,8 @@
 
                 <!-- Investor Relations Column -->
                 <div class="footer-column">
-                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
-                        <i class="fas fa-chart-line mr-2"></i>
+                    <h4 class="text-eni-yellow font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <i class="fas fa-chart-line text-base"></i>
                         Investor Relations
                     </h4>
                     <ul class="space-y-3">
@@ -81,8 +81,8 @@
 
                 <!-- Sustainability Column -->
                 <div class="footer-column">
-                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
-                        <i class="fas fa-leaf mr-2"></i>
+                    <h4 class="text-eni-yellow font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <i class="fas fa-leaf text-base"></i>
                         Sustainability
                     </h4>
                     <ul class="space-y-3">
@@ -96,8 +96,8 @@
 
                 <!-- Support Column -->
                 <div class="footer-column">
-                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
-                        <i class="fas fa-headset mr-2"></i>
+                    <h4 class="text-eni-yellow font-bold text-sm uppercase tracking-wider mb-6 flex items-center gap-2">
+                        <i class="fas fa-headset text-base"></i>
                         Support
                     </h4>
                     <ul class="space-y-3">
@@ -113,137 +113,145 @@
         </div>
 
         <!-- Golden Divider -->
-        <div class="h-px bg-gradient-to-r from-transparent via-eni-yellow/30 to-transparent mb-8"></div>
+        <div class="h-px bg-gradient-to-r from-transparent via-eni-yellow/40 to-transparent"></div>
 
-        <!-- TIER 3: Stats & Certifications -->
-        <div class="pb-12">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- TIER 3: Statistics, Certifications & Social -->
+        <div class="py-12 lg:py-14">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4">
-                    <!-- Stat Card 1 -->
-                    <div class="stat-card group">
-                        <div class="text-4xl mb-2">
-                            <i class="fas fa-users text-eni-yellow"></i>
+                <!-- Left Side: Statistics (2 rows x 2 columns) -->
+                <div class="lg:col-span-5">
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- Stat Card 1 -->
+                        <div class="stat-card group">
+                            <div class="text-3xl mb-3">
+                                <i class="fas fa-users text-eni-yellow"></i>
+                            </div>
+                            <div class="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">50K+</div>
+                            <div class="text-white/70 text-xs uppercase tracking-wider">Active Investors</div>
                         </div>
-                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">50K+</div>
-                        <div class="text-white/80 text-xs uppercase tracking-wide">Active Investors</div>
-                    </div>
 
-                    <!-- Stat Card 2 -->
-                    <div class="stat-card group">
-                        <div class="text-4xl mb-2">
-                            <i class="fas fa-dollar-sign text-eni-yellow"></i>
+                        <!-- Stat Card 2 -->
+                        <div class="stat-card group">
+                            <div class="text-3xl mb-3">
+                                <i class="fas fa-dollar-sign text-eni-yellow"></i>
+                            </div>
+                            <div class="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">$2.5B+</div>
+                            <div class="text-white/70 text-xs uppercase tracking-wider">Assets Under Management</div>
                         </div>
-                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">$2.5B+</div>
-                        <div class="text-white/80 text-xs uppercase tracking-wide">Assets Under Management</div>
-                    </div>
 
-                    <!-- Stat Card 3 -->
-                    <div class="stat-card group">
-                        <div class="text-4xl mb-2">
-                            <i class="fas fa-star text-eni-yellow"></i>
+                        <!-- Stat Card 3 -->
+                        <div class="stat-card group">
+                            <div class="text-3xl mb-3">
+                                <i class="fas fa-star text-eni-yellow"></i>
+                            </div>
+                            <div class="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">98%</div>
+                            <div class="text-white/70 text-xs uppercase tracking-wider">Customer Satisfaction</div>
                         </div>
-                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">98%</div>
-                        <div class="text-white/80 text-xs uppercase tracking-wide">Customer Satisfaction</div>
-                    </div>
 
-                    <!-- Stat Card 4 -->
-                    <div class="stat-card group">
-                        <div class="text-4xl mb-2">
-                            <i class="fas fa-clock text-eni-yellow"></i>
+                        <!-- Stat Card 4 -->
+                        <div class="stat-card group">
+                            <div class="text-3xl mb-3">
+                                <i class="fas fa-clock text-eni-yellow"></i>
+                            </div>
+                            <div class="text-2xl md:text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">15+</div>
+                            <div class="text-white/70 text-xs uppercase tracking-wider">Years Experience</div>
                         </div>
-                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">15+</div>
-                        <div class="text-white/80 text-xs uppercase tracking-wide">Years Experience</div>
                     </div>
                 </div>
 
-                <!-- Certifications & Social -->
-                <div class="space-y-6">
+                <!-- Right Side: Certifications, Social & Headquarters -->
+                <div class="lg:col-span-7 space-y-8">
+                    
                     <!-- Certifications -->
                     <div>
-                        <h5 class="text-eni-yellow font-semibold text-sm mb-4 flex items-center">
-                            <i class="fas fa-certificate mr-2"></i>
+                        <h5 class="text-eni-yellow font-semibold text-sm uppercase tracking-wider mb-5 flex items-center gap-2">
+                            <i class="fas fa-certificate"></i>
                             Certifications & Standards
                         </h5>
-                        <div class="flex flex-wrap gap-3">
+                        <div class="flex flex-wrap gap-4">
                             <div class="cert-badge">
                                 <i class="fas fa-shield-alt"></i>
-                                <div class="text-white/80 text-xs font-semibold mt-2">ISO 14001</div>
+                                <div class="text-white/90 text-xs font-bold mt-2">ISO 14001</div>
                                 <div class="text-white/50 text-[10px]">Environmental</div>
                             </div>
                             <div class="cert-badge">
                                 <i class="fas fa-hard-hat"></i>
-                                <div class="text-white/80 text-xs font-semibold mt-2">ISO 45001</div>
+                                <div class="text-white/90 text-xs font-bold mt-2">ISO 45001</div>
                                 <div class="text-white/50 text-[10px]">Safety</div>
                             </div>
                             <div class="cert-badge">
                                 <i class="fas fa-users-cog"></i>
-                                <div class="text-white/80 text-xs font-semibold mt-2">SA8000</div>
+                                <div class="text-white/90 text-xs font-bold mt-2">SA8000</div>
                                 <div class="text-white/50 text-[10px]">Social</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Social Media -->
-                    <div>
-                        <h5 class="text-eni-yellow font-semibold text-sm mb-4 flex items-center">
-                            <i class="fas fa-share-nodes mr-2"></i>
-                            Connect With Us
-                        </h5>
-                        <div class="flex gap-3">
-                            <a href="#" class="social-icon group" title="LinkedIn">
-                                <i class="fab fa-linkedin-in text-white group-hover:text-eni-yellow transition-colors"></i>
-                            </a>
-                            <a href="#" class="social-icon group" title="Twitter">
-                                <i class="fab fa-twitter text-white group-hover:text-eni-yellow transition-colors"></i>
-                            </a>
-                            <a href="#" class="social-icon group" title="YouTube">
-                                <i class="fab fa-youtube text-white group-hover:text-eni-yellow transition-colors"></i>
-                            </a>
-                            <a href="#" class="social-icon group" title="Instagram">
-                                <i class="fab fa-instagram text-white group-hover:text-eni-yellow transition-colors"></i>
-                            </a>
-                            <a href="#" class="social-icon group" title="Facebook">
-                                <i class="fab fa-facebook-f text-white group-hover:text-eni-yellow transition-colors"></i>
-                            </a>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Social Media -->
+                        <div>
+                            <h5 class="text-eni-yellow font-semibold text-sm uppercase tracking-wider mb-5 flex items-center gap-2">
+                                <i class="fas fa-share-nodes"></i>
+                                Connect With Us
+                            </h5>
+                            <div class="flex gap-3">
+                                <a href="#" class="social-icon group" title="LinkedIn">
+                                    <i class="fab fa-linkedin-in text-white group-hover:text-eni-yellow transition-colors"></i>
+                                </a>
+                                <a href="#" class="social-icon group" title="Twitter">
+                                    <i class="fab fa-twitter text-white group-hover:text-eni-yellow transition-colors"></i>
+                                    <a href="#" class="social-icon group" title="Twitter">
+                                    <i class="fab fa-twitter text-white group-hover:text-eni-yellow transition-colors"></i>
+                                </a>
+                                <a href="#" class="social-icon group" title="YouTube">
+                                    <i class="fab fa-youtube text-white group-hover:text-eni-yellow transition-colors"></i>
+                                </a>
+                                <a href="#" class="social-icon group" title="Instagram">
+                                    <i class="fab fa-instagram text-white group-hover:text-eni-yellow transition-colors"></i>
+                                </a>
+                                <a href="#" class="social-icon group" title="Facebook">
+                                    <i class="fab fa-facebook-f text-white group-hover:text-eni-yellow transition-colors"></i>
+                                </a>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Headquarters -->
-                    <div class="text-white/60 text-sm">
-                        <div class="flex items-start gap-2">
-                            <i class="fas fa-map-marker-alt text-eni-yellow mt-1"></i>
-                            <div>
-                                <div class="font-semibold text-white/80">ENI S.p.A. Headquarters</div>
-                                <div class="text-xs">Piazzale Enrico Mattei, 1</div>
-                                <div class="text-xs">00144 Rome, Italy</div>
+                        <!-- Headquarters -->
+                        <div>
+                            <h5 class="text-eni-yellow font-semibold text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ENI S.p.A. Headquarters
+                            </h5>
+                            <div class="text-white/60 text-sm space-y-1">
+                                <div class="text-white/80">Piazzale Enrico Mattei, 1</div>
+                                <div>00144 Rome, Italy</div>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
         </div>
 
-        <!-- Bottom Copyright & Legal -->
+        <!-- Bottom Bar: Copyright & Security Badges -->
         <div class="border-t border-white/10 py-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div class="text-white/50 text-sm text-center md:text-left">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                <div class="text-white/50 text-sm">
                     <p>&copy; 2025 ENI S.p.A. All rights reserved. | VAT No. IT 00905811006</p>
                 </div>
                 <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-white/40">
-                    <span class="flex items-center gap-1">
+                    <span class="flex items-center gap-2">
                         <i class="fas fa-lock text-eni-yellow"></i>
                         SSL Secured
                     </span>
-                    <span class="hidden md:inline">•</span>
-                    <span class="flex items-center gap-1">
+                    <span class="hidden md:inline text-white/20">•</span>
+                    <span class="flex items-center gap-2">
                         <i class="fas fa-shield-alt text-eni-yellow"></i>
                         ISO Certified
                     </span>
-                    <span class="hidden md:inline">•</span>
-                    <span class="flex items-center gap-1">
+                    <span class="hidden md:inline text-white/20">•</span>
+                    <span class="flex items-center gap-2">
                         <i class="fas fa-leaf text-eni-yellow"></i>
                         Carbon Neutral 2050
                     </span>
@@ -255,90 +263,75 @@
 </footer>
 
 <style>
-    /* Footer Styles */
+    /* Professional Footer Styles */
     .footer-link {
-        @apply text-white/90 text-sm hover:text-eni-yellow hover:translate-x-1 transition-all duration-300 inline-block relative;
+        @apply text-white/60 text-sm hover:text-eni-yellow transition-all duration-300 inline-block relative;
     }
 
-    .footer-link::before {
+    .footer-link::after {
         content: '';
         position: absolute;
-        bottom: -2px;
+        bottom: -3px;
         left: 0;
         width: 0;
-        height: 1px;
-        background: #FFCD00;
+        height: 2px;
+        background: linear-gradient(90deg, #FFCD00, transparent);
         transition: width 0.3s ease;
     }
 
-    .footer-link:hover::before {
+    .footer-link:hover::after {
         width: 100%;
     }
 
     .stat-card {
-        @apply bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-6 text-center
-               hover:border-eni-yellow/30 hover:shadow-lg hover:shadow-eni-yellow/10
-               transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm;
+        @apply bg-gradient-to-br from-white/5 to-transparent border border-white/10 rounded-xl p-5 text-center
+               hover:border-eni-yellow/40 hover:shadow-lg hover:shadow-eni-yellow/10
+               transition-all duration-300 hover:scale-[1.02] cursor-pointer backdrop-blur-sm;
     }
 
     .cert-badge {
-        @apply bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center
-               hover:border-eni-yellow/30 hover:bg-white/10 transition-all duration-300
-               flex flex-col items-center min-w-[90px];
+        @apply bg-white/5 border border-white/10 rounded-lg px-4 py-3.5 text-center
+               hover:border-eni-yellow/40 hover:bg-white/10 transition-all duration-300
+               flex flex-col items-center min-w-[95px];
     }
 
     .cert-badge i {
         @apply text-eni-yellow text-2xl;
     }
 
-    .cert-badge-img {
-        @apply bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center
-               hover:border-eni-yellow/30 hover:bg-white/10 transition-all duration-300
-               flex flex-col items-center min-w-[70px] max-w-[80px];
-    }
-
-    .cert-image {
-        @apply w-10 h-10 object-contain mb-1;
-        filter: brightness(1.2) contrast(1.1);
-    }
-
-    .cert-badge-img:hover .cert-image {
-        filter: brightness(1.4) contrast(1.2);
-        transform: scale(1.05);
-        transition: all 0.3s ease;
-    }
-
     .social-icon {
-        @apply w-11 h-11 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center
-               hover:border-eni-yellow/30 hover:bg-white/10 hover:scale-110
-               transition-all duration-300 text-lg;
+        @apply w-10 h-10 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center
+               hover:border-eni-yellow/40 hover:bg-eni-yellow/10 hover:scale-110
+               transition-all duration-300 text-base;
     }
 
-    .social-icon i {
-        @apply text-white;
+    /* Footer Column Styles */
+    .footer-column h4 {
+        @apply mb-6;
     }
 
-    /* Mobile Accordion (optional for future enhancement) */
-    @media (max-width: 768px) {
+    .footer-column ul li {
+        @apply leading-relaxed;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 1024px) {
         .footer-column {
-            @apply border-b border-white/10 pb-6;
-        }
-
-        .stat-card {
-            @apply text-sm p-4;
+            @apply border-b border-white/5 pb-8 last:border-b-0;
         }
     }
 
-    /* Horizontal scrollable stats on mobile */
     @media (max-width: 640px) {
-        .grid.grid-cols-2.md\\:grid-cols-4.lg\\:grid-cols-2 {
-            @apply flex overflow-x-auto gap-3 pb-4;
-            scroll-snap-type: x mandatory;
-        }
-
         .stat-card {
-            @apply flex-shrink-0 w-40;
-            scroll-snap-align: center;
+            @apply p-4;
+        }
+        
+        .stat-card .text-3xl {
+            @apply text-2xl;
+        }
+        
+        .stat-card .text-2xl {
+            @apply text-xl;
         }
     }
 </style>
