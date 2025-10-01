@@ -1,289 +1,344 @@
-<!-- Footer -->
-<footer class="relative bg-transparent border-t border-white/20 mt-0 overflow-hidden">
-    <!-- Enhanced glass effect that works with split background -->
-    <div class="absolute inset-0 bg-gradient-to-br from-black/20 via-eni-charcoal/10 to-black/30 backdrop-blur-md"></div>
+<!-- Three-Tier Professional Footer -->
+<footer class="relative bg-[#0B1B3D] border-t border-eni-yellow/20 mt-0 overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 bg-gradient-to-br from-[#0B1B3D]/80 via-[#0B1B3D]/90 to-[#0B1B3D]"></div>
 
-    <!-- Decorative elements optimized for footer section -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-eni-yellow/8 rounded-full blur-3xl animate-pulse"></div>
-    <div class="absolute bottom-0 right-1/4 w-80 h-80 bg-blue-500/6 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    <div class="relative container mx-auto px-6">
 
-    <!-- Subtle texture overlay for premium feel -->
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
-    </div>    <div class="relative container mx-auto px-6 py-12">
-        <!-- Main Footer Content -->
-        <div class="grid md:grid-cols-4 gap-8 mb-12">
+        <!-- TIER 1: Quick Access Links (Slim Top Row) -->
+        <div class="py-6 border-b border-white/10">
+            <div class="flex flex-wrap justify-center items-center gap-2 md:gap-6 text-sm">
+                <a href="#about" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                    About ENI
+                </a>
+                <span class="hidden md:inline text-white/20">|</span>
+                <a href="#investors" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                    Investors
+                </a>
+                <span class="hidden md:inline text-white/20">|</span>
+                <a href="#sustainability" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                    Sustainability
+                </a>
+                <span class="hidden md:inline text-white/20">|</span>
+                <a href="#careers" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                    Careers
+                </a>
+                <span class="hidden md:inline text-white/20">|</span>
+                <a href="#contact" class="text-white/70 hover:text-eni-yellow transition-all duration-300 px-4 py-2 hover:bg-white/5 rounded-lg">
+                    Contact
+                </a>
+            </div>
+        </div>
 
-            <!-- Brand Section -->
-            <div class="text-center md:text-left md:col-span-1">
-                <div class="mb-6">
-                    <div class="inline-flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-eni-yellow to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
-                            <span class="text-eni-dark font-bold text-lg">E</span>
+        <!-- TIER 2: Main Footer Sections (5-Column Grid) -->
+        <div class="py-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-6">
+
+                <!-- Company Column -->
+                <div class="footer-column">
+                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
+                        <i class="fas fa-building mr-2"></i>
+                        Company
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link">About ENI</a></li>
+                        <li><a href="#" class="footer-link">Leadership</a></li>
+                        <li><a href="#" class="footer-link">Global Presence</a></li>
+                        <li><a href="#" class="footer-link">Careers</a></li>
+                        <li><a href="#" class="footer-link">News & Media</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal & Compliance Column -->
+                <div class="footer-column">
+                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
+                        <i class="fas fa-gavel mr-2"></i>
+                        Legal & Compliance
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link">Terms of Service</a></li>
+                        <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="#" class="footer-link">Anti-Corruption</a></li>
+                        <li><a href="#" class="footer-link">Human Rights</a></li>
+                        <li><a href="#" class="footer-link">Code of Ethics</a></li>
+                    </ul>
+                </div>
+
+                <!-- Investor Relations Column -->
+                <div class="footer-column">
+                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
+                        <i class="fas fa-chart-line mr-2"></i>
+                        Investor Relations
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link">Stock Info (BIT: ENI)</a></li>
+                        <li><a href="#" class="footer-link">NYSE: E</a></li>
+                        <li><a href="#" class="footer-link">Annual Reports</a></li>
+                        <li><a href="#" class="footer-link">Financial Calendar</a></li>
+                        <li><a href="#" class="footer-link">Shareholder Info</a></li>
+                    </ul>
+                </div>
+
+                <!-- Sustainability Column -->
+                <div class="footer-column">
+                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
+                        <i class="fas fa-leaf mr-2"></i>
+                        Sustainability
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link">ESG Strategy</a></li>
+                        <li><a href="#" class="footer-link">Renewable Energy</a></li>
+                        <li><a href="#" class="footer-link">Net Zero Roadmap</a></li>
+                        <li><a href="#" class="footer-link">Carbon Capture</a></li>
+                        <li><a href="#" class="footer-link">Sustainability Report</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support Column -->
+                <div class="footer-column">
+                    <h4 class="text-eni-yellow font-bold text-base mb-5 flex items-center">
+                        <i class="fas fa-headset mr-2"></i>
+                        Support
+                    </h4>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="footer-link">Contact Us</a></li>
+                        <li><a href="#" class="footer-link">Help Center</a></li>
+                        <li><a href="#" class="footer-link">FAQs</a></li>
+                        <li><a href="#" class="footer-link">Live Chat</a></li>
+                        <li><a href="#" class="footer-link">Feedback</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Golden Divider -->
+        <div class="h-px bg-gradient-to-r from-transparent via-eni-yellow/30 to-transparent mb-8"></div>
+
+        <!-- TIER 3: Stats & Certifications -->
+        <div class="pb-12">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-2 gap-4">
+                    <!-- Stat Card 1 -->
+                    <div class="stat-card group">
+                        <div class="text-4xl mb-2">
+                            <i class="fas fa-users text-eni-yellow"></i>
                         </div>
-                        <span class="text-white font-bold text-xl">ENI</span>
+                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">50K+</div>
+                        <div class="text-white/80 text-xs uppercase tracking-wide">Active Investors</div>
                     </div>
-                    <p class="text-white/70 text-sm leading-relaxed mb-4">
-                        Professional investment platform delivering secure, regulated financial growth opportunities.
-                    </p>
-                    <!-- Social Icons -->
-                    <div class="flex justify-center md:justify-start space-x-4">
-                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-eni-yellow/20 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group">
-                            <svg class="w-5 h-5 text-white/70 group-hover:text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-eni-yellow/20 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group">
-                            <svg class="w-5 h-5 text-white/70 group-hover:text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-eni-yellow/20 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group">
-                            <svg class="w-5 h-5 text-white/70 group-hover:text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.740.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.760-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="w-10 h-10 bg-white/10 hover:bg-eni-yellow/20 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg group">
-                            <svg class="w-5 h-5 text-white/70 group-hover:text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                            </svg>
-                        </a>
+
+                    <!-- Stat Card 2 -->
+                    <div class="stat-card group">
+                        <div class="text-4xl mb-2">
+                            <i class="fas fa-dollar-sign text-eni-yellow"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">$2.5B+</div>
+                        <div class="text-white/80 text-xs uppercase tracking-wide">Assets Under Management</div>
+                    </div>
+
+                    <!-- Stat Card 3 -->
+                    <div class="stat-card group">
+                        <div class="text-4xl mb-2">
+                            <i class="fas fa-star text-eni-yellow"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">98%</div>
+                        <div class="text-white/80 text-xs uppercase tracking-wide">Customer Satisfaction</div>
+                    </div>
+
+                    <!-- Stat Card 4 -->
+                    <div class="stat-card group">
+                        <div class="text-4xl mb-2">
+                            <i class="fas fa-clock text-eni-yellow"></i>
+                        </div>
+                        <div class="text-3xl font-bold text-white mb-1 group-hover:text-eni-yellow transition-colors">15+</div>
+                        <div class="text-white/80 text-xs uppercase tracking-wide">Years Experience</div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Legal & Compliance -->
-            <div class="text-center md:text-left">
-                <h4 class="text-eni-yellow font-bold text-lg mb-6 flex items-center justify-center md:justify-start">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                    Legal & Compliance
-                </h4>
-                <ul class="space-y-3 text-white/70 text-sm">
-                    <li><a href="#" data-modal="terms" class="open-modal hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Terms of Service
-                    </a></li>
-                    <li><a href="#" data-modal="privacy" class="open-modal hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Privacy Policy
-                    </a></li>
-                    <li><a href="#" data-modal="risk" class="open-modal hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Risk Disclosure
-                    </a></li>
-                    <li><a href="#" data-modal="aml" class="open-modal hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Anti-Money Laundering
-                    </a></li>
-                    <li><a href="#" data-modal="guidelines" class="open-modal hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Investment Guidelines
-                    </a></li>
-                </ul>
-            </div>
+                <!-- Certifications & Social -->
+                <div class="space-y-6">
+                    <!-- Certifications -->
+                    <div>
+                        <h5 class="text-eni-yellow font-semibold text-sm mb-4 flex items-center">
+                            <i class="fas fa-certificate mr-2"></i>
+                            Certifications & Standards
+                        </h5>
+                        <div class="flex flex-wrap gap-3">
+                            <div class="cert-badge">
+                                <i class="fas fa-shield-alt"></i>
+                                <div class="text-white/80 text-xs font-semibold mt-2">ISO 14001</div>
+                                <div class="text-white/50 text-[10px]">Environmental</div>
+                            </div>
+                            <div class="cert-badge">
+                                <i class="fas fa-hard-hat"></i>
+                                <div class="text-white/80 text-xs font-semibold mt-2">ISO 45001</div>
+                                <div class="text-white/50 text-[10px]">Safety</div>
+                            </div>
+                            <div class="cert-badge">
+                                <i class="fas fa-users-cog"></i>
+                                <div class="text-white/80 text-xs font-semibold mt-2">SA8000</div>
+                                <div class="text-white/50 text-[10px]">Social</div>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Company & Support -->
-            <div class="text-center md:text-left">
-                <h4 class="text-eni-yellow font-bold text-lg mb-6 flex items-center justify-center md:justify-start">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    Company & Support
-                </h4>
-                <ul class="space-y-3 text-white/70 text-sm">
-                    <li><a href="#" onclick="openAboutModal()" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        About ENI
-                    </a></li>
-                    <li><a href="#" onclick="openSupportModal()" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Contact Support
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Help Center
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Investment FAQ
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Security Center
-                    </a></li>
-                </ul>
-            </div>
+                    <!-- Social Media -->
+                    <div>
+                        <h5 class="text-eni-yellow font-semibold text-sm mb-4 flex items-center">
+                            <i class="fas fa-share-nodes mr-2"></i>
+                            Connect With Us
+                        </h5>
+                        <div class="flex gap-3">
+                            <a href="#" class="social-icon group" title="LinkedIn">
+                                <i class="fab fa-linkedin-in text-white group-hover:text-eni-yellow transition-colors"></i>
+                            </a>
+                            <a href="#" class="social-icon group" title="Twitter">
+                                <i class="fab fa-twitter text-white group-hover:text-eni-yellow transition-colors"></i>
+                            </a>
+                            <a href="#" class="social-icon group" title="YouTube">
+                                <i class="fab fa-youtube text-white group-hover:text-eni-yellow transition-colors"></i>
+                            </a>
+                            <a href="#" class="social-icon group" title="Instagram">
+                                <i class="fab fa-instagram text-white group-hover:text-eni-yellow transition-colors"></i>
+                            </a>
+                            <a href="#" class="social-icon group" title="Facebook">
+                                <i class="fab fa-facebook-f text-white group-hover:text-eni-yellow transition-colors"></i>
+                            </a>
+                        </div>
+                    </div>
 
-            <!-- Regulatory Info -->
-            <div class="text-center md:text-left">
-                <h4 class="text-eni-yellow font-bold text-lg mb-6 flex items-center justify-center md:justify-start">
-                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                    </svg>
-                    Regulatory Info
-                </h4>
-                <ul class="space-y-3 text-white/70 text-sm">
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        License Information
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Regulatory Compliance
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Audit Reports
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Financial Disclosures
-                    </a></li>
-                    <li><a href="#" class="hover:text-eni-yellow transition-all duration-300 hover:translate-x-1 inline-flex items-center group">
-                        <span class="w-1 h-1 bg-eni-yellow/50 rounded-full mr-3 group-hover:bg-eni-yellow transition-colors"></span>
-                        Investor Protection
-                    </a></li>
-                </ul>
-            </div>
+                    <!-- Headquarters -->
+                    <div class="text-white/60 text-sm">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-map-marker-alt text-eni-yellow mt-1"></i>
+                            <div>
+                                <div class="font-semibold text-white/80">ENI S.p.A. Headquarters</div>
+                                <div class="text-xs">Piazzale Enrico Mattei, 1</div>
+                                <div class="text-xs">00144 Rome, Italy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        </div>
-
-        <!-- Enhanced Stats Section -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 border border-white/10 rounded-2xl p-6 bg-white/5 backdrop-blur-sm">
-            <div class="text-center">
-                <div class="text-2xl font-bold text-eni-yellow mb-1">50K+</div>
-                <div class="text-white/70 text-sm">Active Investors</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-eni-yellow mb-1">$2.5B+</div>
-                <div class="text-white/70 text-sm">Assets Under Management</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-eni-yellow mb-1">98%</div>
-                <div class="text-white/70 text-sm">Customer Satisfaction</div>
-            </div>
-            <div class="text-center">
-                <div class="text-2xl font-bold text-eni-yellow mb-1">15+</div>
-                <div class="text-white/70 text-sm">Years Experience</div>
             </div>
         </div>
 
-        <!-- Trust Badges -->
-        <div class="flex flex-wrap justify-center items-center gap-8 mb-12">
-            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
-                <div class="w-10 h-10 bg-green-500/20 hover:bg-green-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-green-500/20">
-                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                    </svg>
+        <!-- Bottom Copyright & Legal -->
+        <div class="border-t border-white/10 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-white/50 text-sm text-center md:text-left">
+                    <p>&copy; 2025 ENI S.p.A. All rights reserved. | VAT No. IT 00905811006</p>
                 </div>
-                <span>SSL Secured</span>
-            </div>
-            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
-                <div class="w-10 h-10 bg-blue-500/20 hover:bg-blue-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-blue-500/20">
-                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                </div>
-                <span>Regulated Platform</span>
-            </div>
-            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
-                <div class="w-10 h-10 bg-eni-yellow/20 hover:bg-eni-yellow/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-eni-yellow/20">
-                    <svg class="w-5 h-5 text-eni-yellow" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                </div>
-                <span>Licensed & Insured</span>
-            </div>
-            <div class="flex items-center space-x-2 text-white/70 text-sm hover:text-white/90 transition-all duration-300 group">
-                <div class="w-10 h-10 bg-purple-500/20 hover:bg-purple-500/30 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 border border-purple-500/20">
-                    <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                    </svg>
-                </div>
-                <span>24/7 Support</span>
-            </div>
-        </div>
-
-        <!-- Bottom Footer -->
-        <div class="border-t border-white/10 pt-8">
-            <div class="flex flex-col md:flex-row justify-between items-center mb-6">
-                <div class="text-white/60 text-sm mb-4 md:mb-0 flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                    </svg>
-                    © {{ date('Y') }} ENI Members. All rights reserved.
-                </div>
-                <div class="flex items-center gap-6 text-white/60 text-sm">
-                    <div class="flex items-center">
-                        <div class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></div>
-                        <span>System Status: Operational</span>
-                    </div>
+                <div class="flex flex-wrap items-center justify-center gap-4 text-xs text-white/40">
+                    <span class="flex items-center gap-1">
+                        <i class="fas fa-lock text-eni-yellow"></i>
+                        SSL Secured
+                    </span>
                     <span class="hidden md:inline">•</span>
-                    <span class="flex items-center">
-                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                        </svg>
-                        Trusted by 50,000+ investors
+                    <span class="flex items-center gap-1">
+                        <i class="fas fa-shield-alt text-eni-yellow"></i>
+                        ISO Certified
+                    </span>
+                    <span class="hidden md:inline">•</span>
+                    <span class="flex items-center gap-1">
+                        <i class="fas fa-leaf text-eni-yellow"></i>
+                        Carbon Neutral 2050
                     </span>
                 </div>
             </div>
-
-            <!-- Enhanced Disclaimer -->
-            <div class="bg-white/5 border border-white/10 rounded-xl p-6 backdrop-blur-sm">
-                <div class="text-white/50 text-xs max-w-6xl mx-auto">
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div>
-                            <p class="mb-3 flex items-start">
-                                <svg class="w-4 h-4 mr-2 mt-0.5 text-red-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-                                </svg>
-                                <span><strong class="text-white/70">Risk Warning:</strong> Investment involves risk. Past performance is not indicative of future results.
-                                The value of investments may go up or down and investors may not get back the amount originally invested.</span>
-                            </p>
-                        </div>
-                        <div>
-                            <p class="flex items-start">
-                                <svg class="w-4 h-4 mr-2 mt-0.5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                                </svg>
-                                <span><strong class="text-white/70">Regulatory Compliance:</strong> ENI is regulated by financial authorities and complies with international investment standards.
-                                All investments are subject to our terms and conditions and regulatory oversight.</span>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
+
     </div>
 </footer>
 
-<script>
-    // Delegated modal openers for footer links
-    document.addEventListener('click', function (e) {
-        const el = e.target.closest && e.target.closest('.open-modal');
-        if (!el) return;
-        e.preventDefault();
-        const modal = el.dataset.modal;
-        switch (modal) {
-            case 'terms':
-                if (typeof openTermsModal === 'function') openTermsModal();
-                break;
-            case 'privacy':
-                if (typeof openPrivacyModal === 'function') openPrivacyModal();
-                break;
-            case 'risk':
-                if (typeof openRiskModal === 'function') openRiskModal();
-                break;
-            case 'aml':
-                if (typeof openAmlModal === 'function') openAmlModal();
-                break;
-            case 'guidelines':
-                if (typeof openGuidelinesModal === 'function') openGuidelinesModal();
-                break;
-            default:
-                break;
+<style>
+    /* Footer Styles */
+    .footer-link {
+        @apply text-white/90 text-sm hover:text-eni-yellow hover:translate-x-1 transition-all duration-300 inline-block relative;
+    }
+
+    .footer-link::before {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: #FFCD00;
+        transition: width 0.3s ease;
+    }
+
+    .footer-link:hover::before {
+        width: 100%;
+    }
+
+    .stat-card {
+        @apply bg-gradient-to-br from-white/5 to-white/0 border border-white/10 rounded-xl p-6 text-center
+               hover:border-eni-yellow/30 hover:shadow-lg hover:shadow-eni-yellow/10
+               transition-all duration-300 hover:scale-105 cursor-pointer backdrop-blur-sm;
+    }
+
+    .cert-badge {
+        @apply bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-center
+               hover:border-eni-yellow/30 hover:bg-white/10 transition-all duration-300
+               flex flex-col items-center min-w-[90px];
+    }
+
+    .cert-badge i {
+        @apply text-eni-yellow text-2xl;
+    }
+
+    .cert-badge-img {
+        @apply bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-center
+               hover:border-eni-yellow/30 hover:bg-white/10 transition-all duration-300
+               flex flex-col items-center min-w-[70px] max-w-[80px];
+    }
+
+    .cert-image {
+        @apply w-10 h-10 object-contain mb-1;
+        filter: brightness(1.2) contrast(1.1);
+    }
+
+    .cert-badge-img:hover .cert-image {
+        filter: brightness(1.4) contrast(1.2);
+        transform: scale(1.05);
+        transition: all 0.3s ease;
+    }
+
+    .social-icon {
+        @apply w-11 h-11 bg-white/5 border border-white/10 rounded-lg flex items-center justify-center
+               hover:border-eni-yellow/30 hover:bg-white/10 hover:scale-110
+               transition-all duration-300 text-lg;
+    }
+
+    .social-icon i {
+        @apply text-white;
+    }
+
+    /* Mobile Accordion (optional for future enhancement) */
+    @media (max-width: 768px) {
+        .footer-column {
+            @apply border-b border-white/10 pb-6;
         }
-    });
-</script>
+
+        .stat-card {
+            @apply text-sm p-4;
+        }
+    }
+
+    /* Horizontal scrollable stats on mobile */
+    @media (max-width: 640px) {
+        .grid.grid-cols-2.md\\:grid-cols-4.lg\\:grid-cols-2 {
+            @apply flex overflow-x-auto gap-3 pb-4;
+            scroll-snap-type: x mandatory;
+        }
+
+        .stat-card {
+            @apply flex-shrink-0 w-40;
+            scroll-snap-align: center;
+        }
+    }
+</style>
