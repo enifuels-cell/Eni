@@ -162,7 +162,7 @@
 
                 <!-- Right Side: Certifications, Social & Headquarters -->
                 <div class="lg:col-span-7 space-y-8">
-                    
+
                     <!-- Certifications -->
                     <div>
                         <h5 class="text-eni-yellow font-semibold text-sm uppercase tracking-wider mb-5 flex items-center gap-2">
@@ -325,11 +325,11 @@
         .stat-card {
             @apply p-4;
         }
-        
+
         .stat-card .text-3xl {
             @apply text-2xl;
         }
-        
+
         .stat-card .text-2xl {
             @apply text-xl;
         }
