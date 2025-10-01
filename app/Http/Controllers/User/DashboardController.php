@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Models\FranchiseApplication;
 use App\Models\InvestmentPackage;
+use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -229,9 +230,16 @@ class DashboardController extends Controller
 
     public function packages()
     {
-        $packages = InvestmentPackage::active()->get();
+        $investmentPackages = InvestmentPackage::active()->get();
         $accountBalance = Auth::user()->accountBalance(); // Use calculated balance that excludes locked investments
-        return view('user.packages', compact('packages', 'accountBalance'));
+
+        // Get user's investments for the "Your Active Investments" section
+        $investments = Auth::user()->investments()
+            ->with(['investmentPackage', 'dailyInterestLogs'])
+            ->latest()
+            ->paginate(10);
+
+        return view('user.packages', compact('investmentPackages', 'accountBalance', 'investments'));
     }
 
     public function deposit()
@@ -828,5 +836,71 @@ class DashboardController extends Controller
             'message' => 'Attendance marked successfully!',
             'newTicketCount' => $newTicketCount
         ]);
+    }
+
+    public function claimSignupBonus(Request $request)
+    {
+        $user = Auth::user();
+
+        // Check if bonus already claimed
+        if ($user->signup_bonus_claimed) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sign-up bonus has already been claimed.'
+            ], 400);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $bonusAmount = 10.00; // $10 sign-up bonus
+
+            // Create transaction record
+            Transaction::create([
+                'user_id' => $user->id,
+                'type' => 'deposit',
+                'amount' => $bonusAmount,
+                'reference' => 'SIGNUP-BONUS-' . $user->id,
+                'status' => 'completed',
+                'description' => 'Welcome Sign-up Bonus',
+                'processed_at' => now(),
+            ]);
+
+            // Update user record
+            $user->update([
+                'signup_bonus_claimed' => true,
+                'signup_bonus_claimed_at' => now(),
+            ]);
+
+            // Mark the notification as read
+            $user->unreadNotifications()
+                ->whereJsonContains('data->type', 'signup_bonus')
+                ->update(['read_at' => now()]);
+
+            DB::commit();
+
+            \Log::info('Sign-up bonus claimed', [
+                'user_id' => $user->id,
+                'amount' => $bonusAmount
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => '$10 sign-up bonus has been added to your account!',
+                'new_balance' => $user->fresh()->accountBalance()
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Failed to claim sign-up bonus', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to claim bonus. Please try again.'
+            ], 500);
+        }
     }
 }

@@ -7,6 +7,15 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('Enilogo.png') }}">
+
+        <!-- PWA Manifest -->
+        <link rel="manifest" href="/manifest.webmanifest">
+        <meta name="theme-color" content="#FFCD00">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

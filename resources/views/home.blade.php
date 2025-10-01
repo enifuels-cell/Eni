@@ -584,6 +584,38 @@
                 <div class="text-gray-400 uppercase tracking-wide text-sm font-semibold">Renewable Investment</div>
             </div>
         </div>
+
+        <!-- Coral South Project Video Showcase -->
+        <div class="mt-20 animate-on-scroll">
+            <div class="relative rounded-2xl overflow-hidden border-2 border-eni-yellow/30 shadow-2xl">
+                <!-- Video Container with 16:9 Aspect Ratio -->
+                <div class="relative w-full" style="aspect-ratio: 16/9;">
+                    <video
+                        class="absolute inset-0 w-full h-full object-cover"
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        controls
+                        poster="https://images.unsplash.com/photo-1565567934436-d7aca2346c34?w=1200&q=80"
+                        preload="auto">
+                        <source src="{{ asset('The Coral South Project.mp4') }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+
+                <!-- Video Overlay Info -->
+                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-eni-dark/95 to-transparent p-4 md:p-6 pointer-events-none">
+                    <h3 class="text-xl md:text-2xl font-bold text-eni-yellow mb-1 md:mb-2">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        The Coral South Project
+                    </h3>
+                    <p class="text-white text-xs md:text-sm">
+                        Pioneering floating LNG technology in Mozambique - A testament to ENI's innovation in offshore energy production
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 

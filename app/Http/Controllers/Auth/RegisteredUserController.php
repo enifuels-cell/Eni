@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Referral;
 use App\Mail\WelcomeEmail;
+use App\Notifications\SignupBonusNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,6 +73,9 @@ class RegisteredUserController extends Controller
         }
 
         event(new Registered($user));
+
+        // Send signup bonus notification
+        $user->notify(new SignupBonusNotification());
 
         // Send welcome email
         try {

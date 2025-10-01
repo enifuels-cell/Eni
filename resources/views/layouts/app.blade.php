@@ -8,6 +8,11 @@
         <title>{{ config('app.name', 'Eni Members') }}</title>
         <meta name="theme-color" content="#FFCD00">
 
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+        <link rel="shortcut icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+        <link rel="apple-touch-icon" href="{{ asset('Enilogo.png') }}">
+
         <!-- PWA Manifest -->
         <link rel="manifest" href="/manifest.webmanifest">
 

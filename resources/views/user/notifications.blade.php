@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notifications — Eni Members</title>
   <meta name="theme-color" content="#FFCD00" />
-  
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -34,12 +34,12 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
-    
+
     .prose p {
       margin-bottom: 1rem;
       line-height: 1.7;
     }
-    
+
     .prose p:last-child {
       margin-bottom: 0;
     }
@@ -99,7 +99,7 @@
             <div id="filterMenu" class="absolute right-0 mt-2 w-48 bg-eni-dark border border-white/20 rounded-lg shadow-xl z-50 hidden">
               <div class="p-2">
                 @foreach($categories as $key => $name)
-                  <a href="{{ route('user.notifications', ['filter' => $key]) }}" 
+                  <a href="{{ route('user.notifications', ['filter' => $key]) }}"
                      class="block px-3 py-2 text-sm text-white hover:bg-white/10 rounded {{ $filter === $key ? 'bg-white/10' : '' }}">
                     {{ $name }}
                   </a>
@@ -150,10 +150,23 @@
                   <span class="text-white/50 text-sm">Read</span>
                 @endif
               </div>
-              <div class="flex items-center gap-2 text-white/40">
-                <span class="text-sm">Click to view details</span>
-                <i class="fas fa-chevron-right text-xs"></i>
-              </div>
+
+              @php
+                $notificationData = is_string($notification->data) ? json_decode($notification->data, true) : $notification->data;
+              @endphp
+
+              @if(isset($notificationData['type']) && $notificationData['type'] === 'signup_bonus' && !auth()->user()->signup_bonus_claimed)
+                <button onclick="event.stopPropagation(); claimSignupBonus(this)"
+                        class="px-6 py-2 bg-eni-yellow text-eni-dark font-bold rounded-lg hover:bg-yellow-400 transition-all duration-300 flex items-center gap-2">
+                  <i class="fas fa-gift"></i>
+                  <span>Claim $10 Bonus</span>
+                </button>
+              @else
+                <div class="flex items-center gap-2 text-white/40">
+                  <span class="text-sm">Click to view details</span>
+                  <i class="fas fa-chevron-right text-xs"></i>
+                </div>
+              @endif
             </div>
           </div>
         </div>
@@ -433,13 +446,13 @@
     function openNotificationModal(id, title, message, category, date, isRead, actionUrl) {
       currentNotificationId = id;
       currentNotificationActionUrl = actionUrl;
-      
+
       // Update modal content
       document.getElementById('modalTitle').textContent = title;
       document.getElementById('modalMessage').textContent = message;
       document.getElementById('modalCategory').textContent = category;
       document.getElementById('modalDate').textContent = date;
-      
+
       // Update status
       const statusEl = document.getElementById('modalStatus');
       const markReadBtn = document.getElementById('markReadBtn');
@@ -452,7 +465,7 @@
         statusEl.className = 'px-2 py-1 bg-eni-yellow/20 text-eni-yellow text-xs rounded-full';
         markReadBtn.style.display = 'inline-flex';
       }
-      
+
       // Update icon based on category
       const iconEl = document.getElementById('modalIcon');
       const iconMap = {
@@ -466,7 +479,7 @@
       };
       iconEl.className = iconMap[category] || 'fas fa-bell';
       iconEl.className += ' text-eni-yellow';
-      
+
       // Show/hide action button
       const actionBtn = document.getElementById('actionBtn');
       if (actionUrl && actionUrl.trim() !== '') {
@@ -474,10 +487,10 @@
       } else {
         actionBtn.style.display = 'none';
       }
-      
+
       // Show modal
       document.getElementById('notificationModal').classList.remove('hidden');
-      
+
       // Auto-mark as read if unread
       if (!isRead) {
         setTimeout(() => {
@@ -503,7 +516,7 @@
     // Mark notification as read (with UI update)
     async function markNotificationAsRead() {
       if (!currentNotificationId) return;
-      
+
       try {
         const response = await fetch(`{{ route("user.notifications.mark-read", ":id") }}`.replace(':id', currentNotificationId), {
           method: 'POST',
@@ -512,7 +525,7 @@
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
           }
         });
-        
+
         if (response.ok) {
           // Update modal UI
           const statusEl = document.getElementById('modalStatus');
@@ -520,7 +533,7 @@
           statusEl.textContent = 'Read';
           statusEl.className = 'px-2 py-1 bg-white/20 text-white/70 text-xs rounded-full';
           markReadBtn.style.display = 'none';
-          
+
           // Reload page to update the notification list
           setTimeout(() => {
             location.reload();
@@ -556,7 +569,7 @@
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
           }
         });
-        
+
         if (response.ok) {
           location.reload();
         }
@@ -614,6 +627,48 @@
     function showAttendanceModal() {
       // Redirect to dashboard with attendance modal flag
       window.location.href = '{{ route("user.dashboard") }}#attendance-modal';
+    }
+
+    // Claim Signup Bonus Function
+    async function claimSignupBonus(button) {
+      const originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Claiming...</span>';
+
+      try {
+        const response = await fetch('{{ route("user.claim-signup-bonus") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success message
+          button.innerHTML = '<i class="fas fa-check"></i> <span>Claimed!</span>';
+          button.classList.remove('bg-eni-yellow', 'hover:bg-yellow-400');
+          button.classList.add('bg-green-500');
+
+          // Show alert
+          alert('🎉 ' + data.message);
+
+          // Reload page to update balance
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          throw new Error(data.message || 'Failed to claim bonus');
+        }
+      } catch (error) {
+        console.error('Error claiming bonus:', error);
+        alert('❌ ' + error.message);
+        button.disabled = false;
+        button.innerHTML = originalText;
+      }
     }
   </script>
 

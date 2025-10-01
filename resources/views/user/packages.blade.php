@@ -111,12 +111,20 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             transform-origin: center;
-            min-height: 400px; /* Taller cards for better video display */
+            min-height: 320px; /* Reduced from 400px */
+            max-width: 100%;
+        }
+
+        /* Energy Saver card - maintains GIF aspect ratio */
+        .package-card.energy-saver-card {
+            min-height: 420px; /* Reduced from 550px */
+            height: auto;
+            max-width: 100%;
         }
 
         .package-card:hover {
-            transform: translateY(-16px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(255, 205, 0, 0.3), 0 0 30px rgba(255, 205, 0, 0.2);
+            transform: translateY(-12px) scale(1.02); /* Slightly less movement */
+            box-shadow: 0 20px 40px rgba(255, 205, 0, 0.3), 0 0 25px rgba(255, 205, 0, 0.2);
         }
 
         .package-card.selected {
@@ -304,6 +312,127 @@
         .vip-video-card:hover .package-card-inner {
             border-color: rgba(239, 68, 68, 0.6);
             box-shadow: 0 0 30px rgba(239, 68, 68, 0.4);
+        }
+
+        /* ========== RESPONSIVE PACKAGE CARDS ========== */
+
+        /* Package Card Container - Responsive sizing */
+        .package-card {
+            width: 100%;
+            max-width: 100%;
+            margin-bottom: 0;
+        }
+
+        /* Mobile: Stacked vertically with 85-90% viewport width, max 400px */
+        @media (max-width: 768px) {
+            .package-card {
+                width: 90%;
+                max-width: 400px;
+                margin: 0 auto 30px auto; /* Center with vertical spacing */
+            }
+
+            /* Reduce image size on mobile for faster scrolling */
+            .energy-gif-card-img,
+            .growth-gif-card-img,
+            .capital-gif-card-img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+
+        /* Tablet and Desktop: Side-by-side with max-width constraint */
+        @media (min-width: 769px) {
+            .package-card {
+                max-width: 350px; /* Prevent cards from being too wide */
+            }
+        }
+
+        /* Energy GIF - Direct styling on IMG element (Green glow) */
+        .energy-gif-card-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 1.5rem;
+            border: 2px solid rgba(34, 197, 94, 0.4);
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.2);
+            transition: all 0.3s ease;
+            animation: energy-pulse 3s ease-in-out infinite;
+        }
+
+        .energy-gif-card-img:hover {
+            border-color: rgba(34, 197, 94, 0.7);
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.5), 0 0 60px rgba(34, 197, 94, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Growth GIF - Direct styling on IMG element (Blue glow) */
+        .growth-gif-card-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 1.5rem;
+            border: 2px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+            animation: energy-pulse 3s ease-in-out infinite;
+        }
+
+        .growth-gif-card-img:hover {
+            border-color: rgba(59, 130, 246, 0.7);
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.3);
+            transform: scale(1.02);
+        }
+
+        /* Capital GIF - Direct styling on IMG element (Yellow/Gold glow) */
+        .capital-gif-card-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 1.5rem;
+            border: 2px solid rgba(255, 205, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 205, 0, 0.3), 0 0 40px rgba(255, 205, 0, 0.2);
+            transition: all 0.3s ease;
+            animation: energy-pulse 3s ease-in-out infinite;
+        }
+
+        .capital-gif-card-img:hover {
+            border-color: rgba(255, 205, 0, 0.7);
+            box-shadow: 0 0 30px rgba(255, 205, 0, 0.5), 0 0 60px rgba(255, 205, 0, 0.3);
+            transform: scale(1.02);
+        }
+
+        @keyframes energy-pulse {
+            0%, 100% {
+                filter: brightness(1) contrast(1);
+            }
+            50% {
+                filter: brightness(1.05) contrast(1.02);
+            }
+        }
+
+        /* Mobile-specific adjustments */
+        @media (max-width: 768px) {
+            /* Reduce hover scale on mobile to prevent cards from overlapping */
+            .energy-gif-card-img:hover,
+            .growth-gif-card-img:hover,
+            .capital-gif-card-img:hover {
+                transform: scale(1.01); /* Smaller scale on mobile */
+            }
+
+            /* Reduce parent container hover effects on mobile */
+            .package-card:hover {
+                transform: scale(1.01) translateY(-2px);
+            }
+        }
+
+        /* Desktop hover effects */
+        @media (min-width: 769px) {
+            .package-card:hover {
+                transform: scale(1.05) translateY(-8px);
+            }
         }
 
         /* Crypto Badge Animation */
@@ -499,7 +628,7 @@
             </div>
         </header>
 
-        <div class="container mx-auto px-6 py-8 relative z-10">
+        <div class="container mx-auto px-2 py-8 relative z-10">
         @if(session('success'))
             <div class="bg-green-500/20 border border-green-500/30 rounded-lg p-4 mb-6">
                 <p class="text-green-400">{{ session('success') }}</p>
@@ -520,22 +649,6 @@
         <div class="text-center mb-16">
             <h2 class="text-5xl font-bold text-eni-yellow mb-6 text-glow">Investment Packages</h2>
             <p class="text-white/80 text-xl max-w-3xl mx-auto leading-relaxed">Choose the perfect investment strategy for your financial goals. Start earning daily interest with our secure and proven packages.</p>
-
-            <!-- VIP & Crypto Package Highlights -->
-            <div class="flex justify-center items-center mt-8 space-x-6">
-                <div class="flex items-center bg-gradient-to-r from-red-600/20 to-red-500/20 px-4 py-2 rounded-full border border-red-500/30">
-                    <svg class="w-5 h-5 mr-2 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M15 10l-3-3v2H6v2h6v2l3-3zM4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4z"/>
-                    </svg>
-                    <span class="text-red-400 font-semibold">VIP Video Packages Available</span>
-                </div>
-                <div class="flex items-center bg-gradient-to-r from-blue-600/20 to-blue-500/20 px-4 py-2 rounded-full border border-blue-500/30">
-                    <svg class="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1L9 7V9C9 10.1 9.9 11 11 11V13H13V11C14.1 11 15 10.1 15 9ZM11 9H13V7H11V9Z"/>
-                    </svg>
-                    <span class="text-blue-400 font-semibold">Crypto-Backed Investments</span>
-                </div>
-            </div>
         </div>
 
         <!-- Trust Indicators & Quick Stats -->
@@ -591,14 +704,14 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-white/80 mb-4 italic">"ENI has completely transformed my investment strategy. The daily returns are consistent and the platform is incredibly reliable. I started with the Growth package and I'm already seeing excellent results!"</p>
+                    <p class="text-white/80 mb-4 italic">"ENI has completely transformed my investment strategy. The daily returns are consistent and the platform is incredibly reliable. I started with the Growth Power package and I'm already seeing excellent results!"</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gradient-to-br from-eni-yellow to-yellow-500 rounded-full flex items-center justify-center mr-3">
                             <span class="text-eni-dark font-bold text-sm">SM</span>
                         </div>
                         <div>
                             <div class="font-semibold text-white">Sarah Martinez</div>
-                            <div class="text-white/60 text-sm">Growth Package Investor</div>
+                            <div class="text-white/60 text-sm">Growth Power Investor</div>
                         </div>
                     </div>
                 </div>
@@ -623,14 +736,14 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-white/80 mb-4 italic">"The Premium package has exceeded all my expectations. ENI's transparency and professional approach to investment management is unmatched. The referral system is also fantastic!"</p>
+                    <p class="text-white/80 mb-4 italic">"The Capital Prime package has exceeded all my expectations. ENI's transparency and professional approach to investment management is unmatched. The referral system is also fantastic!"</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
                             <span class="text-white font-bold text-sm">DJ</span>
                         </div>
                         <div>
                             <div class="font-semibold text-white">David Johnson</div>
-                            <div class="text-white/60 text-sm">Premium Package Investor</div>
+                            <div class="text-white/60 text-sm">Capital Prime Investor</div>
                         </div>
                     </div>
                 </div>
@@ -655,14 +768,14 @@
                             </svg>
                         </div>
                     </div>
-                    <p class="text-white/80 mb-4 italic">"As a newcomer to investing, ENI made everything simple and secure. The Basic package was perfect to start with, and the customer support team is always available to help. Highly recommended!"</p>
+                    <p class="text-white/80 mb-4 italic">"As a newcomer to investing, ENI made everything simple and secure. The Energy Saver package was perfect to start with, and the customer support team is always available to help. Highly recommended!"</p>
                     <div class="flex items-center">
                         <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3">
                             <span class="text-white font-bold text-sm">EC</span>
                         </div>
                         <div>
                             <div class="font-semibold text-white">Emily Chen</div>
-                            <div class="text-white/60 text-sm">Basic Package Investor</div>
+                            <div class="text-white/60 text-sm">Energy Saver Investor</div>
                         </div>
                     </div>
                 </div>
@@ -670,16 +783,15 @@
         </div>
 
         <!-- Investment Packages Grid -->
-        <div class="mb-16 relative">
+        <div class="mb-16 relative px-4">
             <!-- Subtle gradient background -->
             <div class="absolute inset-0 bg-gradient-to-br from-eni-yellow/5 via-transparent to-eni-dark/20 rounded-3xl -mx-4 -my-8"></div>
 
-            <!-- Dynamic Packages from Database -->
-            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
+            <!-- Responsive Grid: Stacked on mobile, side-by-side on tablet/desktop -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 max-w-7xl mx-auto relative z-10 items-start justify-items-center">
 
-                @foreach($packages as $index => $package)
-                <div class="package-card card-spotlight group relative cursor-pointer transform transition-all duration-500 hover:scale-105 hover:-translate-y-4 h-96"
-                     onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
+                @foreach($investmentPackages as $index => $package)
+                <div class="package-card {{ $index === 0 ? 'energy-saver-card' : '' }} card-spotlight group relative transition-all duration-500">
 
                     @php
                         // Visual hierarchy based on package tier with media backgrounds
@@ -698,43 +810,44 @@
 
                         // Media backgrounds for packages
                         $mediaBackground = match($index) {
-                            0 => 'crypto.jpg', // Crypto image for first package
-                            1 => 'VIP.mp4', // VIP video for most popular
-                            2 => 'VIP1.mp4', // VIP1 video for premium
+                            0 => 'Energy.gif', // Energy GIF for Energy Saver package
+                            1 => 'Growth.gif', // Growth GIF for Growth Power package
+                            2 => 'Capital.gif', // Capital GIF for Capital Prime package
                             default => 'crypto.jpg'
                         };
 
-                        $isVideo = in_array($mediaBackground, ['VIP.mp4', 'VIP1.mp4']);
+                        $isVideo = false; // All packages now use GIFs
+                        $isGif = in_array($mediaBackground, ['Energy.gif', 'Growth.gif', 'Capital.gif']);
+
+                        // Assign specific GIF card class based on package
+                        $gifCardClass = match($index) {
+                            0 => 'energy-gif-card',   // Energy Saver - Green glow
+                            1 => 'growth-gif-card',   // Growth Power - Blue glow
+                            2 => 'capital-gif-card',  // Capital Prime - Yellow glow
+                            default => 'energy-gif-card'
+                        };
                     @endphp
 
-                    <!-- No badges - Pure media display -->
+                    <!-- GIF as the card itself - no container background -->
 
-                    <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500 {{ $isVideo ? 'vip-video-card' : 'crypto-card' }}">
-
-                        <!-- Pure Media Display - No Text Overlays -->
-                        @if($isVideo)
-                            <!-- Pure VIP Video Display -->
-                            <video
-                                class="absolute inset-0 w-full h-full object-contain bg-black"
-                                autoplay
-                                muted
-                                loop
-                                playsinline
-                                poster="">
-                                <source src="{{ asset($mediaBackground) }}" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                        @else
-                            <!-- Pure Crypto Image Display -->
+                    @if($isGif)
+                        <!-- GIF IS the package card - Optimized loading -->
+                        <img
+                            src="{{ asset($mediaBackground) }}"
+                            alt="{{ $package->name }}"
+                            class="w-full h-auto rounded-3xl cursor-pointer {{ $gifCardClass }}-img"
+                            loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
+                    @else
+                        <!-- Fallback for non-GIF packages -->
+                        <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500">
                             <div
-                                class="absolute inset-0 w-full h-full bg-cover bg-center crypto-bg"
+                                class="absolute inset-0 w-full h-full bg-cover bg-center"
                                 style="background-image: url('{{ asset($mediaBackground) }}');">
                             </div>
-                        @endif
-
-                        <!-- Invisible Click Area for Functionality -->
-                        <div class="absolute inset-0 z-10 cursor-pointer"></div>                        <!-- Pure content - no overlay effects -->
-                    </div>
+                            <div class="absolute inset-0 z-10 cursor-pointer"></div>
+                        </div>
+                    @endif
                 </div>
                 @endforeach
 
@@ -1538,18 +1651,18 @@
 
                             <div>
                                 <h3 class="text-lg font-bold text-eni-yellow mb-3">3. Investment Packages</h3>
-                                <p class="text-white/80 mb-2">ENI provides tiered investment options, such as:</p>
+                                <p class="text-white/80 mb-2">ENI provides tiered co-partnership investment options:</p>
                                 <ul class="space-y-2 text-white/80 ml-4">
-                                    <li>• <strong>Capital Package</strong> (conservative, entry-level)</li>
-                                    <li>• <strong>Energy Package</strong> (balanced growth)</li>
-                                    <li>• <strong>Growth Package</strong> (premium, high-yield)</li>
+                                    <li>• <strong>Energy Saver</strong> ($200-$899, 0.5% daily, 6 months)</li>
+                                    <li>• <strong>Growth Power</strong> ($900-$6,999, 0.7% daily, 9 months)</li>
+                                    <li>• <strong>Capital Prime</strong> ($7,000-$50,000, 0.9% daily, 12 months)</li>
                                 </ul>
-                                <p class="text-white/80 mt-3 mb-2">Each package has defined:</p>
+                                <p class="text-white/80 mt-3 mb-2">Each package includes:</p>
                                 <ul class="space-y-2 text-white/80 ml-4">
-                                    <li>• Minimum investment amount</li>
-                                    <li>• Daily interest yield</li>
-                                    <li>• Capital release duration</li>
-                                    <li>• Referral incentives (e.g., 5%)</li>
+                                    <li>• Steady daily yield</li>
+                                    <li>• Capital release at maturity</li>
+                                    <li>• Option to reinvest</li>
+                                    <li>• Referral incentives (5%-8%)</li>
                                 </ul>
                             </div>
 

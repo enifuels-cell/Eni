@@ -64,6 +64,8 @@ class User extends Authenticatable
         'role',
         'account_id',
         'account_balance',
+        'signup_bonus_claimed',
+        'signup_bonus_claimed_at',
         'last_login_at',
         'last_login_ip',
         'pin_hash',
@@ -102,6 +104,8 @@ class User extends Authenticatable
             'last_login_at' => 'datetime',
             'pin_set_at' => 'datetime',
             'suspended_at' => 'datetime',
+            'signup_bonus_claimed' => 'boolean',
+            'signup_bonus_claimed_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

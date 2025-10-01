@@ -7,6 +7,15 @@
     <title>ENI Investment Platform — Enterprise Investment Solutions</title>
     <meta name="description" content="Enterprise-level investment platform offering secure deposit solutions, automated daily interest calculations, and comprehensive portfolio management.">
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+    <link rel="shortcut icon" type="image/png" href="{{ asset('Enilogo.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('Enilogo.png') }}">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.webmanifest">
+    <meta name="theme-color" content="#FFCD00">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">

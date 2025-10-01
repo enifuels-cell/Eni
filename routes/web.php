@@ -243,6 +243,9 @@ Route::middleware(['auth', 'check.suspended'])->group(function () {
         Route::post('/notifications/mark-all-read', [UserDashboardController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
         Route::post('/notifications/{id}/mark-read', [UserDashboardController::class, 'markNotificationAsRead'])->name('notifications.mark-read');
 
+        // Sign-up Bonus
+        Route::post('/claim-signup-bonus', [UserDashboardController::class, 'claimSignupBonus'])->name('claim-signup-bonus');
+
         // Investment Packages
         Route::get('/packages', [UserDashboardController::class, 'packages'])->name('packages');
 

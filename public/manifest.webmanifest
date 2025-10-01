@@ -1,20 +1,22 @@
 {
-  "name": "Eni Members",
-  "short_name": "Eni",
-  "description": "Eni Members progressive web app",
+  "name": "ENI Investment Platform",
+  "short_name": "ENI",
+  "description": "Enterprise Investment Solutions - Secure investment platform with daily returns",
   "icons": [
     {
-      "src": "/icons/icon-192x192.png",
+      "src": "/Enilogo.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512.png",
+      "src": "/Enilogo.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icons/icon-512x512-maskable.png",
+      "src": "/Enilogo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -22,6 +24,7 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FFCD00",
-  "theme_color": "#FFCD00"
+  "background_color": "#0b2241",
+  "theme_color": "#FFCD00",
+  "orientation": "portrait-primary"
 }
