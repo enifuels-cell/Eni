@@ -347,7 +347,7 @@
             }
         }
 
-        /* Energy GIF - Direct styling on IMG element (Green glow) */
+        /* Energy Video - Direct styling on VIDEO element (Green glow) */
         .energy-gif-card-img {
             display: block;
             width: 100%;
@@ -358,6 +358,7 @@
             box-shadow: 0 0 20px rgba(34, 197, 94, 0.3), 0 0 40px rgba(34, 197, 94, 0.2);
             transition: all 0.3s ease;
             animation: energy-pulse 3s ease-in-out infinite;
+            object-fit: cover;
         }
 
         .energy-gif-card-img:hover {
@@ -366,7 +367,7 @@
             transform: scale(1.02);
         }
 
-        /* Growth GIF - Direct styling on IMG element (Blue glow) */
+        /* Growth Video - Direct styling on VIDEO element (Blue glow) */
         .growth-gif-card-img {
             display: block;
             width: 100%;
@@ -377,6 +378,7 @@
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.2);
             transition: all 0.3s ease;
             animation: energy-pulse 3s ease-in-out infinite;
+            object-fit: cover;
         }
 
         .growth-gif-card-img:hover {
@@ -385,7 +387,7 @@
             transform: scale(1.02);
         }
 
-        /* Capital GIF - Direct styling on IMG element (Yellow/Gold glow) */
+        /* Capital Video - Direct styling on VIDEO element (Yellow/Gold glow) */
         .capital-gif-card-img {
             display: block;
             width: 100%;
@@ -396,6 +398,7 @@
             box-shadow: 0 0 20px rgba(255, 205, 0, 0.3), 0 0 40px rgba(255, 205, 0, 0.2);
             transition: all 0.3s ease;
             animation: energy-pulse 3s ease-in-out infinite;
+            object-fit: cover;
         }
 
         .capital-gif-card-img:hover {
@@ -810,14 +813,14 @@
 
                         // Media backgrounds for packages
                         $mediaBackground = match($index) {
-                            0 => 'Energy.gif', // Energy GIF for Energy Saver package
-                            1 => 'Growth.gif', // Growth GIF for Growth Power package
-                            2 => 'Capital.gif', // Capital GIF for Capital Prime package
+                            0 => 'Energy.mp4', // Energy Video for Energy Saver package
+                            1 => 'Growth.mp4', // Growth Video for Growth Power package
+                            2 => 'Capital.mp4', // Capital Video for Capital Prime package
                             default => 'crypto.jpg'
                         };
 
-                        $isVideo = false; // All packages now use GIFs
-                        $isGif = in_array($mediaBackground, ['Energy.gif', 'Growth.gif', 'Capital.gif']);
+                        $isVideo = in_array($mediaBackground, ['Energy.mp4', 'Growth.mp4', 'Capital.mp4']); // All packages now use MP4 videos
+                        $isGif = false;
 
                         // Assign specific GIF card class based on package
                         $gifCardClass = match($index) {
@@ -828,18 +831,21 @@
                         };
                     @endphp
 
-                    <!-- GIF as the card itself - no container background -->
+                    <!-- Video as the card itself - no container background -->
 
-                    @if($isGif)
-                        <!-- GIF IS the package card - Optimized loading -->
-                        <img
+                    @if($isVideo)
+                        <!-- VIDEO IS the package card - Autoplay, loop, no controls -->
+                        <video
                             src="{{ asset($mediaBackground) }}"
-                            alt="{{ $package->name }}"
                             class="w-full h-auto rounded-3xl cursor-pointer {{ $gifCardClass }}-img"
-                            loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
-                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="{{ $index === 0 ? 'auto' : 'metadata' }}"
+                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'></video>
                     @else
-                        <!-- Fallback for non-GIF packages -->
+                        <!-- Fallback for non-video packages -->
                         <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500">
                             <div
                                 class="absolute inset-0 w-full h-full bg-cover bg-center"

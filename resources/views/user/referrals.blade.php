@@ -237,6 +237,24 @@
                 transform: scale(1);
             }
         }
+
+        /* Make referral link selectable */
+        #referralLink {
+            user-select: all;
+            -webkit-user-select: all;
+            -moz-user-select: all;
+            -ms-user-select: all;
+        }
+
+        #referralLink::selection {
+            background-color: rgba(255, 205, 0, 0.3);
+            color: #fff;
+        }
+
+        #referralLink::-moz-selection {
+            background-color: rgba(255, 205, 0, 0.3);
+            color: #fff;
+        }
     </style>
 </head>
 <body class="text-white min-h-screen relative overflow-x-hidden">
@@ -393,8 +411,10 @@
                     <div class="flex mb-4">
                         <input type="text" id="referralLink"
                                value="{{ $referralLink }}"
-                               class="flex-1 bg-white/10 border border-white/20 rounded-l-xl px-4 py-4 text-white focus:outline-none focus:border-eni-yellow text-sm backdrop-blur-sm"
-                               readonly>
+                               class="flex-1 bg-white/10 border border-white/20 rounded-l-xl px-4 py-4 text-white focus:outline-none focus:border-eni-yellow text-sm backdrop-blur-sm select-all cursor-pointer"
+                               readonly
+                               onclick="this.select(); this.setSelectionRange(0, 99999);"
+                               ontouchstart="this.select(); this.setSelectionRange(0, 99999);">
                         <button type="button" data-action="copy-link" data-target="referralLink"
                                 class="bg-gradient-to-r from-eni-yellow to-yellow-500 text-eni-dark px-6 py-4 rounded-r-xl font-semibold hover:from-yellow-400 hover:to-yellow-400 transition-all duration-300 hover:scale-105">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -403,28 +423,15 @@
                         </button>
                     </div>
                     <div class="bg-eni-yellow/10 rounded-lg p-3 border border-eni-yellow/20">
-                        <div class="flex items-center justify-between gap-3">
-                            <p class="text-white/80 text-sm flex-1">
-                                @if(Auth::user()->username)
-                                    <span class="text-eni-yellow font-semibold">Easy to remember:</span>
-                                    <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->username }}</span>
-                                @else
-                                    <span class="text-eni-yellow font-semibold">Your referral code:</span>
-                                    <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->id }}</span>
-                                @endif
-                            </p>
-                            <button onclick="copyReferralCode()"
-                                    id="copy-referral-btn"
-                                    class="flex items-center gap-2 px-4 py-2 bg-eni-yellow text-eni-dark font-semibold rounded-lg hover:bg-eni-yellow/90 transition-all duration-200 whitespace-nowrap">
-                                <svg id="copy-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                                </svg>
-                                <svg id="check-icon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                                </svg>
-                                <span id="copy-btn-text">Copy</span>
-                            </button>
-                        </div>
+                        <p class="text-white/80 text-sm">
+                            @if(Auth::user()->username)
+                                <span class="text-eni-yellow font-semibold">Easy to remember:</span>
+                                <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->username }}</span>
+                            @else
+                                <span class="text-eni-yellow font-semibold">Your referral code:</span>
+                                <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->id }}</span>
+                            @endif
+                        </p>
                     </div>
                 </div>
 

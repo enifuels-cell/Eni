@@ -596,7 +596,6 @@
                         muted
                         loop
                         playsinline
-                        controls
                         poster="https://images.unsplash.com/photo-1565567934436-d7aca2346c34?w=1200&q=80"
                         preload="auto">
                         <source src="{{ asset('The Coral South Project.mp4') }}" type="video/mp4">
