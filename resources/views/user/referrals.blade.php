@@ -403,13 +403,28 @@
                         </button>
                     </div>
                     <div class="bg-eni-yellow/10 rounded-lg p-3 border border-eni-yellow/20">
-                        <p class="text-white/80 text-sm">
-                            @if(Auth::user()->username)
-                                <span class="text-eni-yellow font-semibold">Easy to remember:</span> /register?ref={{ Auth::user()->username }}
-                            @else
-                                <span class="text-eni-yellow font-semibold">Your referral code:</span> {{ Auth::user()->id }}
-                            @endif
-                        </p>
+                        <div class="flex items-center justify-between gap-3">
+                            <p class="text-white/80 text-sm flex-1">
+                                @if(Auth::user()->username)
+                                    <span class="text-eni-yellow font-semibold">Easy to remember:</span> 
+                                    <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->username }}</span>
+                                @else
+                                    <span class="text-eni-yellow font-semibold">Your referral code:</span> 
+                                    <span id="referral-code-text" class="text-white font-mono">{{ Auth::user()->id }}</span>
+                                @endif
+                            </p>
+                            <button onclick="copyReferralCode()" 
+                                    id="copy-referral-btn"
+                                    class="flex items-center gap-2 px-4 py-2 bg-eni-yellow text-eni-dark font-semibold rounded-lg hover:bg-eni-yellow/90 transition-all duration-200 whitespace-nowrap">
+                                <svg id="copy-icon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                                </svg>
+                                <svg id="check-icon" class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                                </svg>
+                                <span id="copy-btn-text">Copy</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -586,6 +601,60 @@
                 generateBtn.style.display = 'inline-flex';
                 hideBtn.style.display = 'none';
             }
+        }
+
+        function copyReferralCode() {
+            const referralCodeText = document.getElementById('referral-code-text').textContent;
+            const copyBtn = document.getElementById('copy-referral-btn');
+            const copyIcon = document.getElementById('copy-icon');
+            const checkIcon = document.getElementById('check-icon');
+            const btnText = document.getElementById('copy-btn-text');
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(referralCodeText).then(() => {
+                // Show success state
+                copyIcon.classList.add('hidden');
+                checkIcon.classList.remove('hidden');
+                btnText.textContent = 'Copied!';
+                copyBtn.classList.add('bg-green-500', 'text-white');
+                copyBtn.classList.remove('bg-eni-yellow', 'text-eni-dark');
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyIcon.classList.remove('hidden');
+                    checkIcon.classList.add('hidden');
+                    btnText.textContent = 'Copy';
+                    copyBtn.classList.remove('bg-green-500', 'text-white');
+                    copyBtn.classList.add('bg-eni-yellow', 'text-eni-dark');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = referralCodeText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    // Show success state
+                    copyIcon.classList.add('hidden');
+                    checkIcon.classList.remove('hidden');
+                    btnText.textContent = 'Copied!';
+                    copyBtn.classList.add('bg-green-500', 'text-white');
+                    copyBtn.classList.remove('bg-eni-yellow', 'text-eni-dark');
+
+                    setTimeout(() => {
+                        copyIcon.classList.remove('hidden');
+                        checkIcon.classList.add('hidden');
+                        btnText.textContent = 'Copy';
+                        copyBtn.classList.remove('bg-green-500', 'text-white');
+                        copyBtn.classList.add('bg-eni-yellow', 'text-eni-dark');
+                    }, 2000);
+                } catch (err) {
+                    alert('Failed to copy. Please copy manually: ' + referralCodeText);
+                }
+                document.body.removeChild(textArea);
+            });
         }
 
         // Delegate data-action buttons
