@@ -353,14 +353,18 @@ class DashboardController extends Controller
                 ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
                 : 'Deposit request - awaiting approval';
 
-            // Create pending transaction
+            // Check if this is an account balance payment (auto-approved)
+            $isAccountBalancePayment = $request->payment_method === 'account_balance';
+
+            // Create transaction (approved if account balance, pending otherwise)
             $transaction = $user->transactions()->create([
                 'type' => 'deposit',
                 'amount' => $request->amount,
                 'reference' => $reference,
-                'status' => 'pending',
+                'status' => $isAccountBalancePayment ? 'approved' : 'pending',
                 'description' => $description,
                 'receipt_path' => $receiptPath, // stored in local disk (private)
+                'processed_at' => $isAccountBalancePayment ? now() : null,
             ]);
 
             \Log::info('Transaction created', [
@@ -373,18 +377,92 @@ class DashboardController extends Controller
             if ($request->package_id) {
                 $package = InvestmentPackage::find($request->package_id);
 
+                // Check if payment method is account_balance - if so, auto-approve
+                $isAccountBalancePayment = $request->payment_method === 'account_balance';
+                $isAutoApproved = false;
+
+                // For account balance payments, verify user has sufficient balance
+                if ($isAccountBalancePayment) {
+                    $availableBalance = $user->account_balance;
+                    if ($availableBalance < $request->amount) {
+                        if ($request->ajax() || $request->wantsJson()) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Insufficient account balance. Available: ₱' . number_format($availableBalance, 2)
+                            ], 422);
+                        }
+                        return back()->withErrors(['amount' => 'Insufficient account balance']);
+                    }
+
+                    // Deduct from account balance immediately
+                    $user->decrement('account_balance', $request->amount);
+                    $isAutoApproved = true;
+                }
+
                 $investment = $user->investments()->create([
                     'investment_package_id' => $request->package_id,
                     'amount' => $request->amount,
                     'daily_shares_rate' => $package->daily_shares_rate,
                     'remaining_days' => $package->effective_days,
                     'total_interest_earned' => 0,
-                    'active' => false, // Will be activated when deposit is approved
-                    'started_at' => now(),
+                    'active' => $isAutoApproved, // Auto-approve if account balance payment
+                    'started_at' => $isAutoApproved ? now() : null,
                     'ended_at' => null,
                 ]);
 
-                \Log::info('Investment created', ['investment_id' => $investment->id]);
+                \Log::info('Investment created', [
+                    'investment_id' => $investment->id,
+                    'payment_method' => $request->payment_method,
+                    'auto_approved' => $isAutoApproved
+                ]);
+
+                // If auto-approved (account balance payment), handle slots and referral bonus immediately
+                if ($isAutoApproved) {
+                    // Decrement package slots
+                    if ($package) {
+                        \App\Models\InvestmentPackage::where('id', $package->id)
+                            ->where('available_slots', '>', 0)
+                            ->decrement('available_slots');
+                        $package->refresh();
+                    }
+
+                    // Process referral bonus if user was referred
+                    $referral = $user->referralReceived;
+                    if ($referral && $package) {
+                        // Calculate bonus amount
+                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money 
+                            ? $investment->amount->toFloat() 
+                            : (float) $investment->amount;
+                        
+                        $bonusRate = $package->referral_bonus_rate / 100;
+                        $bonusAmount = $investmentAmountValue * $bonusRate;
+
+                        // Create referral bonus record
+                        $referralBonus = \App\Models\ReferralBonus::create([
+                            'referral_id' => $referral->id,
+                            'investment_id' => $investment->id,
+                            'bonus_amount' => $bonusAmount,
+                            'paid' => true,
+                            'paid_at' => now()
+                        ]);
+
+                        // Add bonus to referrer's account balance
+                        $referrer = $referral->referrer;
+                        if ($referrer) {
+                            $referrer->increment('account_balance', $bonusAmount);
+
+                            // Create transaction record for the referral bonus
+                            $referrer->transactions()->create([
+                                'type' => 'referral_bonus',
+                                'amount' => $bonusAmount,
+                                'status' => 'completed',
+                                'description' => 'Referral bonus from ' . $user->name . ' - ' . $package->name . ' investment',
+                                'reference' => 'REF' . time() . rand(1000, 9999),
+                                'processed_at' => now()
+                            ]);
+                        }
+                    }
+                }
 
                 // Check if this is an AJAX request
                 if ($request->ajax() || $request->wantsJson()) {
