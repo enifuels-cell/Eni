@@ -11,8 +11,11 @@ use Illuminate\Support\Facades\Route;
 // Include auth routes
 require __DIR__.'/auth.php';
 
-// Include debug routes
-require __DIR__.'/debug_investment.php';
+// Include debug and test routes (development only)
+if (config('app.env') !== 'production') {
+    require __DIR__.'/debug_investment.php';
+    require __DIR__.'/test_csrf.php';
+}
 
 Route::get('/', function () {
     // Check if the user is authenticated
@@ -27,163 +30,173 @@ Route::get('/', function () {
 
 // Public FAQs JSON endpoint (read-only)
 Route::get('/faqs.json', [FaqController::class, 'index'])->name('faqs.index');
-// Test route for debugging
-Route::get('/test', function () {
-    return view('test');
-});
 
-// Temporary cache clear route (REMOVE AFTER USE)
-Route::get('/clear-cache-temp', function () {
-    \Artisan::call('config:clear');
-    \Artisan::call('cache:clear');
-    \Artisan::call('route:clear');
-    \Artisan::call('view:clear');
+// Development/Debug Routes (only available in non-production environments)
+if (config('app.env') !== 'production') {
+    // Test route for debugging
+    Route::get('/test', function () {
+        return view('test');
+    });
 
-    return response()->json([
-        'message' => 'All caches cleared successfully!',
-        'commands_run' => [
-            'config:clear',
-            'cache:clear',
-            'route:clear',
-            'view:clear'
-        ]
-    ]);
-});
-
-// Temporary debug route for investment issues (REMOVE AFTER USE)
-Route::get('/debug-investment', function () {
-    $user = auth()->user();
-    if (!$user) {
-        return response()->json(['error' => 'Not authenticated']);
-    }
-
-    $packages = \App\Models\InvestmentPackage::all();
-    $activePackages = \App\Models\InvestmentPackage::where('active', true)->get();
-
-    return response()->json([
-        'user_id' => $user->id,
-        'user_balance' => $user->account_balance,
-        'calculated_balance' => $user->accountBalance(),
-        'total_packages' => $packages->count(),
-        'active_packages' => $activePackages->count(),
-        'packages' => $packages->map(function($p) {
-            return [
-                'id' => $p->id,
-                'name' => $p->name,
-                'active' => $p->active,
-                'min_amount' => $p->min_amount,
-                'max_amount' => $p->max_amount,
-                'available_slots' => $p->available_slots
-            ];
-        }),
-        'recent_logs' => \DB::table('laravel_log')->latest()->take(5)->get() ?? []
-    ]);
-});
-
-// Public packages route for testing
-Route::get('/public-packages', function () {
-    $packages = App\Models\InvestmentPackage::available()->get();
-    return view('investments.index', compact('packages'))->with('userInvestments', collect());
-});
-
-// Debug packages route
-Route::get('/debug-packages', function () {
-    $packages = App\Models\InvestmentPackage::all();
-    $available = App\Models\InvestmentPackage::available()->get();
-
-    return response()->json([
-        'total_packages' => $packages->count(),
-        'available_packages' => $available->count(),
-        'all_packages' => $packages->map(function($p) {
-            return [
-                'name' => $p->name,
-                'active' => $p->active,
-                'available_slots' => $p->available_slots,
-                'min_amount' => $p->min_amount,
-                'max_amount' => $p->max_amount
-            ];
-        }),
-        'available_only' => $available->map(function($p) {
-            return [
-                'name' => $p->name,
-                'active' => $p->active,
-                'available_slots' => $p->available_slots
-            ];
-        })
-    ]);
-});
-
-// Production debug route (simpler, no auth required)
-Route::get('/prod-debug', function () {
-    try {
-        $totalPackages = App\Models\InvestmentPackage::count();
-        $activePackages = App\Models\InvestmentPackage::where('active', true)->count();
-        $packagesWithSlots = App\Models\InvestmentPackage::where('active', true)
-            ->where(function($q) {
-                $q->whereNull('available_slots')->orWhere('available_slots', '>', 0);
-            })->count();
+    // Cache clearing route (admin only)
+    Route::middleware(['auth', 'admin'])->get('/clear-cache-temp', function () {
+        \Artisan::call('config:clear');
+        \Artisan::call('cache:clear');
+        \Artisan::call('route:clear');
+        \Artisan::call('view:clear');
 
         return response()->json([
-            'status' => 'success',
-            'total_packages' => $totalPackages,
-            'active_packages' => $activePackages,
-            'available_packages' => $packagesWithSlots,
-            'environment' => app()->environment(),
-            'database_connection' => config('database.default'),
+            'message' => 'All caches cleared successfully!',
+            'commands_run' => [
+                'config:clear',
+                'cache:clear',
+                'route:clear',
+                'view:clear'
+            ]
         ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-            'environment' => app()->environment(),
-        ]);
-    }
-});
+    });
 
-// Debug route to check auth status and PIN
-Route::get('/debug-auth', function () {
-    $user = auth()->user();
-    if ($user) {
+    // Debug route for investment issues
+    Route::get('/debug-investment', function () {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'Not authenticated']);
+        }
+
+        $packages = \App\Models\InvestmentPackage::all();
+        $activePackages = \App\Models\InvestmentPackage::where('active', true)->get();
+
         return response()->json([
-            'authenticated' => true,
             'user_id' => $user->id,
-            'user_name' => $user->name,
-            'user_email' => $user->email,
-            'has_pin' => $user->pin_hash ? true : false,
-            'pin_set_at' => $user->pin_set_at,
+            'user_balance' => $user->account_balance,
+            'calculated_balance' => $user->accountBalance(),
+            'total_packages' => $packages->count(),
+            'active_packages' => $activePackages->count(),
+            'packages' => $packages->map(function($p) {
+                return [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'active' => $p->active,
+                    'min_amount' => $p->min_amount,
+                    'max_amount' => $p->max_amount,
+                    'available_slots' => $p->available_slots
+                ];
+            }),
+            'recent_logs' => \DB::table('laravel_log')->latest()->take(5)->get() ?? []
         ]);
-    } else {
-        return response()->json([
-            'authenticated' => false,
-            'message' => 'User not logged in'
-        ]);
-    }
-});
+    });
 
-// Alternative logout route (GET)
+    // Public packages route for testing
+    Route::get('/public-packages', function () {
+        $packages = App\Models\InvestmentPackage::available()->get();
+        return view('investments.index', compact('packages'))->with('userInvestments', collect());
+    });
+
+    // Debug packages route
+    Route::get('/debug-packages', function () {
+        $packages = App\Models\InvestmentPackage::all();
+        $available = App\Models\InvestmentPackage::available()->get();
+
+        return response()->json([
+            'total_packages' => $packages->count(),
+            'available_packages' => $available->count(),
+            'all_packages' => $packages->map(function($p) {
+                return [
+                    'name' => $p->name,
+                    'active' => $p->active,
+                    'available_slots' => $p->available_slots,
+                    'min_amount' => $p->min_amount,
+                    'max_amount' => $p->max_amount
+                ];
+            }),
+            'available_only' => $available->map(function($p) {
+                return [
+                    'name' => $p->name,
+                    'active' => $p->active,
+                    'available_slots' => $p->available_slots
+                ];
+            })
+        ]);
+    });
+
+    // Production debug route (simpler, no auth required)
+    Route::get('/prod-debug', function () {
+        try {
+            $totalPackages = App\Models\InvestmentPackage::count();
+            $activePackages = App\Models\InvestmentPackage::where('active', true)->count();
+            $packagesWithSlots = App\Models\InvestmentPackage::where('active', true)
+                ->where(function($q) {
+                    $q->whereNull('available_slots')->orWhere('available_slots', '>', 0);
+                })->count();
+
+            return response()->json([
+                'status' => 'success',
+                'total_packages' => $totalPackages,
+                'active_packages' => $activePackages,
+                'available_packages' => $packagesWithSlots,
+                'environment' => app()->environment(),
+                'database_connection' => config('database.default'),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'environment' => app()->environment(),
+            ]);
+        }
+    });
+
+    // Debug route to check auth status and PIN
+    Route::get('/debug-auth', function () {
+        $user = auth()->user();
+        if ($user) {
+            return response()->json([
+                'authenticated' => true,
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_email' => $user->email,
+                'has_pin' => $user->pin_hash ? true : false,
+                'pin_set_at' => $user->pin_set_at,
+            ]);
+        } else {
+            return response()->json([
+                'authenticated' => false,
+                'message' => 'User not logged in'
+            ]);
+        }
+    });
+
+    // Session and CSRF test route
+    Route::get('/session-test', function () {
+        session(['test_key' => 'Session is working!']);
+        $csrfToken = csrf_token();
+        return response()->json([
+            'session_works' => session('test_key'),
+            'csrf_token' => $csrfToken,
+            'session_id' => session()->getId(),
+            'config_url' => config('app.url')
+        ]);
+    });
+
+    // Demo route to force splash screen view
+    Route::get('/demo-splash', function () {
+        return view('splash-screen');
+    })->name('demo.splash');
+
+    // Debug packages view
+    Route::get('/debug/packages', function() {
+        $packages = App\Models\InvestmentPackage::active()->get();
+        return view('debug.packages', compact('packages'));
+    });
+}
+
+// Alternative logout route (GET) - functional route for logout link compatibility
 Route::get('/logout-alt', function () {
     auth()->logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/');
 })->middleware('auth')->name('logout.alt');
-
-// Session and CSRF test route
-Route::get('/session-test', function () {
-    session(['test_key' => 'Session is working!']);
-    $csrfToken = csrf_token();
-    return response()->json([
-        'session_works' => session('test_key'),
-        'csrf_token' => $csrfToken,
-        'session_id' => session()->getId(),
-        'config_url' => config('app.url')
-    ]);
-});
-
-// Demo route to force splash screen view
-Route::get('/demo-splash', function () {
-    return view('splash-screen');
-})->name('demo.splash');
 
 // ENI Corporate Homepage for authenticated users
 Route::get('/home', function () {
@@ -292,9 +305,3 @@ require __DIR__.'/auth.php';
 
 // Admin routes
 require __DIR__.'/admin.php';
-
-// Debug route
-Route::get('/debug/packages', function() {
-    $packages = App\Models\InvestmentPackage::active()->get();
-    return view('debug.packages', compact('packages'));
-});

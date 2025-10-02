@@ -1,28 +1,78 @@
 
-# Investment/Deposit Platform
+# ENI Investment Platform
 
-## Overview
+[![Laravel](https://img.shields.io/badge/Laravel-12.26.4-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2.12-blue.svg)](https://php.net)
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)](#)
+
+## 🎯 Overview
 
 A robust, secure, and enterprise-level investment/deposit platform built with Laravel. This platform enables users to purchase investment packages, earn daily interest, receive referral bonuses, apply for franchise opportunities, and manage their finances with a corporate-grade user experience.
 
-## Key Features
+## ✨ Key Features
 
-- Investment packages with multiple tiers and returns
-- Automated daily interest calculation and crediting
-- Multi-level referral and bonus system
-- Payment and banking integration (including QR code payments)
-- Administrative dashboard for approvals, analytics, and management
-- User account, profile, and bank details management
-- Real-time notifications and secure authentication
+### Core Functionality
 
-## Security & Best Practices
+- **Investment Packages** with multiple tiers, slots system, and automated returns
+- **Automated Daily Interest** calculation and crediting via scheduled tasks
+- **Multi-level Referral System** with instant commission tracking
+- **Dual Authentication** - Email/Password + 6-digit PIN support
+- **Bank Transfer Integration** with admin approval workflow
+- **Investment Receipts** with professional ENI-themed design
+- **Available Slots Badge** - Real-time package availability display
 
-- Follows Laravel security best practices (CSRF, XSS, SQL Injection protection)
-- Uses Laravel's built-in authentication and authorization
-- Follows clean code and SOLID principles
-- Modular, scalable, and maintainable architecture
+### Advanced Features
 
-## Getting Started
+- **Race Condition Protection** - Atomic slot decrement with row-level locking
+- **CSRF Auto-Refresh** - 30-minute token refresh for better UX
+- **12-Hour Sessions** - Extended session lifetime with security
+- **Signup Bonus System** - Automatic bonus on registration
+- **Franchise Applications** - Complete application and approval workflow
+- **Admin Dashboard** - Analytics, approvals, and user management
+- **Responsive Design** - Mobile-friendly ENI theme (Navy, Yellow, Charcoal)
+
+### Security Features
+
+- CSRF protection with auto-refresh mechanism
+- PIN authentication with bcrypt hashing
+- Rate limiting on sensitive endpoints
+- SQL injection prevention (Eloquent ORM)
+- XSS protection (Blade auto-escaping)
+- Secure session management (HTTPOnly, SameSite)
+- File upload validation
+- Environment-based debug route gating
+
+## 🚀 Deployment Status
+
+**Current Status**: ✅ **PRODUCTION READY**
+
+All critical security issues have been addressed. See deployment documentation below.
+
+### 📚 Deployment Documentation
+
+Before deploying, read these guides in order:
+
+1. **[DEPLOYMENT_SUMMARY.md](DEPLOYMENT_SUMMARY.md)** - Quick start guide (read this first!)
+2. **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Interactive step-by-step checklist
+3. **[DEPLOYMENT_READINESS_REPORT.md](DEPLOYMENT_READINESS_REPORT.md)** - Complete security audit
+4. **[DEPLOYMENT_STATUS_FINAL.md](DEPLOYMENT_STATUS_FINAL.md)** - Final verification status
+
+### ⚠️ Critical Notes for Production
+
+**DO NOT deploy with the `.env` file!** Use `.env.production` instead:
+
+```bash
+cp .env.production .env
+```
+
+Then update:
+
+- `APP_URL` to your production domain
+- `MAIL_PASSWORD` with actual Gmail App Password
+
+See [DEPLOYMENT_SUMMARY.md](DEPLOYMENT_SUMMARY.md) for details.
+
+## 🛠️ Getting Started (Development)
 
 1. Clone the repository or copy the project files
 2. Run `composer install`
@@ -179,7 +229,7 @@ vendor\\bin\\phpunit
 ```
 
 Key test categories:
- 
+
 - Email verification (expiry, resends)
 - Receipt security (path traversal, authorization)
 - Monetary precision (Money arithmetic)
@@ -218,5 +268,3 @@ Suggested next enhancements:
 ## License
 
 (Add license details here if applicable.)
-
-

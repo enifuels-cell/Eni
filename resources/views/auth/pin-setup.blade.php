@@ -11,7 +11,20 @@
 
                     @if(session('success'))
                         <div class="bg-green-600/20 border border-green-500/30 text-green-400 px-4 py-3 rounded-lg mb-6">
+                            <i class="fas fa-check-circle mr-2"></i>
                             {{ session('success') }}
+                        </div>
+                    @endif
+
+                    @if($errors->any())
+                        <div class="bg-red-600/20 border border-red-500/30 text-red-400 px-4 py-3 rounded-lg mb-6">
+                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                            <strong>Error:</strong>
+                            <ul class="list-disc list-inside mt-2">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     @endif
 
@@ -117,14 +130,13 @@
                                 </div>
 
                                 <input type="hidden" id="pin-combined" name="pin">
-                                <input type="hidden" id="pin-confirmation" name="pin_confirmation">
 
                                 @error('pin')
                                     <div class="text-red-400 text-sm mb-4">{{ $message }}</div>
                                 @enderror
                             </div>
 
-                            <div class="mb-6">
+            <div class="mb-6">
                                 <label class="block text-gray-300 text-sm font-medium mb-4">
                                     Confirm your PIN
                                 </label>
@@ -167,6 +179,8 @@
                                            autocomplete="off"
                                            data-pin-input>
                                 </div>
+
+                                <input type="hidden" id="pin-confirmation" name="pin_confirmation">
                             </div>
 
                             <div class="flex justify-between items-center">

@@ -108,6 +108,7 @@
         }
 
         .package-card {
+            position: relative; /* Required for absolute positioning of slots badge */
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             transform-origin: center;
@@ -548,6 +549,115 @@
             pointer-events: none;
         }
 
+        /* ========== AVAILABLE SLOTS BADGE OVERLAY ========== */
+        .slots-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            z-index: 20;
+            background: linear-gradient(135deg, rgba(11, 34, 65, 0.95) 0%, rgba(11, 34, 65, 0.98) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 205, 0, 0.6);
+            border-radius: 12px;
+            padding: 8px 16px;
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.3),
+                0 0 24px rgba(255, 205, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slots-pulse 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .slots-badge:hover {
+            transform: scale(1.05);
+            box-shadow:
+                0 12px 24px rgba(0, 0, 0, 0.4),
+                0 0 32px rgba(255, 205, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .slots-badge-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #FFCD00;
+            text-shadow:
+                0 0 10px rgba(255, 205, 0, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .slots-badge-label {
+            font-size: 0.625rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            line-height: 1;
+            display: block;
+        }
+
+        @keyframes slots-pulse {
+            0%, 100% {
+                border-color: rgba(255, 205, 0, 0.6);
+                box-shadow:
+                    0 8px 16px rgba(0, 0, 0, 0.3),
+                    0 0 24px rgba(255, 205, 0, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                border-color: rgba(255, 205, 0, 0.9);
+                box-shadow:
+                    0 8px 16px rgba(0, 0, 0, 0.3),
+                    0 0 32px rgba(255, 205, 0, 0.6),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        /* Low slots warning state */
+        .slots-badge.low-slots {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(185, 28, 28, 0.98) 100%);
+            border-color: rgba(248, 113, 113, 0.8);
+            animation: slots-urgent 2s ease-in-out infinite;
+        }
+
+        .slots-badge.low-slots .slots-badge-number {
+            color: #FFFFFF;
+            text-shadow:
+                0 0 10px rgba(255, 255, 255, 0.5),
+                0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slots-urgent {
+            0%, 100% {
+                border-color: rgba(248, 113, 113, 0.8);
+                box-shadow:
+                    0 8px 16px rgba(0, 0, 0, 0.3),
+                    0 0 24px rgba(248, 113, 113, 0.6),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            }
+            50% {
+                border-color: rgba(252, 165, 165, 1);
+                box-shadow:
+                    0 8px 16px rgba(0, 0, 0, 0.3),
+                    0 0 36px rgba(248, 113, 113, 0.9),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        /* Unlimited slots state */
+        .slots-badge.unlimited-slots {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.98) 100%);
+            border-color: rgba(110, 231, 183, 0.8);
+        }
+
+        .slots-badge.unlimited-slots .slots-badge-label {
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
         .orb-1 {
             width: 300px;
             height: 300px;
@@ -829,7 +939,26 @@
                             2 => 'capital-gif-card',  // Capital Prime - Yellow glow
                             default => 'energy-gif-card'
                         };
+
+                        // Calculate slots badge class
+                        $slotsClass = '';
+                        if ($package->available_slots === null) {
+                            $slotsClass = 'unlimited-slots';
+                        } elseif ($package->available_slots <= 10 && $package->available_slots > 0) {
+                            $slotsClass = 'low-slots';
+                        }
                     @endphp
+
+                    <!-- Available Slots Badge Overlay -->
+                    <div class="slots-badge {{ $slotsClass }}">
+                        @if($package->available_slots === null)
+                            <span class="slots-badge-number">∞</span>
+                            <span class="slots-badge-label">Unlimited</span>
+                        @else
+                            <span class="slots-badge-number">{{ $package->available_slots }}</span>
+                            <span class="slots-badge-label">{{ $package->available_slots === 1 ? 'Slot Left' : 'Slots Left' }}</span>
+                        @endif
+                    </div>
 
                     <!-- Video as the card itself - no container background -->
 

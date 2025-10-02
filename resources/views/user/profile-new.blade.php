@@ -18,7 +18,7 @@
             <p class="text-sm text-white/60">Manage your account and bank details</p>
           </div>
         </div>
-        
+
         <div class="flex items-center gap-4">
           <a href="{{ route('dashboard') }}" class="text-eni-yellow hover:text-yellow-300 transition-colors flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,7 +52,7 @@
 
     <!-- Profile Sections -->
     <div class="space-y-6">
-      
+
       <!-- Personal Information Section -->
       <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
         <button onclick="toggleSection('personal')" class="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-colors">
@@ -71,41 +71,41 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
-        
+
         <div id="personal-content" class="hidden border-t border-white/10">
           <div class="p-6">
             <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
               @csrf
               @method('patch')
-              
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label for="name" class="block text-sm font-medium text-eni-yellow mb-2">Full Name</label>
-                  <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}" 
-                         class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors" 
+                  <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
+                         class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors"
                          required>
                 </div>
-                
+
                 <div>
                   <label for="email" class="block text-sm font-medium text-eni-yellow mb-2">Email Address</label>
-                  <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" 
-                         class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors" 
+                  <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
+                         class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors"
                          required>
                 </div>
-                
+
                 <div>
                   <label for="phone" class="block text-sm font-medium text-eni-yellow mb-2">Phone Number</label>
-                  <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}" 
+                  <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
-                
+
                 <div>
                   <label for="address" class="block text-sm font-medium text-eni-yellow mb-2">Address</label>
-                  <input type="text" id="address" name="address" value="{{ old('address', $user->address) }}" 
+                  <input type="text" id="address" name="address" value="{{ old('address', $user->address) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
               </div>
-              
+
               <div class="flex justify-end">
                 <button type="submit" class="bg-eni-yellow text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors">
                   Update Personal Info
@@ -134,45 +134,45 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
-        
+
         <div id="bank-content" class="hidden border-t border-white/10">
           <div class="p-6">
             <form method="POST" action="{{ route('profile.update') }}" class="space-y-6">
               @csrf
               @method('patch')
-              
+
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label for="bank_name" class="block text-sm font-medium text-eni-yellow mb-2">Bank Name</label>
-                  <input type="text" id="bank_name" name="bank_name" value="{{ old('bank_name', $user->bank_name) }}" 
+                  <input type="text" id="bank_name" name="bank_name" value="{{ old('bank_name', $user->bank_name) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
-                
+
                 <div>
                   <label for="account_number" class="block text-sm font-medium text-eni-yellow mb-2">Account Number</label>
-                  <input type="text" id="account_number" name="account_number" value="{{ old('account_number', $user->account_number) }}" 
+                  <input type="text" id="account_number" name="account_number" value="{{ old('account_number', $user->account_number) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
-                
+
                 <div>
                   <label for="account_holder_name" class="block text-sm font-medium text-eni-yellow mb-2">Account Holder Name</label>
-                  <input type="text" id="account_holder_name" name="account_holder_name" value="{{ old('account_holder_name', $user->account_holder_name) }}" 
+                  <input type="text" id="account_holder_name" name="account_holder_name" value="{{ old('account_holder_name', $user->account_holder_name) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
-                
+
                 <div>
                   <label for="routing_number" class="block text-sm font-medium text-eni-yellow mb-2">Routing Number</label>
-                  <input type="text" id="routing_number" name="routing_number" value="{{ old('routing_number', $user->routing_number) }}" 
+                  <input type="text" id="routing_number" name="routing_number" value="{{ old('routing_number', $user->routing_number) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
-                
+
                 <div class="md:col-span-2">
                   <label for="swift_code" class="block text-sm font-medium text-eni-yellow mb-2">SWIFT/BIC Code (for international transfers)</label>
-                  <input type="text" id="swift_code" name="swift_code" value="{{ old('swift_code', $user->swift_code) }}" 
+                  <input type="text" id="swift_code" name="swift_code" value="{{ old('swift_code', $user->swift_code) }}"
                          class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors">
                 </div>
               </div>
-              
+
               <div class="flex justify-end">
                 <button type="submit" class="bg-eni-yellow text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors">
                   Update Bank Details
@@ -201,7 +201,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
-        
+
         <div id="account-content" class="hidden border-t border-white/10">
           <div class="p-6 space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -209,17 +209,17 @@
                 <label class="block text-sm font-medium text-eni-yellow mb-1">Account Balance</label>
                 <p class="text-2xl font-bold text-white">${{ number_format($user->balance, 2) }}</p>
               </div>
-              
+
               <div class="bg-black/20 rounded-xl p-4">
                 <label class="block text-sm font-medium text-eni-yellow mb-1">Member Since</label>
                 <p class="text-lg text-white">{{ $user->created_at->format('F j, Y') }}</p>
               </div>
-              
+
               <div class="bg-black/20 rounded-xl p-4">
                 <label class="block text-sm font-medium text-eni-yellow mb-1">Account Status</label>
                 <p class="text-lg text-green-400">Active</p>
               </div>
-              
+
               <div class="bg-black/20 rounded-xl p-4">
                 <label class="block text-sm font-medium text-eni-yellow mb-1">Email Verified</label>
                 <p class="text-lg {{ $user->email_verified_at ? 'text-green-400' : 'text-red-400' }}">
@@ -249,40 +249,115 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
         </button>
-        
+
         <div id="password-content" class="hidden border-t border-white/10">
           <div class="p-6">
             <form method="POST" action="{{ route('password.update') }}" class="space-y-6">
               @csrf
               @method('put')
-              
+
               <div>
                 <label for="current_password" class="block text-sm font-medium text-eni-yellow mb-2">Current Password</label>
-                <input type="password" id="current_password" name="current_password" 
-                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors" 
+                <input type="password" id="current_password" name="current_password"
+                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors"
                        required>
               </div>
-              
+
               <div>
                 <label for="password" class="block text-sm font-medium text-eni-yellow mb-2">New Password</label>
-                <input type="password" id="password" name="password" 
-                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors" 
+                <input type="password" id="password" name="password"
+                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors"
                        required>
               </div>
-              
+
               <div>
                 <label for="password_confirmation" class="block text-sm font-medium text-eni-yellow mb-2">Confirm New Password</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" 
-                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors" 
+                <input type="password" id="password_confirmation" name="password_confirmation"
+                       class="w-full bg-black/30 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 focus:border-eni-yellow focus:outline-none focus:ring-2 focus:ring-eni-yellow/20 transition-colors"
                        required>
               </div>
-              
+
               <div class="flex justify-end">
                 <button type="submit" class="bg-eni-yellow text-black px-6 py-3 rounded-xl font-semibold hover:bg-yellow-400 transition-colors">
                   Update Password
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIN Setup Section -->
+      <div class="bg-gradient-to-r from-purple-900/30 to-pink-900/30 backdrop-blur border border-white/10 rounded-2xl overflow-hidden">
+        <button onclick="toggleSection('pin')" class="w-full p-6 text-left flex items-center justify-between hover:bg-white/5 transition-colors">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-eni-yellow/20 rounded-xl flex items-center justify-center">
+              <svg class="w-6 h-6 text-eni-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-xl font-semibold text-white">PIN Setup & Security</h3>
+              <p class="text-white/60">
+                @if(auth()->user()->pin_hash)
+                  <span class="text-green-400">✓ PIN Enabled</span> - Manage your security PIN
+                @else
+                  <span class="text-yellow-400">⚠ PIN Not Set</span> - Set up a 4-digit PIN for quick login
+                @endif
+              </p>
+            </div>
+          </div>
+          <svg id="pin-chevron" class="w-6 h-6 text-white/60 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+
+        <div id="pin-content" class="hidden border-t border-white/10">
+          <div class="p-6">
+            @if(auth()->user()->pin_hash)
+              <!-- PIN Already Set -->
+              <div class="space-y-6">
+                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                  <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div>
+                      <h4 class="text-green-400 font-semibold">PIN is Active</h4>
+                      <p class="text-green-300/80 text-sm">Your account is secured with a 4-digit PIN</p>
+                      @if(auth()->user()->pin_set_at)
+                        <p class="text-green-300/60 text-xs mt-1">Set on {{ auth()->user()->pin_set_at->format('M d, Y') }}</p>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex gap-4">
+                  <a href="{{ route('pin.setup.form') }}"
+                     class="flex-1 bg-eni-yellow/20 hover:bg-eni-yellow/30 text-eni-yellow border border-eni-yellow/30 px-6 py-3 rounded-xl font-semibold text-center transition-colors">
+                    Change PIN
+                  </a>
+
+                  <form method="POST" action="{{ route('pin.remove') }}" class="flex-1" onsubmit="return confirm('Are you sure you want to remove your PIN?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-6 py-3 rounded-xl font-semibold transition-colors">
+                      Remove PIN
+                    </button>
+                  </form>
+                </div>
+              </div>
+            @else
+              <!-- PIN Not Set -->
+              <div class="space-y-4">
+                <p class="text-white/80">Set up a 4-digit PIN for faster and more secure login to your account.</p>
+                <a href="{{ route('pin.setup.form') }}"
+                   class="block bg-eni-yellow hover:bg-yellow-400 text-black px-6 py-3 rounded-xl font-semibold text-center transition-colors">
+                  Set Up PIN Now
+                </a>
+              </div>
+            @endif
           </div>
         </div>
       </div>
@@ -294,23 +369,23 @@
     function toggleSection(sectionName) {
       const content = document.getElementById(`${sectionName}-content`);
       const chevron = document.getElementById(`${sectionName}-chevron`);
-      
+
       // Close all other sections
       const allContents = document.querySelectorAll('[id$="-content"]');
       const allChevrons = document.querySelectorAll('[id$="-chevron"]');
-      
+
       allContents.forEach((c) => {
         if (c.id !== `${sectionName}-content`) {
           c.classList.add('hidden');
         }
       });
-      
+
       allChevrons.forEach((ch) => {
         if (ch.id !== `${sectionName}-chevron`) {
           ch.classList.remove('rotate-180');
         }
       });
-      
+
       // Toggle current section
       content.classList.toggle('hidden');
       chevron.classList.toggle('rotate-180');
@@ -320,17 +395,19 @@
     document.addEventListener('DOMContentLoaded', function() {
       // Check for URL fragment first
       const hash = window.location.hash.substring(1);
-      if (hash && ['personal', 'bank', 'account', 'password'].includes(hash)) {
+      if (hash && ['personal', 'bank', 'account', 'password', 'pin'].includes(hash)) {
         toggleSection(hash);
         return;
       }
-      
+
       // If there's a success message, keep the relevant section open
       const status = '{{ session("status") }}';
       if (status === 'profile-updated') {
         toggleSection('personal');
       } else if (status === 'password-updated') {
         toggleSection('password');
+      } else if (status === 'pin-updated' || status === 'pin-removed') {
+        toggleSection('pin');
       }
     });
   </script>

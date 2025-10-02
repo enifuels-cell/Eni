@@ -167,8 +167,8 @@ class PinLoginController extends Controller
         // Create the cookie
         $cookie = Cookie::make('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
 
-        return redirect()->route('home')
-            ->with('success', 'PIN setup completed successfully!')
+        return redirect()->route('pin.setup.form')
+            ->with('success', 'PIN setup completed successfully! You can now use your 4-digit PIN for quick login.')
             ->cookie($cookie);
     }
 

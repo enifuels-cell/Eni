@@ -37,11 +37,11 @@ class AdminDashboardController extends Controller
             ->where('status', 'approved')
             ->where('type', 'deposit')
             ->sum('amount');
-        
+
         $pendingDeposits = Transaction::where('type', 'deposit')
             ->where('status', 'pending')
             ->count();
-        
+
         $pendingWithdrawals = Transaction::where('type', 'withdrawal')
             ->where('status', 'pending')
             ->count();
@@ -144,6 +144,12 @@ class AdminDashboardController extends Controller
                         'started_at' => now()
                     ]);
 
+                    // Deduct available slots from the package if applicable
+                    $package = $investment->investmentPackage;
+                    if ($package && $package->available_slots !== null && $package->available_slots > 0) {
+                        $package->decrement('available_slots');
+                    }
+
                     // Deduct investment amount from user's account balance since investments are locked
                     // The user already received the deposit amount above, but now it should be locked in investment
                     $transaction->user->decrement('account_balance', $investment->amount);
@@ -232,7 +238,7 @@ class AdminDashboardController extends Controller
         }
 
         $logs = $query->latest()->paginate(50);
-        
+
         $totalToday = DailyInterestLog::whereDate('created_at', today())
             ->sum('interest_amount');
 
@@ -367,9 +373,9 @@ class AdminDashboardController extends Controller
             $user->investments()->delete();
             $user->referrals()->delete();
             $user->dailyInterestLogs()->delete();
-            
+
             $this->logAdminAction('delete_user', null, "Deleted user: {$user->email}");
-            
+
             $user->delete();
         });
 
