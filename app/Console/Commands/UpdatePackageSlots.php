@@ -27,19 +27,19 @@ class UpdatePackageSlots extends Command
     public function handle()
     {
         $slots = (int) $this->argument('slots');
-        
+
         $this->info("Updating all investment packages to have {$slots} available slots...");
-        
+
         $packages = InvestmentPackage::all();
-        
+
         if ($packages->isEmpty()) {
             $this->error('No investment packages found in the database.');
             return 1;
         }
-        
+
         $this->info("Found {$packages->count()} package(s):");
         $this->newLine();
-        
+
         // Show current state
         $this->table(
             ['ID', 'Package Name', 'Current Slots'],
@@ -49,15 +49,15 @@ class UpdatePackageSlots extends Command
                 $p->available_slots ?? 'Unlimited'
             ])
         );
-        
+
         $this->newLine();
-        
+
         // Update all packages
         $updated = InvestmentPackage::query()->update(['available_slots' => $slots]);
-        
+
         $this->info("✓ Successfully updated {$updated} package(s) to {$slots} slots.");
         $this->newLine();
-        
+
         // Show updated state
         $packages = InvestmentPackage::all();
         $this->info('Updated packages:');
@@ -69,7 +69,7 @@ class UpdatePackageSlots extends Command
                 $p->available_slots ?? 'Unlimited'
             ])
         );
-        
+
         return 0;
     }
 }
