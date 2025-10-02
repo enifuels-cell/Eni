@@ -128,13 +128,20 @@ class AdminDashboardController extends Controller
                     ? $transaction->amount->toFloat()
                     : (float) $transaction->amount;
 
-                // Add to user balance
-                $transaction->user->increment('account_balance', $amountValue);
+                // Check if this is a package investment deposit
+                $isInvestmentDeposit = str_contains($transaction->description, 'Investment in') &&
+                                      str_contains($transaction->description, 'package');
 
-                // Check if this is a package investment deposit and activate associated investments
-                if (str_contains($transaction->description, 'Investment in') && str_contains($transaction->description, 'package')) {
+                // Only add to account balance if this is NOT an investment deposit
+                // Investment deposits go directly to locked investment
+                if (!$isInvestmentDeposit) {
+                    // Regular deposit - add to withdrawable account balance
+                    $transaction->user->increment('account_balance', $amountValue);
+                }
+
+                // If this is an investment deposit, activate the investment directly
+                if ($isInvestmentDeposit) {
                     // Find and activate investments created around the same time as this transaction
-                    // for the same user and amount
                     $investments = $transaction->user->investments()
                         ->where('active', false)
                         ->where('amount', $transaction->amount)
@@ -145,6 +152,7 @@ class AdminDashboardController extends Controller
                         ->get();
 
                     foreach ($investments as $investment) {
+                        // Activate the investment (funds are now locked)
                         $investment->update([
                             'active' => true,
                             'started_at' => now()
@@ -152,27 +160,56 @@ class AdminDashboardController extends Controller
 
                         // Deduct available slots from the package if applicable
                         $package = $investment->investmentPackage;
-                        if ($package && $package->available_slots !== null && $package->available_slots > 0) {
-                            $package->decrement('available_slots');
+                        if ($package) {
+                            // Use direct database decrement to ensure it's persisted
+                            \App\Models\InvestmentPackage::where('id', $package->id)
+                                ->where('available_slots', '>', 0)
+                                ->decrement('available_slots');
+
+                            // Reload the package to get updated value
+                            $package->refresh();
                         }
 
-                        // Get investment amount as decimal
-                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money
-                            ? $investment->amount->toFloat()
-                            : (float) $investment->amount;
+                        // Process referral bonus if user was referred
+                        $referral = $transaction->user->referralReceived;
+                        if ($referral && $package) {
+                            // Calculate bonus amount
+                            $investmentAmountValue = $investment->amount instanceof \App\Support\Money
+                                ? $investment->amount->toFloat()
+                                : (float) $investment->amount;
 
-                        // Deduct investment amount from user's account balance since investments are locked
-                        // The user already received the deposit amount above, but now it should be locked in investment
-                        $transaction->user->decrement('account_balance', $investmentAmountValue);
+                            $bonusRate = $package->referral_bonus_rate / 100; // Convert percentage to decimal
+                            $bonusAmount = $investmentAmountValue * $bonusRate;
 
-                        // Create a transaction record for the investment deduction
-                        $transaction->user->transactions()->create([
-                            'type' => 'other',
-                            'amount' => -$investmentAmountValue,
-                            'status' => 'completed',
-                            'description' => 'Investment activated - funds locked for ' . $investment->investmentPackage->effective_days . ' days (Investment #' . $investment->id . ')',
-                            'reference' => 'LOCK' . time() . rand(1000, 9999)
-                        ]);
+                            // Create referral bonus record
+                            $referralBonus = \App\Models\ReferralBonus::create([
+                                'referral_id' => $referral->id,
+                                'investment_id' => $investment->id,
+                                'bonus_amount' => $bonusAmount,
+                                'paid' => true,
+                                'paid_at' => now()
+                            ]);
+
+                            // Add bonus to referrer's account balance
+                            $referrer = $referral->referrer;
+                            if ($referrer) {
+                                $referrer->increment('account_balance', $bonusAmount);
+
+                                // Create transaction record for the referral bonus
+                                $referrer->transactions()->create([
+                                    'type' => 'referral_bonus',
+                                    'amount' => $bonusAmount,
+                                    'status' => 'completed',
+                                    'description' => 'Referral bonus from ' . $transaction->user->name . ' - ' . $package->name . ' investment',
+                                    'reference' => 'REF' . time() . rand(1000, 9999),
+                                    'processed_at' => now()
+                                ]);
+                            }
+                        }
+
+                        // Note: We don't add to account_balance and then deduct
+                        // The approved deposit goes DIRECTLY into the locked investment
+                        // This way account_balance only contains withdrawable funds
                     }
                 }
 
