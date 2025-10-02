@@ -133,7 +133,7 @@
         </div>
 
         <h2>📦 Package Videos</h2>
-        
+
         <div class="video-container">
             <h3>1. Energy.mp4 (Energy Saver Package)</h3>
             <video id="energy" controls muted preload="metadata">
@@ -190,16 +190,16 @@
             <div class="info-grid">
                 <span class="label">Browser:</span>
                 <span class="value" id="browser-info"></span>
-                
+
                 <span class="label">Screen Size:</span>
                 <span class="value" id="screen-info"></span>
-                
+
                 <span class="label">Current URL:</span>
                 <span class="value" id="url-info"></span>
-                
+
                 <span class="label">Page Protocol:</span>
                 <span class="value" id="protocol-info"></span>
-                
+
                 <span class="label">Timestamp:</span>
                 <span class="value" id="time-info"></span>
             </div>
@@ -247,10 +247,10 @@
                     <div class="info-grid">
                         <span class="label">Duration:</span>
                         <span class="value">${Math.round(video.duration)} seconds</span>
-                        
+
                         <span class="label">Resolution:</span>
                         <span class="value">${video.videoWidth}x${video.videoHeight}</span>
-                        
+
                         <span class="label">File:</span>
                         <span class="value">${file}</span>
                     </div>
@@ -265,7 +265,7 @@
                 const error = video.error;
                 let errorMsg = 'Unknown error';
                 let errorCode = 'N/A';
-                
+
                 if (error) {
                     errorCode = error.code;
                     switch(error.code) {
@@ -283,19 +283,19 @@
                             break;
                     }
                 }
-                
+
                 const info = `
                     <span class="error">❌ Failed to load ${name}!</span><br>
                     <div class="info-grid">
                         <span class="label">Error Code:</span>
                         <span class="value">${errorCode}</span>
-                        
+
                         <span class="label">Error Type:</span>
                         <span class="value">${errorMsg}</span>
-                        
+
                         <span class="label">File:</span>
                         <span class="value">${file}</span>
-                        
+
                         <span class="label">Likely Cause:</span>
                         <span class="value">File not found on server. Git LFS files may not be pulled.</span>
                     </div>
@@ -314,18 +314,18 @@
         async function checkFiles() {
             const fileCheck = document.getElementById('file-check');
             let results = '<strong>HTTP Accessibility Test:</strong><br><br>';
-            
+
             for (const { file, name } of videos) {
                 try {
                     const startTime = Date.now();
                     const response = await fetch(file, { method: 'HEAD' });
                     const loadTime = Date.now() - startTime;
-                    
+
                     if (response.ok) {
                         const size = response.headers.get('content-length');
                         const contentType = response.headers.get('content-type');
                         const sizeInMB = size ? (size / 1024 / 1024).toFixed(2) : 'unknown';
-                        
+
                         results += `
                             <div class="info-grid">
                                 <span class="label">✅ ${name}:</span>
@@ -349,14 +349,14 @@
                     `;
                 }
             }
-            
+
             fileCheck.innerHTML = results;
         }
 
         function updateSummary() {
             const summary = document.getElementById('quick-summary');
             const progress = testResults.passed + testResults.failed;
-            
+
             if (progress < testResults.total) {
                 summary.innerHTML = `
                     <span class="loading">⏳ Testing... (${progress}/${testResults.total})</span>
@@ -364,13 +364,13 @@
             } else {
                 const status = testResults.passed === testResults.total ? 'success' : 'error';
                 const icon = testResults.passed === testResults.total ? '✅' : '⚠️';
-                
+
                 summary.innerHTML = `
                     <span class="${status}">${icon} Test Complete: ${testResults.passed}/${testResults.total} videos working</span><br><br>
                     <div class="info-grid">
                         <span class="label">Passed:</span>
                         <span class="value success">${testResults.passed}</span>
-                        
+
                         <span class="label">Failed:</span>
                         <span class="value error">${testResults.failed}</span>
                     </div>
