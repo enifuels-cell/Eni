@@ -115,61 +115,80 @@ class AdminDashboardController extends Controller
             return back()->withErrors(['error' => 'Invalid transaction for approval.']);
         }
 
-        DB::transaction(function () use ($transaction) {
-            // Update transaction status
-            $transaction->update([
-                'status' => 'approved',
-                'processed_at' => now()
+        try {
+            DB::transaction(function () use ($transaction) {
+                // Update transaction status
+                $transaction->update([
+                    'status' => 'approved',
+                    'processed_at' => now()
+                ]);
+
+                // Get the amount as a decimal number (Money object to float)
+                $amountValue = $transaction->amount instanceof \App\Support\Money
+                    ? $transaction->amount->toFloat()
+                    : (float) $transaction->amount;
+
+                // Add to user balance
+                $transaction->user->increment('account_balance', $amountValue);
+
+                // Check if this is a package investment deposit and activate associated investments
+                if (str_contains($transaction->description, 'Investment in') && str_contains($transaction->description, 'package')) {
+                    // Find and activate investments created around the same time as this transaction
+                    // for the same user and amount
+                    $investments = $transaction->user->investments()
+                        ->where('active', false)
+                        ->where('amount', $transaction->amount)
+                        ->whereBetween('created_at', [
+                            $transaction->created_at->subMinutes(5),
+                            $transaction->created_at->addMinutes(5)
+                        ])
+                        ->get();
+
+                    foreach ($investments as $investment) {
+                        $investment->update([
+                            'active' => true,
+                            'started_at' => now()
+                        ]);
+
+                        // Deduct available slots from the package if applicable
+                        $package = $investment->investmentPackage;
+                        if ($package && $package->available_slots !== null && $package->available_slots > 0) {
+                            $package->decrement('available_slots');
+                        }
+
+                        // Get investment amount as decimal
+                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money
+                            ? $investment->amount->toFloat()
+                            : (float) $investment->amount;
+
+                        // Deduct investment amount from user's account balance since investments are locked
+                        // The user already received the deposit amount above, but now it should be locked in investment
+                        $transaction->user->decrement('account_balance', $investmentAmountValue);
+
+                        // Create a transaction record for the investment deduction
+                        $transaction->user->transactions()->create([
+                            'type' => 'other',
+                            'amount' => -$investmentAmountValue,
+                            'status' => 'completed',
+                            'description' => 'Investment activated - funds locked for ' . $investment->investmentPackage->effective_days . ' days (Investment #' . $investment->id . ')',
+                            'reference' => 'LOCK' . time() . rand(1000, 9999)
+                        ]);
+                    }
+                }
+
+                // Log admin action
+                $this->logAdminAction('approve_deposit', $transaction);
+            });
+
+            return back()->with('success', 'Deposit approved successfully.');
+        } catch (\Exception $e) {
+            \Log::error('Error approving deposit: ' . $e->getMessage(), [
+                'transaction_id' => $transaction->id,
+                'exception' => $e
             ]);
 
-            // Add to user balance
-            $transaction->user->increment('account_balance', $transaction->amount);
-
-            // Check if this is a package investment deposit and activate associated investments
-            if (str_contains($transaction->description, 'Investment in') && str_contains($transaction->description, 'package')) {
-                // Find and activate investments created around the same time as this transaction
-                // for the same user and amount
-                $investments = $transaction->user->investments()
-                    ->where('active', false)
-                    ->where('amount', $transaction->amount)
-                    ->whereBetween('created_at', [
-                        $transaction->created_at->subMinutes(5),
-                        $transaction->created_at->addMinutes(5)
-                    ])
-                    ->get();
-
-                foreach ($investments as $investment) {
-                    $investment->update([
-                        'active' => true,
-                        'started_at' => now()
-                    ]);
-
-                    // Deduct available slots from the package if applicable
-                    $package = $investment->investmentPackage;
-                    if ($package && $package->available_slots !== null && $package->available_slots > 0) {
-                        $package->decrement('available_slots');
-                    }
-
-                    // Deduct investment amount from user's account balance since investments are locked
-                    // The user already received the deposit amount above, but now it should be locked in investment
-                    $transaction->user->decrement('account_balance', $investment->amount);
-
-                    // Create a transaction record for the investment deduction
-                    $transaction->user->transactions()->create([
-                        'type' => 'other',
-                        'amount' => -$investment->amount,
-                        'status' => 'completed',
-                        'description' => 'Investment activated - funds locked for ' . $investment->investmentPackage->effective_days . ' days (Investment #' . $investment->id . ')',
-                        'reference' => 'LOCK' . time() . rand(1000, 9999)
-                    ]);
-                }
-            }
-
-            // Log admin action
-            $this->logAdminAction('approve_deposit', $transaction);
-        });
-
-        return back()->with('success', 'Deposit approved successfully.');
+            return back()->withErrors(['error' => 'Failed to approve deposit: ' . $e->getMessage()]);
+        }
     }
 
     /**
