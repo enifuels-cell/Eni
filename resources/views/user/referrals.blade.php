@@ -411,12 +411,12 @@
                     <div class="flex mb-4">
                         <input type="text" id="referralLink"
                                value="{{ $referralLink }}"
-                               class="flex-1 bg-white/10 border border-white/20 rounded-l-xl px-4 py-4 text-white focus:outline-none focus:border-eni-yellow text-sm backdrop-blur-sm select-all cursor-pointer"
+                               class="flex-1 bg-white/10 border border-white/20 rounded-l-xl px-4 py-4 text-white focus:outline-none focus:border-eni-yellow text-sm backdrop-blur-sm cursor-text"
                                readonly
-                               onclick="this.select(); this.setSelectionRange(0, 99999);"
-                               ontouchstart="this.select(); this.setSelectionRange(0, 99999);">
+                               onclick="this.focus(); this.select();"
+                               onfocus="this.select();">
                         <button type="button" data-action="copy-link" data-target="referralLink"
-                                class="bg-gradient-to-r from-eni-yellow to-yellow-500 text-eni-dark px-6 py-4 rounded-r-xl font-semibold hover:from-yellow-400 hover:to-yellow-400 transition-all duration-300 hover:scale-105">
+                                class="bg-gradient-to-r from-eni-yellow to-yellow-500 text-eni-dark px-6 py-4 rounded-r-xl font-semibold hover:from-yellow-400 hover:to-yellow-400 transition-all duration-300 hover:scale-105 flex items-center justify-center">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                             </svg>
@@ -543,9 +543,11 @@
             const linkInput = document.getElementById(inputId);
             if (!linkInput) return;
 
-            // Try clipboard API first
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(linkInput.value).then(function() {
+            const textToCopy = linkInput.value;
+
+            // Try clipboard API first (modern browsers)
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(function() {
                     showCopyFeedback(buttonElement);
                 }, function() {
                     fallbackCopy(linkInput, buttonElement);
@@ -563,30 +565,42 @@
         }
 
         function fallbackCopy(input, buttonElement) {
-            input.select();
-            input.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-            showCopyFeedback(buttonElement);
+            try {
+                // Focus and select the input
+                input.focus();
+                input.select();
+                
+                // For mobile devices
+                input.setSelectionRange(0, 99999);
+                
+                // Execute copy command
+                const successful = document.execCommand('copy');
+                
+                if (successful) {
+                    showCopyFeedback(buttonElement);
+                } else {
+                    // Last resort: show alert with the link
+                    alert('Copy this link:\n\n' + input.value);
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                alert('Copy this link:\n\n' + input.value);
+            }
         }
 
         function showCopyFeedback(button) {
             if (!button) return;
-            const originalText = button.textContent;
+            const originalHTML = button.innerHTML;
             const originalClasses = Array.from(button.classList);
 
-            button.textContent = 'Copied!';
-            button.classList.remove('bg-eni-yellow', 'bg-gray-600');
-            button.classList.add('bg-green-500');
+            button.innerHTML = '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+            button.classList.remove('from-eni-yellow', 'to-yellow-500', 'hover:from-yellow-400', 'hover:to-yellow-400');
+            button.classList.add('from-green-500', 'to-green-600');
 
             setTimeout(() => {
-                button.textContent = originalText;
-                button.classList.remove('bg-green-500');
-                // Restore original classes
-                originalClasses.forEach(cls => {
-                    if (cls.startsWith('bg-')) {
-                        button.classList.add(cls);
-                    }
-                });
+                button.innerHTML = originalHTML;
+                button.classList.remove('from-green-500', 'to-green-600');
+                button.classList.add('from-eni-yellow', 'to-yellow-500', 'hover:from-yellow-400', 'hover:to-yellow-400');
             }, 2000);
         }
 
@@ -685,6 +699,33 @@
                 const linkInput = document.getElementById('referralLink');
                 if (linkInput) copyLink('referralLink', el);
                 return;
+            }
+        });
+
+        // Enhanced mobile support for referral link input
+        document.addEventListener('DOMContentLoaded', function() {
+            const referralInput = document.getElementById('referralLink');
+            if (referralInput) {
+                // Add touch event handlers for better mobile support
+                referralInput.addEventListener('touchstart', function(e) {
+                    this.focus();
+                    this.select();
+                });
+                
+                // Add double-click to copy
+                referralInput.addEventListener('dblclick', function(e) {
+                    const copyBtn = document.querySelector('[data-target="referralLink"]');
+                    if (copyBtn) {
+                        copyLink('referralLink', copyBtn);
+                    }
+                });
+
+                // Prevent deselection on mobile
+                referralInput.addEventListener('touchend', function(e) {
+                    e.preventDefault();
+                    this.focus();
+                    this.select();
+                });
             }
         });
     </script>
