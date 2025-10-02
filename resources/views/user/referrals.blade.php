@@ -569,13 +569,13 @@
                 // Focus and select the input
                 input.focus();
                 input.select();
-                
+
                 // For mobile devices
                 input.setSelectionRange(0, 99999);
-                
+
                 // Execute copy command
                 const successful = document.execCommand('copy');
-                
+
                 if (successful) {
                     showCopyFeedback(buttonElement);
                 } else {
@@ -711,7 +711,7 @@
                     this.focus();
                     this.select();
                 });
-                
+
                 // Add double-click to copy
                 referralInput.addEventListener('dblclick', function(e) {
                     const copyBtn = document.querySelector('[data-target="referralLink"]');
