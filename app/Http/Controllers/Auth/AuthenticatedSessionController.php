@@ -56,6 +56,19 @@ class AuthenticatedSessionController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        // If user has PIN set, create device cookie for future PIN login
+        if ($user->pin_hash) {
+            $deviceData = [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'device_id' => $this->getDeviceFingerprint($request)
+            ];
+
+            $cookie = Cookie::make('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
+
+            return redirect()->route('home')->cookie($cookie);
+        }
+
         // Check if user doesn't have PIN set up and prompt them
         if (!$user->pin_hash) {
             session()->flash('pin_setup_prompt', true);
@@ -80,7 +93,15 @@ class AuthenticatedSessionController extends Controller
                 'device_id' => $this->getDeviceFingerprint($request)
             ];
 
-            Cookie::queue('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
+            $cookie = Cookie::make('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
+
+            Auth::guard('web')->logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return redirect('/login')->cookie($cookie);
         }
 
         Auth::guard('web')->logout();

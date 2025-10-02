@@ -3,6 +3,7 @@
 ## What Your Diagnostic Report Means
 
 Your report shows:
+
 ```
 Total Tests: 4
 Passed: 0
@@ -14,6 +15,7 @@ This means **the videos aren't even trying to load**. They're timing out before 
 ---
 
 ## ✅ CONFIRMED: Videos Work Locally
+
 - ✅ Energy.mp4 - 1.78 MB
 - ✅ Growth.mp4 - 23.77 MB  
 - ✅ Capital.mp4 - 24.2 MB
@@ -24,12 +26,14 @@ This means **the videos aren't even trying to load**. They're timing out before 
 ## ❌ ROOT CAUSE: Git LFS Files Not on Server
 
 **What happened:**
+
 1. You committed MP4 files to Git
 2. Git LFS saved them as "pointer" files (~130 bytes)
 3. Your live server pulled the code
 4. **BUT: Your server only has tiny pointer files, not the actual videos**
 
 **How to verify:**
+
 ```bash
 # SSH into your server
 ls -lh public/*.mp4
@@ -88,6 +92,7 @@ If Git LFS doesn't work or isn't available:
    - Upload to: `/path/to/your/project/public/`
 
 3. **Set permissions:**
+
    ```bash
    chmod 644 public/*.mp4
    ```
@@ -108,6 +113,7 @@ If your server doesn't support Git LFS or large files:
    - Any CDN service
 
 2. **Update blade files:**
+
    ```php
    // In resources/views/user/packages.blade.php
    // Change from:
@@ -130,12 +136,14 @@ If your server doesn't support Git LFS or large files:
 ## 📊 IMPROVED DIAGNOSTIC TEST
 
 I've updated the test to:
+
 - ✅ Show timeout errors (10-second limit)
 - ✅ Try multiple load events (loadedmetadata + loadeddata)
 - ✅ Force reload after 100ms
 - ✅ Actually report failures instead of showing 0/0
 
 **Next time you run the test, you'll see:**
+
 - Either: "❌ Failed to load (timeout)" for each video
 - Or: "✅ Loaded successfully!" if files exist
 
@@ -144,6 +152,7 @@ I've updated the test to:
 ## 🎯 IMMEDIATE NEXT STEPS
 
 1. **Check if files exist on server:**
+
    ```bash
    ls -lh /path/to/public/*.mp4
    ```
@@ -153,18 +162,19 @@ I've updated the test to:
    - Or Solution 2 (Manual Upload)
 
 3. **Test again:**
-   - Visit: https://enienterprise.com/video-test.html
+   - Visit: <https://enienterprise.com/video-test.html>
    - Should now show actual pass/fail results
 
 4. **Once working, test your pages:**
-   - https://enienterprise.com (home page video)
-   - https://enienterprise.com/dashboard/packages (package videos)
+   - <https://enienterprise.com> (home page video)
+   - <https://enienterprise.com/dashboard/packages> (package videos)
 
 ---
 
 ## 📞 NEED HELP?
 
 **If you're stuck, provide:**
+
 1. Output of: `ls -lh /path/to/public/*.mp4`
 2. Output of: `git lfs version`
 3. Your hosting provider name

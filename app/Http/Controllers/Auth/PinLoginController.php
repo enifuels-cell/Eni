@@ -113,10 +113,20 @@ class PinLoginController extends Controller
             'last_login_ip' => $request->ip()
         ]);
 
+        // Refresh device cookie for future PIN logins
+        $deviceData = [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'device_id' => $this->getDeviceFingerprint($request)
+        ];
+
+        // Create the cookie
+        $cookie = Cookie::make('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
+
         // Regenerate session
         $request->session()->regenerate();
 
-        return redirect()->route('home');
+        return redirect()->route('home')->cookie($cookie);
     }
 
     /**
@@ -154,9 +164,12 @@ class PinLoginController extends Controller
             'device_id' => $this->getDeviceFingerprint($request)
         ];
 
-        Cookie::queue('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
+        // Create the cookie
+        $cookie = Cookie::make('pin_device', encrypt($deviceData), 60 * 24 * 30); // 30 days
 
-        return redirect()->route('home')->with('success', 'PIN setup completed successfully!');
+        return redirect()->route('home')
+            ->with('success', 'PIN setup completed successfully!')
+            ->cookie($cookie);
     }
 
     /**
