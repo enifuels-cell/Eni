@@ -1,7 +1,0 @@
-<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="200" height="200" fill="#7c3aed"/>
-  <text x="50%" y="40%" text-anchor="middle" fill="white" font-size="24" font-weight="bold">GROWTH</text>
-  <text x="50%" y="60%" text-anchor="middle" fill="white" font-size="16">PACKAGE</text>
-  <circle cx="100" cy="120" r="30" fill="white" opacity="0.2"/>
-  <path d="M 80 130 L 90 120 L 90 140 L 100 110 L 100 140 L 110 120 L 110 140 L 120 130" stroke="white" stroke-width="3" fill="none"/>
-</svg>
