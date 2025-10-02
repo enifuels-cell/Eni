@@ -430,10 +430,10 @@ class DashboardController extends Controller
                     $referral = $user->referralReceived;
                     if ($referral && $package) {
                         // Calculate bonus amount
-                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money 
-                            ? $investment->amount->toFloat() 
+                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money
+                            ? $investment->amount->toFloat()
                             : (float) $investment->amount;
-                        
+
                         $bonusRate = $package->referral_bonus_rate / 100;
                         $bonusAmount = $investmentAmountValue * $bonusRate;
 
