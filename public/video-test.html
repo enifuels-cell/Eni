@@ -225,7 +225,8 @@
             total: 4,
             passed: 0,
             failed: 0,
-            details: []
+            details: [],
+            timeout: 10000 // 10 second timeout for each video
         };
 
         // Video test configuration
@@ -236,17 +237,48 @@
             { id: 'coral', file: 'The Coral South Project.mp4', name: 'Coral South' }
         ];
 
+        // Track which videos have been tested
+        const testedVideos = new Set();
+
         // Test each video
         videos.forEach(({ id, file, name }) => {
             const video = document.getElementById(id);
             const status = document.getElementById(`${id}-status`);
+            let hasLoaded = false;
+
+            // Set timeout to mark video as failed if it doesn't load
+            const timeoutId = setTimeout(() => {
+                if (!testedVideos.has(id)) {
+                    testedVideos.add(id);
+                    status.innerHTML = `
+                        <span class="error">❌ ${name} failed to load (timeout)</span><br>
+                        <div class="info-grid">
+                            <span class="label">Error:</span>
+                            <span class="value">Video did not load within 10 seconds</span>
+                            
+                            <span class="label">File:</span>
+                            <span class="value">${file}</span>
+                            
+                            <span class="label">Likely Cause:</span>
+                            <span class="value">File may not exist on server or is too large</span>
+                        </div>
+                    `;
+                    testResults.failed++;
+                    testResults.details.push({ name, status: 'FAIL', file, error: 'Timeout - file not accessible' });
+                    updateSummary();
+                }
+            }, testResults.timeout);
 
             video.addEventListener('loadedmetadata', () => {
-                const info = `
-                    <span class="success">✅ ${name} loaded successfully!</span><br>
-                    <div class="info-grid">
-                        <span class="label">Duration:</span>
-                        <span class="value">${Math.round(video.duration)} seconds</span>
+                if (!testedVideos.has(id)) {
+                    clearTimeout(timeoutId);
+                    testedVideos.add(id);
+                    hasLoaded = true;
+                    const info = `
+                        <span class="success">✅ ${name} loaded successfully!</span><br>
+                        <div class="info-grid">
+                            <span class="label">Duration:</span>
+                            <span class="value">${Math.round(video.duration)} seconds</span>
 
                         <span class="label">Resolution:</span>
                         <span class="value">${video.videoWidth}x${video.videoHeight}</span>
@@ -259,10 +291,37 @@
                 testResults.passed++;
                 testResults.details.push({ name, status: 'PASS', file });
                 updateSummary();
+                }
+            });
+
+            video.addEventListener('loadeddata', () => {
+                // Fallback event in case loadedmetadata doesn't fire
+                if (!hasLoaded && !testedVideos.has(id)) {
+                    clearTimeout(timeoutId);
+                    testedVideos.add(id);
+                    hasLoaded = true;
+                    const info = `
+                        <span class="success">✅ ${name} data loaded!</span><br>
+                        <div class="info-grid">
+                            <span class="label">Status:</span>
+                            <span class="value">Video data loaded successfully</span>
+                            
+                            <span class="label">File:</span>
+                            <span class="value">${file}</span>
+                        </div>
+                    `;
+                    status.innerHTML = info;
+                    testResults.passed++;
+                    testResults.details.push({ name, status: 'PASS', file });
+                    updateSummary();
+                }
             });
 
             video.addEventListener('error', (e) => {
-                const error = video.error;
+                if (!testedVideos.has(id)) {
+                    clearTimeout(timeoutId);
+                    testedVideos.add(id);
+                    const error = video.error;
                 let errorMsg = 'Unknown error';
                 let errorCode = 'N/A';
 
@@ -304,10 +363,13 @@
                 testResults.failed++;
                 testResults.details.push({ name, status: 'FAIL', file, error: errorMsg });
                 updateSummary();
+                }
             });
 
-            // Try to load
-            video.load();
+            // Force load attempt
+            setTimeout(() => {
+                video.load();
+            }, 100);
         });
 
         // Check file accessibility via HTTP
