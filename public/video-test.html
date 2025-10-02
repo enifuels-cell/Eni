@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENI Video Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #0b2241;
+            color: white;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #FFD100;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #FFD100;
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #FFD100;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .intro {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: rgba(255,255,255,0.8);
+        }
+        .video-container {
+            margin: 20px 0;
+            padding: 25px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        video {
+            width: 100%;
+            max-width: 800px;
+            border: 3px solid #FFD100;
+            border-radius: 10px;
+            display: block;
+            margin: 15px 0;
+        }
+        .status {
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .success {
+            color: #4ade80;
+            font-weight: bold;
+        }
+        .error {
+            color: #f87171;
+            font-weight: bold;
+        }
+        .warning {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .label {
+            color: #FFD100;
+            font-weight: bold;
+        }
+        .value {
+            color: rgba(255,255,255,0.9);
+            word-break: break-all;
+        }
+        .test-results {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+        .loading {
+            color: #60a5fa;
+        }
+        button {
+            background: linear-gradient(135deg, #FFD100, #FFC107);
+            color: #0b2241;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 209, 0, 0.4);
+        }
+        .button-group {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 ENI Video Diagnostic Test</h1>
+        <p class="intro">This page tests if MP4 videos are accessible and playable on your server.</p>
+
+        <div class="test-results">
+            <h2>Quick Test Results</h2>
+            <div class="status" id="quick-summary">
+                <span class="loading">⏳ Running tests...</span>
+            </div>
+        </div>
+
+        <h2>📦 Package Videos</h2>
+        
+        <div class="video-container">
+            <h3>1. Energy.mp4 (Energy Saver Package)</h3>
+            <video id="energy" controls muted preload="metadata">
+                <source src="Energy.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="status" id="energy-status">
+                <span class="loading">Loading...</span>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <h3>2. Growth.mp4 (Growth Power Package)</h3>
+            <video id="growth" controls muted preload="metadata">
+                <source src="Growth.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="status" id="growth-status">
+                <span class="loading">Loading...</span>
+            </div>
+        </div>
+
+        <div class="video-container">
+            <h3>3. Capital.mp4 (Capital Prime Package)</h3>
+            <video id="capital" controls muted preload="metadata">
+                <source src="Capital.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="status" id="capital-status">
+                <span class="loading">Loading...</span>
+            </div>
+        </div>
+
+        <h2>🏠 Home Page Video</h2>
+
+        <div class="video-container">
+            <h3>4. The Coral South Project.mp4</h3>
+            <video id="coral" controls muted preload="metadata">
+                <source src="The Coral South Project.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="status" id="coral-status">
+                <span class="loading">Loading...</span>
+            </div>
+        </div>
+
+        <h2>📁 File Existence Check</h2>
+        <div class="status" id="file-check">
+            <span class="loading">Checking files via HTTP...</span>
+        </div>
+
+        <h2>🔧 System Information</h2>
+        <div class="status">
+            <div class="info-grid">
+                <span class="label">Browser:</span>
+                <span class="value" id="browser-info"></span>
+                
+                <span class="label">Screen Size:</span>
+                <span class="value" id="screen-info"></span>
+                
+                <span class="label">Current URL:</span>
+                <span class="value" id="url-info"></span>
+                
+                <span class="label">Page Protocol:</span>
+                <span class="value" id="protocol-info"></span>
+                
+                <span class="label">Timestamp:</span>
+                <span class="value" id="time-info"></span>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button onclick="location.reload()">🔄 Refresh Test</button>
+            <button onclick="testAllVideos()">▶️ Play All Videos</button>
+            <button onclick="downloadReport()">📥 Download Report</button>
+        </div>
+    </div>
+
+    <script>
+        // System info
+        document.getElementById('browser-info').textContent = navigator.userAgent;
+        document.getElementById('screen-info').textContent = `${window.innerWidth}x${window.innerHeight}`;
+        document.getElementById('url-info').textContent = window.location.href;
+        document.getElementById('protocol-info').textContent = window.location.protocol;
+        document.getElementById('time-info').textContent = new Date().toLocaleString();
+
+        // Test results storage
+        const testResults = {
+            total: 4,
+            passed: 0,
+            failed: 0,
+            details: []
+        };
+
+        // Video test configuration
+        const videos = [
+            { id: 'energy', file: 'Energy.mp4', name: 'Energy Saver' },
+            { id: 'growth', file: 'Growth.mp4', name: 'Growth Power' },
+            { id: 'capital', file: 'Capital.mp4', name: 'Capital Prime' },
+            { id: 'coral', file: 'The Coral South Project.mp4', name: 'Coral South' }
+        ];
+
+        // Test each video
+        videos.forEach(({ id, file, name }) => {
+            const video = document.getElementById(id);
+            const status = document.getElementById(`${id}-status`);
+
+            video.addEventListener('loadedmetadata', () => {
+                const info = `
+                    <span class="success">✅ ${name} loaded successfully!</span><br>
+                    <div class="info-grid">
+                        <span class="label">Duration:</span>
+                        <span class="value">${Math.round(video.duration)} seconds</span>
+                        
+                        <span class="label">Resolution:</span>
+                        <span class="value">${video.videoWidth}x${video.videoHeight}</span>
+                        
+                        <span class="label">File:</span>
+                        <span class="value">${file}</span>
+                    </div>
+                `;
+                status.innerHTML = info;
+                testResults.passed++;
+                testResults.details.push({ name, status: 'PASS', file });
+                updateSummary();
+            });
+
+            video.addEventListener('error', (e) => {
+                const error = video.error;
+                let errorMsg = 'Unknown error';
+                let errorCode = 'N/A';
+                
+                if (error) {
+                    errorCode = error.code;
+                    switch(error.code) {
+                        case 1:
+                            errorMsg = 'MEDIA_ERR_ABORTED - User aborted video loading';
+                            break;
+                        case 2:
+                            errorMsg = 'MEDIA_ERR_NETWORK - Network error occurred';
+                            break;
+                        case 3:
+                            errorMsg = 'MEDIA_ERR_DECODE - Video decoding failed';
+                            break;
+                        case 4:
+                            errorMsg = 'MEDIA_ERR_SRC_NOT_SUPPORTED - Video format not supported or file not found (404)';
+                            break;
+                    }
+                }
+                
+                const info = `
+                    <span class="error">❌ Failed to load ${name}!</span><br>
+                    <div class="info-grid">
+                        <span class="label">Error Code:</span>
+                        <span class="value">${errorCode}</span>
+                        
+                        <span class="label">Error Type:</span>
+                        <span class="value">${errorMsg}</span>
+                        
+                        <span class="label">File:</span>
+                        <span class="value">${file}</span>
+                        
+                        <span class="label">Likely Cause:</span>
+                        <span class="value">File not found on server. Git LFS files may not be pulled.</span>
+                    </div>
+                `;
+                status.innerHTML = info;
+                testResults.failed++;
+                testResults.details.push({ name, status: 'FAIL', file, error: errorMsg });
+                updateSummary();
+            });
+
+            // Try to load
+            video.load();
+        });
+
+        // Check file accessibility via HTTP
+        async function checkFiles() {
+            const fileCheck = document.getElementById('file-check');
+            let results = '<strong>HTTP Accessibility Test:</strong><br><br>';
+            
+            for (const { file, name } of videos) {
+                try {
+                    const startTime = Date.now();
+                    const response = await fetch(file, { method: 'HEAD' });
+                    const loadTime = Date.now() - startTime;
+                    
+                    if (response.ok) {
+                        const size = response.headers.get('content-length');
+                        const contentType = response.headers.get('content-type');
+                        const sizeInMB = size ? (size / 1024 / 1024).toFixed(2) : 'unknown';
+                        
+                        results += `
+                            <div class="info-grid">
+                                <span class="label">✅ ${name}:</span>
+                                <span class="value">${sizeInMB} MB | ${contentType} | ${loadTime}ms</span>
+                            </div>
+                        `;
+                    } else {
+                        results += `
+                            <div class="info-grid">
+                                <span class="label">❌ ${name}:</span>
+                                <span class="value error">HTTP ${response.status} ${response.statusText}</span>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    results += `
+                        <div class="info-grid">
+                            <span class="label">❌ ${name}:</span>
+                            <span class="value error">${error.message}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            fileCheck.innerHTML = results;
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('quick-summary');
+            const progress = testResults.passed + testResults.failed;
+            
+            if (progress < testResults.total) {
+                summary.innerHTML = `
+                    <span class="loading">⏳ Testing... (${progress}/${testResults.total})</span>
+                `;
+            } else {
+                const status = testResults.passed === testResults.total ? 'success' : 'error';
+                const icon = testResults.passed === testResults.total ? '✅' : '⚠️';
+                
+                summary.innerHTML = `
+                    <span class="${status}">${icon} Test Complete: ${testResults.passed}/${testResults.total} videos working</span><br><br>
+                    <div class="info-grid">
+                        <span class="label">Passed:</span>
+                        <span class="value success">${testResults.passed}</span>
+                        
+                        <span class="label">Failed:</span>
+                        <span class="value error">${testResults.failed}</span>
+                    </div>
+                    ${testResults.failed > 0 ? '<br><span class="warning">⚠️ Some videos failed to load. Check individual test results below.</span>' : ''}
+                `;
+            }
+        }
+
+        function testAllVideos() {
+            videos.forEach(({ id }) => {
+                const video = document.getElementById(id);
+                video.play().catch(e => console.log(`Cannot play ${id}:`, e));
+            });
+        }
+
+        function downloadReport() {
+            const report = `
+ENI VIDEO DIAGNOSTIC REPORT
+============================
+Generated: ${new Date().toLocaleString()}
+URL: ${window.location.href}
+Browser: ${navigator.userAgent}
+
+TEST RESULTS
+============
+Total Tests: ${testResults.total}
+Passed: ${testResults.passed}
+Failed: ${testResults.failed}
+
+DETAILS
+=======
+${testResults.details.map(d => `
+${d.name} (${d.file}): ${d.status}
+${d.error ? 'Error: ' + d.error : ''}
+`).join('\n')}
+
+RECOMMENDATIONS
+===============
+${testResults.failed > 0 ? `
+⚠️ ${testResults.failed} video(s) failed to load.
+
+Most likely cause: Git LFS files not pulled on server.
+
+Solution:
+1. SSH into your server
+2. Run: git lfs install
+3. Run: git lfs pull
+4. Run: ls -lh public/*.mp4
+5. Verify files show MB sizes, not bytes
+
+Alternative: Upload MP4 files manually via FTP/SFTP.
+` : '✅ All videos loaded successfully! No action needed.'}
+            `.trim();
+
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eni-video-diagnostic-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Run file check on load
+        checkFiles();
+    </script>
+</body>
+</html>
