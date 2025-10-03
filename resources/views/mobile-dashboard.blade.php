@@ -203,9 +203,9 @@
                             <div class="flex items-center gap-2">
                                 <span class="text-white font-semibold">
                                     @if($transaction->type === 'withdrawal')
-                                        -${{ number_format($transaction->amount->toFloat(), 2) }}
+                                        -${{ number_format($transaction->amount, 2) }}
                                     @else
-                                        +${{ number_format($transaction->amount->toFloat(), 2) }}
+                                        +${{ number_format($transaction->amount, 2) }}
                                     @endif
                                 </span>
                                 @if($transaction->status !== 'completed')

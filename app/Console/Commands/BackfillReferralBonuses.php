@@ -44,10 +44,7 @@ class BackfillReferralBonuses extends Command
 
             // Calculate and create the bonus
             $package = $investment->investmentPackage;
-            $investmentAmount = $investment->amount instanceof \App\Support\Money
-                ? $investment->amount->toFloat()
-                : (float) $investment->amount;
-
+            $investmentAmount = (float)$investment->amount;
             $bonusAmount = $investmentAmount * ($package->referral_bonus_rate / 100);
 
             DB::transaction(function () use ($referral, $investment, $bonusAmount, $package) {

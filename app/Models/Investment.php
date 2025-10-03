@@ -63,10 +63,9 @@ class Investment extends Model
     ];
 
     protected $casts = [
-        'amount' => \App\Casts\MoneyCast::class,
-        // Keep rate as decimal since it's a percentage, not an amount
+        'amount' => 'decimal:2',
         'daily_shares_rate' => 'decimal:2',
-        'total_interest_earned' => \App\Casts\MoneyCast::class,
+        'total_interest_earned' => 'decimal:2',
         'active' => 'boolean',
         'started_at' => 'datetime',
         'ended_at' => 'datetime'
@@ -99,13 +98,7 @@ class Investment extends Model
 
     public function calculateDailyInterest()
     {
-        $totalAmount = $this->amount;
-
-        // Handle Money cast
-        if ($totalAmount instanceof \App\Support\Money) {
-            $totalAmount = $totalAmount->toFloat();
-        }
-
+        $totalAmount = (float)$this->amount;
         $interestRate = $this->investmentPackage->daily_shares_rate / 100;
 
         return $totalAmount * $interestRate;
@@ -190,7 +183,7 @@ class Investment extends Model
         // Get the referral bonus rate from the investment package
         $package = $this->investmentPackage;
         $bonusRate = $package->referral_bonus_rate ?? 5; // Default 5% if not set
-        $bonusAmount = $this->amount * ($bonusRate / 100);
+        $bonusAmount = (float)$this->amount * ($bonusRate / 100);
 
         // Create the referral bonus record
         $referralBonus = ReferralBonus::create([

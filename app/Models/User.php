@@ -165,35 +165,23 @@ class User extends Authenticatable
     // Helper methods for investment platform
     public function totalInvestedAmount(): float
     {
-        $investments = $this->investments()->active()->get();
-        $total = 0.0;
-        foreach ($investments as $investment) {
-            $total += $investment->amount instanceof \App\Support\Money ? $investment->amount->toFloat() : (float)$investment->amount;
-        }
-        return $total;
+        return (float)$this->investments()
+            ->active()
+            ->sum('amount');
     }
 
     public function totalInterestEarned(): float
     {
-        $investments = $this->investments()->active()->get();
-        $total = 0.0;
-        foreach ($investments as $investment) {
-            $total += $investment->total_interest_earned instanceof \App\Support\Money ? $investment->total_interest_earned->toFloat() : (float)$investment->total_interest_earned;
-        }
-        return $total;
+        return (float)$this->investments()
+            ->active()
+            ->sum('total_interest_earned');
     }
 
     public function totalReferralBonuses(): float
     {
-        $bonuses = \App\Models\ReferralBonus::whereHas('referral', function($query) {
+        return (float)\App\Models\ReferralBonus::whereHas('referral', function($query) {
             $query->where('referrer_id', $this->id);
-        })->where('paid', true)->get();
-
-        $total = 0.0;
-        foreach ($bonuses as $bonus) {
-            $total += $bonus->bonus_amount instanceof \App\Support\Money ? $bonus->bonus_amount->toFloat() : (float)$bonus->bonus_amount;
-        }
-        return $total;
+        })->where('paid', true)->sum('bonus_amount');
     }
 
     public function accountBalance(): float
@@ -203,9 +191,7 @@ class User extends Authenticatable
         // - Incremented by: deposits, interest, referral bonuses
         // - Decremented by: withdrawals, investments from balance
         // Investment amounts are NOT included here (they're locked in totalInvestedAmount)
-        return $this->account_balance instanceof \App\Support\Money
-            ? $this->account_balance->toFloat()
-            : (float) $this->account_balance;
+        return (float)$this->account_balance;
     }
 
     /**

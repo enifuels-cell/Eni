@@ -53,7 +53,7 @@ class Transaction extends Model
     ];
 
     protected $casts = [
-        'amount' => \App\Casts\MoneyCast::class,
+        'amount' => 'decimal:2',
         'processed_at' => 'datetime'
     ];
 

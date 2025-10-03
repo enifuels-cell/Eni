@@ -126,7 +126,7 @@
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
                                 <p class="text-white/70">Investment</p>
-                                <p class="font-semibold">${{ number_format($investment->amount->toFloat(), 2) }}</p>
+                                <p class="font-semibold">${{ number_format($investment->amount, 2) }}</p>
                             </div>
                             <div>
                                 <p class="text-white/70">Daily Interest</p>

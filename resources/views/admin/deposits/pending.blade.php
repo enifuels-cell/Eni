@@ -46,7 +46,7 @@
                                 <!-- Amount & Reference -->
                                 <div class="flex items-center space-x-4 mb-3">
                                     <div class="bg-white/10 border border-white/20 rounded-lg px-3 py-1">
-                                        <span class="text-white font-bold text-xl">${{ number_format($deposit->amount->toFloat(), 2) }}</span>
+                                        <span class="text-white font-bold text-xl">${{ number_format($deposit->amount, 2) }}</span>
                                     </div>
                                     <div class="text-white/60 text-sm">
                                         <i class="fas fa-hashtag mr-1 text-white/40"></i>{{ $deposit->reference }}

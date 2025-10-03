@@ -86,10 +86,7 @@ class UpdateTotalInterest extends Command
                     }
 
                     // Update investment totals
-                    $currentTotalEarned = $investment->total_interest_earned;
-                    if ($currentTotalEarned instanceof \App\Support\Money) {
-                        $currentTotalEarned = $currentTotalEarned->toFloat();
-                    }
+                    $currentTotalEarned = (float)$investment->total_interest_earned;
 
                     $investment->update([
                         'total_interest_earned' => $currentTotalEarned + $dailyInterest,

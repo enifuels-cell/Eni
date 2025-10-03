@@ -64,11 +64,11 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">${{ number_format($log->investment->amount->toFloat(), 2) }}</div>
+                                <div class="text-sm text-gray-900">${{ number_format($log->investment->amount, 2) }}</div>
                                 <div class="text-sm text-gray-500">{{ $log->investment->investmentPackage->name ?? 'Package' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-green-600">${{ number_format($log->interest_amount->toFloat(), 2) }}</div>
+                                <div class="text-sm font-medium text-green-600">${{ number_format($log->interest_amount, 2) }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $log->created_at->format('M d, Y g:i A') }}

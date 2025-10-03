@@ -146,7 +146,7 @@
                 @forelse($recentDeposits as $deposit)
                     <div class="flex justify-between items-center p-4 bg-white/5 rounded-lg">
                         <div>
-                            <div class="font-medium text-white">${{ number_format($deposit->amount->toFloat(), 2) }}</div>
+                            <div class="font-medium text-white">${{ number_format($deposit->amount, 2) }}</div>
                             <div class="text-sm text-white/60">{{ $deposit->created_at->format('M d, Y - H:i') }}</div>
                             <div class="text-sm text-white/60">{{ $deposit->reference }}</div>
                         </div>

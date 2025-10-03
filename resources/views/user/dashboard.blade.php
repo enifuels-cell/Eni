@@ -165,8 +165,8 @@
                                     <div class="text-sm text-gray-400">{{ $transaction->created_at->format('M d, Y - H:i') }}</div>
                                 </div>
                                 <div class="text-right">
-                                    <div class="font-medium {{ ($transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : $transaction->amount) > 0 ? 'text-green-400' : 'text-red-400' }}">
-                                        {{ ($transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : $transaction->amount) > 0 ? '+' : '' }}$@money($transaction->amount)
+                                    <div class="font-medium {{ $transaction->amount > 0 ? 'text-green-400' : 'text-red-400' }}">
+                                        {{ $transaction->amount > 0 ? '+' : '' }}$@money($transaction->amount)
                                     </div>
                                     <div class="text-sm text-gray-400">{{ ucfirst($transaction->status) }}</div>
                                 </div>

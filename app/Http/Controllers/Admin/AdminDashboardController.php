@@ -123,10 +123,8 @@ class AdminDashboardController extends Controller
                     'processed_at' => now()
                 ]);
 
-                // Get the amount as a decimal number (Money object to float)
-                $amountValue = $transaction->amount instanceof \App\Support\Money
-                    ? $transaction->amount->toFloat()
-                    : (float) $transaction->amount;
+                // Get the amount as a decimal number
+                $amountValue = (float)$transaction->amount;
 
                 // Check if this is a package investment deposit
                 $isInvestmentDeposit = str_contains($transaction->description, 'Investment in') &&
@@ -142,16 +140,45 @@ class AdminDashboardController extends Controller
                 // If this is an investment deposit, activate the investment directly
                 if ($isInvestmentDeposit) {
                     // Find and activate investments created around the same time as this transaction
+                    $transactionAmountValue = (float)$transaction->amount;
+
                     $investments = $transaction->user->investments()
                         ->where('active', false)
-                        ->where('amount', $transaction->amount)
                         ->whereBetween('created_at', [
-                            $transaction->created_at->subMinutes(5),
-                            $transaction->created_at->addMinutes(5)
+                            $transaction->created_at->copy()->subMinutes(5),
+                            $transaction->created_at->copy()->addMinutes(5)
                         ])
-                        ->get();
+                        ->get()
+                        ->filter(function($investment) use ($transactionAmountValue) {
+                            $investmentAmount = (float)$investment->amount;
+                            return abs($investmentAmount - $transactionAmountValue) < 0.01;
+                        });
+
+                    if ($investments->isEmpty()) {
+                        \Log::warning('No matching investment found for deposit approval', [
+                            'transaction_id' => $transaction->id,
+                            'user_id' => $transaction->user_id,
+                            'amount' => $transactionAmountValue,
+                            'description' => $transaction->description,
+                            'created_at' => $transaction->created_at,
+                            'all_inactive_investments' => $transaction->user->investments()->where('active', false)->get()->map(function($inv) {
+                                return [
+                                    'id' => $inv->id,
+                                    'amount' => (float)$inv->amount,
+                                    'created_at' => $inv->created_at
+                                ];
+                            })
+                        ]);
+                    }
 
                     foreach ($investments as $investment) {
+                        \Log::info('Activating investment from deposit approval', [
+                            'investment_id' => $investment->id,
+                            'transaction_id' => $transaction->id,
+                            'amount' => $transactionAmountValue,
+                            'user_id' => $transaction->user_id
+                        ]);
+
                         // Activate the investment (funds are now locked)
                         $investment->update([
                             'active' => true,
@@ -174,11 +201,8 @@ class AdminDashboardController extends Controller
                         $referral = $transaction->user->referralReceived;
                         if ($referral && $package) {
                             // Calculate bonus amount
-                            $investmentAmountValue = $investment->amount instanceof \App\Support\Money
-                                ? $investment->amount->toFloat()
-                                : (float) $investment->amount;
-
-                            $bonusRate = $package->referral_bonus_rate / 100; // Convert percentage to decimal
+                            $investmentAmountValue = (float)$investment->amount;
+                            $bonusRate = $package->referral_bonus_rate / 100;
                             $bonusAmount = $investmentAmountValue * $bonusRate;
 
                             // Create referral bonus record

@@ -216,7 +216,7 @@
                                                 <p class="text-sm text-gray-300">
                                                     {{ $transaction->user->name }} -
                                                     <span class="font-medium text-white">{{ ucfirst($transaction->type) }}</span>
-                                                    of ${{ number_format($transaction->amount->toFloat(), 2) }}
+                                                    of ${{ number_format($transaction->amount, 2) }}
                                                     @if($transaction->status === 'pending')
                                                         <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full border bg-yellow-500/10 text-yellow-400 border-yellow-500/40">
                                                             {{ ucfirst($transaction->status) }}

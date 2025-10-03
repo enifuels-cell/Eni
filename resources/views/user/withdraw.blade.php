@@ -214,7 +214,7 @@
                                     {{ $withdrawal->created_at->format('M d, Y') }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-400">
-                                    -${{ number_format($withdrawal->amount->toFloat(), 2) }}
+                                    -${{ number_format($withdrawal->amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                                     {{ ucfirst(str_replace('_', ' ', $withdrawal->payment_method)) }}

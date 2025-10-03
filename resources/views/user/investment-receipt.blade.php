@@ -190,7 +190,7 @@
                             </div>
                             <div class="bg-white rounded-lg p-4 shadow-sm">
                                 <span class="text-gray-600 text-sm font-medium block mb-1">Investment Amount</span>
-                                <span class="font-bold text-2xl text-eni-dark">${{ number_format($investment->amount->toFloat(), 2) }}</span>
+                                <span class="font-bold text-2xl text-eni-dark">${{ number_format($investment->amount, 2) }}</span>
                             </div>
                             <div class="bg-white rounded-lg p-4 shadow-sm">
                                 <span class="text-gray-600 text-sm font-medium block mb-1">Daily Interest Rate</span>
@@ -208,7 +208,7 @@
                             </div>
                             <div class="bg-green-50 rounded-lg p-4 shadow-sm border-2 border-green-200">
                                 <span class="text-green-700 text-sm font-semibold block mb-1">Total Expected Return</span>
-                                <span class="font-bold text-2xl text-green-700">${{ number_format($investment->amount->toFloat() * (1 + ($investment->daily_shares_rate / 100) * $investment->investmentPackage->effective_days), 2) }}</span>
+                                <span class="font-bold text-2xl text-green-700">${{ number_format($investment->amount * (1 + ($investment->daily_shares_rate / 100) * $investment->investmentPackage->effective_days), 2) }}</span>
                             </div>
                         </div>
                     </div>
@@ -220,7 +220,7 @@
                     <div class="receipt-gradient rounded-xl p-6 shadow-lg">
                         <div class="flex justify-between items-center">
                             <span class="text-xl font-bold text-white">Total Amount:</span>
-                            <span class="text-3xl font-bold text-eni-yellow">${{ number_format($transaction->amount->toFloat(), 2) }}</span>
+                            <span class="text-3xl font-bold text-eni-yellow">${{ number_format($transaction->amount, 2) }}</span>
                         </div>
                     </div>
                 </div>

@@ -129,7 +129,7 @@
                                     @foreach($userInvestments as $investment)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ $investment->investmentPackage->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${{ number_format($investment->amount->toFloat(), 2) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-white">${{ number_format($investment->amount, 2) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $investment->active ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-gray-500/20 text-gray-400 border border-gray-500/30' }}">
                                                 {{ $investment->active ? 'Active' : 'Completed' }}
