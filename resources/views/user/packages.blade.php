@@ -552,9 +552,9 @@
         /* ========== AVAILABLE SLOTS BADGE OVERLAY ========== */
         .slots-badge {
             position: absolute;
-            bottom: 12px;
-            right: 12px;
-            z-index: 20;
+            bottom: 16px;
+            right: 16px;
+            z-index: 50;
             background: linear-gradient(135deg, rgba(11, 34, 65, 0.95) 0%, rgba(11, 34, 65, 0.98) 100%);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -567,6 +567,7 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             animation: slots-pulse 3s ease-in-out infinite;
             transition: all 0.3s ease;
+            pointer-events: none; /* Allow clicks to pass through to video */
         }
 
         .slots-badge:hover {
