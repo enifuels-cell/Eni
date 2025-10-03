@@ -198,48 +198,14 @@ class User extends Authenticatable
 
     public function accountBalance(): float
     {
-        // Get transactions and convert Money objects to floats
-        $creditTransactions = $this->transactions()
-            ->whereIn('type', ['deposit', 'interest', 'referral_bonus'])
-            ->whereIn('status', ['completed', 'approved'])
-            ->get();
-
-        $credits = 0.0;
-        foreach ($creditTransactions as $transaction) {
-            $credits += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
-        }
-
-        $transferTransactions = $this->transactions()
-            ->where('type', 'transfer')
-            ->where('status', 'completed')
-            ->get();
-
-        $transfers = 0.0;
-        foreach ($transferTransactions as $transaction) {
-            $transfers += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
-        }
-
-        $withdrawalTransactions = $this->transactions()
-            ->where('type', 'withdrawal')
-            ->where('status', 'completed')
-            ->get();
-
-        $withdrawals = 0.0;
-        foreach ($withdrawalTransactions as $transaction) {
-            $withdrawals += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
-        }
-
-        $otherTransactions = $this->transactions()
-            ->where('type', 'other')
-            ->where('status', 'completed')
-            ->get();
-
-        $other = 0.0;
-        foreach ($otherTransactions as $transaction) {
-            $other += $transaction->amount instanceof \App\Support\Money ? $transaction->amount->toFloat() : (float)$transaction->amount;
-        }
-
-        return $credits + $transfers + $other - $withdrawals;
+        // Simply return the account_balance column value
+        // This column is properly maintained by increment/decrement operations:
+        // - Incremented by: deposits, interest, referral bonuses
+        // - Decremented by: withdrawals, investments from balance
+        // Investment amounts are NOT included here (they're locked in totalInvestedAmount)
+        return $this->account_balance instanceof \App\Support\Money
+            ? $this->account_balance->toFloat()
+            : (float) $this->account_balance;
     }
 
     /**

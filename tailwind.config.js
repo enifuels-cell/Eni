@@ -17,6 +17,7 @@ export default {
             colors: {
                 'eni-yellow': '#FFCD00',
                 'eni-dark': '#1a1a1a',
+                'eni-navy': '#003366', // Dark blue color
             },
         },
     },

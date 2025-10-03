@@ -29,16 +29,16 @@
       }
     }
   </script>
-  <style> 
-    body{font-family:Inter,ui-sans-serif,system-ui} 
-    
+  <style>
+    body{font-family:Inter,ui-sans-serif,system-ui}
+
     /* Mobile safe area considerations */
     @media (max-width: 640px) {
       #floatingNav {
         bottom: max(1rem, env(safe-area-inset-bottom, 0px));
       }
     }
-    
+
     /* Ensure floating nav doesn't cause horizontal scroll */
     #floatingNav > div {
       max-width: calc(100vw - 2rem);
@@ -76,7 +76,7 @@
           <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
           <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
         </button>
-        
+
         <!-- Profile Dropdown Menu -->
         <div id="profileMenu" class="absolute right-0 top-full mt-2 w-64 bg-eni-dark border border-white/20 rounded-lg shadow-lg z-50 hidden">
           <div class="p-4 border-b border-white/10">
@@ -163,22 +163,24 @@
   <!-- Circular KPI Cards -->
   <section class="grid grid-cols-3 gap-4 px-6 mt-6">
     <div class="bg-white/5 rounded-2xl p-4 text-center">
-      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
+      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-lg">
         {{ ($active_investments ?? 0) }}
       </div>
       <p class="text-xs mt-2 text-white/70">Active Investments</p>
     </div>
+            <!-- Total Invested (Yellow Background) -->
+        <div class="bg-eni-yellow rounded-2xl p-6 flex flex-col items-center justify-center">
+            <div class="text-center">
+                <p class="text-4xl font-bold text-blue-900">${{ number_format($total_invested, 2) }}</p>
+                <p class="text-sm font-medium text-blue-900 mt-2">Total Invested</p>
+            </div>
+        </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
-      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        $@money($total_invested ?? 0)
+      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center">
+        <i class="fas fa-gift text-eni-yellow text-2xl"></i>
       </div>
-      <p class="text-xs mt-2 text-white/70">Total Invested</p>
-    </div>
-    <div class="bg-white/5 rounded-2xl p-4 text-center">
-      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-sm">
-        $@money($total_referral_bonus ?? 0)
-      </div>
-      <p class="text-xs mt-2 text-white/70">Referral Bonus</p>
+      <p class="text-lg font-bold mt-2 text-eni-yellow">$@money($total_referral_bonus ?? 0)</p>
+      <p class="text-xs text-white/70">Referral Bonus</p>
     </div>
   </section>
 
@@ -274,7 +276,7 @@
           </span>
         @endif
       </div>
-      
+
       <div class="space-y-3">
         @if(!Auth::user()->pin_hash)
         <!-- PIN Setup Notification -->
@@ -349,7 +351,7 @@
         </div>
         @endforelse
       </div>
-      
+
       <div class="mt-4 pt-4 border-t border-white/10">
         <a href="{{ route('user.notifications') }}" class="text-eni-yellow text-sm hover:underline flex items-center justify-between">
           <span>View All Notifications</span>
@@ -389,17 +391,17 @@
     document.addEventListener('click', function(event) {
       const panel = document.getElementById('notificationsPanel');
       const button = event.target.closest('[aria-label="notifications"]');
-      
+
       if (!panel.contains(event.target) && !button) {
         panel.classList.add('hidden');
       }
     });
-    
+
     // Close profile menu when clicking outside
     document.addEventListener('click', function(event) {
       const menu = document.getElementById('profileMenu');
       const button = event.target.closest('button[onclick="toggleProfileMenu()"]');
-      
+
       if (!button && !menu.contains(event.target)) {
         menu.classList.add('hidden');
       }
@@ -409,13 +411,13 @@
     let lastScrollTop = 0;
     let scrollThreshold = 10; // Minimum scroll distance to trigger hide/show
     let isScrolling = false;
-    
+
     window.addEventListener('scroll', function() {
       if (!isScrolling) {
         window.requestAnimationFrame(function() {
           const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
           const floatingNav = document.getElementById('floatingNav');
-          
+
           // Only react to significant scroll movements
           if (Math.abs(currentScroll - lastScrollTop) > scrollThreshold) {
             if (currentScroll > lastScrollTop && currentScroll > 100) {
@@ -427,7 +429,7 @@
             }
             lastScrollTop = currentScroll;
           }
-          
+
           isScrolling = false;
         });
       }
@@ -438,12 +440,12 @@
     let scrollTimer = null;
     window.addEventListener('scroll', function() {
       const floatingNav = document.getElementById('floatingNav');
-      
+
       // Clear the timer if it exists
       if (scrollTimer !== null) {
         clearTimeout(scrollTimer);
       }
-      
+
       // Set a timer to show nav after scrolling stops
       scrollTimer = setTimeout(function() {
         floatingNav.style.transform = 'translateY(0)';
