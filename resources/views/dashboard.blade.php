@@ -169,10 +169,10 @@
       <p class="text-xs mt-2 text-white/70">Active Investments</p>
     </div>
             <!-- Total Invested (Yellow Background) -->
-        <div class="bg-eni-yellow rounded-2xl p-6 flex flex-col items-center justify-center">
+        <div class="bg-eni-yellow rounded-2xl p-4 md:p-6 flex flex-col items-center justify-center">
             <div class="text-center">
-                <p class="text-4xl font-bold text-blue-900">${{ number_format($total_invested, 2) }}</p>
-                <p class="text-sm font-medium text-blue-900 mt-2">Total Invested</p>
+                <p class="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-900 break-words">${{ number_format($total_invested, 2) }}</p>
+                <p class="text-xs sm:text-sm font-medium text-blue-900 mt-1 md:mt-2">Total Invested</p>
             </div>
         </div>
     <div class="bg-white/5 rounded-2xl p-4 text-center">
