@@ -81,19 +81,25 @@ class InvestmentService
                 'processed_at' => now(),
             ]);
 
-            // Referral bonus logic
-            if ($referralCode) {
-                $referral = Referral::where('referral_code', $referralCode)->first();
-                if ($referral && $referral->referee_id === $user->id) {
-                    $bonusAmount = $amount * ($package->referral_bonus_rate / 100);
+            // Referral bonus logic - Check if user was referred
+            $referral = $user->referralReceived; // Check if this user was referred by someone
 
-                    $bonus = ReferralBonus::create([
-                        'referral_id' => $referral->id,
-                        'investment_id' => $investment->id,
-                        'bonus_amount' => $bonusAmount,
-                        'paid' => true,
-                        'paid_at' => now(),
-                    ]);
+            if ($referral) {
+                // User was referred, give bonus to the referrer
+                $bonusAmount = $amount * ($package->referral_bonus_rate / 100);
+
+                $bonus = ReferralBonus::create([
+                    'referral_id' => $referral->id,
+                    'investment_id' => $investment->id,
+                    'bonus_amount' => $bonusAmount,
+                    'paid' => true,
+                    'paid_at' => now(),
+                ]);
+
+                // Credit the referrer's account balance
+                $referrer = $referral->referrer;
+                if ($referrer) {
+                    $referrer->increment('account_balance', $bonusAmount);
 
                     Transaction::create([
                         'user_id' => $referral->referrer_id,
@@ -101,12 +107,12 @@ class InvestmentService
                         'amount' => $bonusAmount,
                         'reference' => "Referral bonus for investment #" . $investment->id,
                         'status' => 'completed',
-                        'description' => "Referral bonus from " . $user->name,
+                        'description' => "Referral bonus from " . $user->name . " - " . $package->name . " investment",
                         'processed_at' => now(),
                     ]);
-
-                    event(new ReferralBonusGranted($bonus));
                 }
+
+                event(new ReferralBonusGranted($bonus));
             }
 
             // Decrement slots atomically (prevent overbooking)
