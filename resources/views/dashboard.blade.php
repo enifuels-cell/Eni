@@ -47,34 +47,34 @@
 </head>
 <body class="bg-eni-charcoal min-h-screen text-white flex flex-col pb-20 sm:pb-8">
   <!-- Header -->
-  <header class="bg-eni-dark px-6 py-4 flex items-center justify-between shadow-md">
-    <div class="flex items-center gap-4">
-      <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
+  <header class="bg-eni-dark px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between shadow-md">
+    <div class="flex items-center gap-3">
+      <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-7 sm:h-8 w-auto" />
       <div>
-        <h1 class="font-extrabold text-xl tracking-tight">Eni Members</h1>
-        <p class="text-sm text-white/70">Welcome back, {{ Auth::user()->name }}</p>
+        <h1 class="font-extrabold text-lg sm:text-xl tracking-tight text-eni-yellow">Eni Members</h1>
+        <p class="text-xs sm:text-sm text-white/60 mt-0.5">Welcome back, {{ Auth::user()->name }}</p>
       </div>
     </div>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-2 sm:gap-3">
       <div class="relative">
-        <button onclick="toggleNotifications()" class="relative p-2 rounded-full hover:bg-white/10" aria-label="notifications">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-white"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
+        <button onclick="toggleNotifications()" class="relative p-1.5 sm:p-2 rounded-full hover:bg-white/10 transition-colors" aria-label="notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 sm:w-6 sm:h-6 text-white"><path d="M8.25 21a3.75 3.75 0 0 0 7.5 0h-7.5ZM4.5 8.25A7.5 7.5 0 0 1 12 3a7.5 7.5 0 0 1 7.5 5.25v4.178l.932 2.8a1.125 1.125 0 0 1-1.068 1.472H4.636a1.125 1.125 0 0 1-1.068-1.472l.932-2.8V8.25Z"/></svg>
           @php
             $totalUnread = $unread_notifications_count + (!Auth::user()->pin_hash ? 1 : 0);
           @endphp
           @if($totalUnread > 0)
             @if($totalUnread > 9)
-              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">9+</span>
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-semibold animate-pulse">9+</span>
             @else
-              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold animate-pulse">{{ $totalUnread }}</span>
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-semibold animate-pulse">{{ $totalUnread }}</span>
             @endif
           @endif
         </button>
       </div>
       <div class="relative">
         <button onclick="toggleProfileMenu()" class="block hover:opacity-80 transition-opacity relative">
-          <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-10 h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
-          <div class="absolute top-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
+          <img src="https://dummyimage.com/40x40/FFCD00/000000&text={{ substr(Auth::user()->name, 0, 1) }}" alt="user avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 border-eni-yellow cursor-pointer"/>
+          <div class="absolute top-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 rounded-full border-2 border-eni-charcoal"></div>
         </button>
 
         <!-- Profile Dropdown Menu -->
@@ -143,70 +143,183 @@
     </div>
   </header>
 
-  <!-- Hero Balance -->
-  <section class="bg-gradient-to-br from-eni-yellow to-yellow-400 text-eni-dark rounded-b-3xl p-6 shadow-glow">
-    <h2 class="text-sm uppercase font-bold tracking-wide">Account Balance</h2>
-    <p class="text-4xl font-extrabold mt-1">$@money($account_balance ?? 0)</p>
-    <p class="text-sm text-eni-dark/70">
-      @if(($total_interest ?? 0) > 0)
-        + $@money($total_interest) Interest Earned
-      @else
-        Ready to start investing
-      @endif
-    </p>
-    <div class="flex gap-4 mt-6">
-      <button onclick="window.location.href='{{ route("dashboard.packages") }}'" class="flex-1 bg-eni-dark text-white font-bold py-3 rounded-xl hover:bg-black/80">Invest</button>
-      <button onclick="window.location.href='{{ route("dashboard.withdraw") }}'" class="flex-1 bg-white text-eni-dark font-bold py-3 rounded-xl hover:bg-gray-100">Withdraw</button>
+  <!-- Hero Balance Card - Optimized Compact Design -->
+  <section class="px-4 sm:px-6 mt-4">
+    <div class="bg-gradient-to-br from-eni-yellow via-yellow-400 to-yellow-500 text-eni-dark rounded-2xl p-4 sm:p-5 shadow-[0_8px_30px_rgba(255,205,0,0.4)]">
+      <!-- Balance Display -->
+      <div class="mb-4">
+        <h2 class="text-[10px] sm:text-xs uppercase font-bold tracking-wide text-eni-dark/70 mb-1">Account Balance</h2>
+        <p class="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-tight">$@money($account_balance ?? 0)</p>
+        <p class="text-[10px] sm:text-xs text-eni-dark/60 mt-0.5 italic">
+          @if(($total_interest ?? 0) > 0)
+            + $@money($total_interest) Interest Earned
+          @else
+            Ready to start investing
+          @endif
+        </p>
+      </div>
+
+      <!-- Action Buttons - Compact & Responsive -->
+      <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+        <button onclick="window.location.href='{{ route("dashboard.packages") }}'" class="flex-1 bg-eni-dark text-white font-semibold py-2.5 sm:py-3 rounded-xl hover:bg-black transition-all hover:shadow-lg active:scale-95 text-sm">
+          <i class="fas fa-chart-line mr-2 text-xs"></i>Invest
+        </button>
+        <button onclick="window.location.href='{{ route("dashboard.withdraw") }}'" class="flex-1 bg-white text-eni-dark font-semibold py-2.5 sm:py-3 rounded-xl hover:bg-gray-100 transition-all hover:shadow-lg active:scale-95 text-sm">
+          <i class="fas fa-wallet mr-2 text-xs"></i>Withdraw
+        </button>
+      </div>
     </div>
   </section>
 
-  <!-- Circular KPI Cards -->
-  <section class="grid grid-cols-3 gap-4 px-6 mt-6">
-    <div class="bg-white/5 rounded-2xl p-4 text-center">
-      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-lg">
+  <!-- Stats Cards - Uniform Height & Spacing -->
+  <section class="grid grid-cols-3 gap-3 sm:gap-4 px-4 sm:px-6 mt-6">
+    <!-- Active Investments -->
+    <div class="bg-white/5 backdrop-blur rounded-2xl p-3 sm:p-4 text-center flex flex-col items-center justify-center min-h-[130px] hover:bg-white/10 transition-all hover:scale-105">
+      <div class="mx-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center font-extrabold text-base sm:text-lg mb-2">
         {{ ($active_investments ?? 0) }}
       </div>
-      <p class="text-xs mt-2 text-white/70">Active Investments</p>
+      <p class="text-[10px] sm:text-xs text-white/70 leading-tight">Active<br>Investments</p>
     </div>
-            <!-- Total Invested (Yellow Background) -->
-        <div class="bg-eni-yellow rounded-2xl p-3 md:p-6 flex flex-col items-center justify-center min-h-[120px]">
-            <div class="text-center w-full px-2">
-                <p class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-blue-900 break-all leading-tight">${{ number_format($total_invested, 2) }}</p>
-                <p class="text-[10px] sm:text-xs md:text-sm font-medium text-blue-900 mt-1 whitespace-nowrap">Total Invested</p>
-            </div>
-        </div>
-    <div class="bg-white/5 rounded-2xl p-4 text-center">
-      <div class="mx-auto w-16 h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center">
-        <i class="fas fa-gift text-eni-yellow text-2xl"></i>
+
+    <!-- Total Invested -->
+    <div class="bg-eni-yellow rounded-2xl p-3 sm:p-4 flex flex-col items-center justify-center min-h-[130px] hover:shadow-lg transition-all hover:scale-105">
+      <div class="text-center w-full">
+        <p class="text-lg sm:text-xl md:text-2xl font-bold text-blue-900 break-all leading-tight">${{ number_format($total_invested, 2) }}</p>
+        <p class="text-[10px] sm:text-xs font-medium text-blue-900 mt-1.5 whitespace-nowrap">Total Invested</p>
       </div>
-      <p class="text-lg font-bold mt-2 text-eni-yellow">$@money($total_referral_bonus ?? 0)</p>
-      <p class="text-xs text-white/70">Referral Bonus</p>
+    </div>
+
+    <!-- Referral Bonus -->
+    <div class="bg-white/5 backdrop-blur rounded-2xl p-3 sm:p-4 text-center flex flex-col items-center justify-center min-h-[130px] hover:bg-white/10 transition-all hover:scale-105">
+      <div class="mx-auto w-14 h-14 sm:w-16 sm:h-16 rounded-full border-4 border-eni-yellow flex items-center justify-center mb-2">
+        <i class="fas fa-gift text-eni-yellow text-xl sm:text-2xl"></i>
+      </div>
+      <p class="text-base sm:text-lg font-bold text-eni-yellow leading-tight">${{ number_format($total_referral_bonus ?? 0, 2) }}</p>
+      <p class="text-[10px] sm:text-xs text-white/70 leading-tight mt-1">Referral<br>Bonus</p>
     </div>
   </section>
 
-  <!-- Investment Packages -->
-  <section class="px-6 mt-6">
-    <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-eni-dark to-eni-yellow text-white shadow-md">
-      <div class="p-6">
-        <h3 class="font-bold text-lg">Premium Investment Packages</h3>
-        <p class="text-sm mt-1 text-white/80">Earn guaranteed daily returns with our secure investment options.</p>
-        <button onclick="window.location.href='{{ route('dashboard.packages') }}'" class="mt-3 bg-white text-eni-dark px-4 py-2 rounded-lg font-semibold">Browse Packages</button>
+  <!-- Investment Packages Carousel - Corporate Side-by-Side Layout -->
+  <section class="px-4 sm:px-6 mt-6">
+    <div class="relative bg-gradient-to-r from-eni-yellow to-yellow-400 rounded-2xl overflow-hidden">
+      <div class="flex flex-row items-center">
+        <!-- Text Content Section (Left) -->
+        <div class="flex-1 p-4 sm:p-5 text-blue-900">
+          <h3 class="text-base sm:text-lg font-bold leading-tight mb-1 sm:mb-2">Premium Investment Packages</h3>
+          <p class="text-[10px] sm:text-xs leading-snug text-blue-900/80 mb-2 sm:mb-3">Earn guaranteed daily returns with our secure investment options.</p>
+
+          <!-- Navigation Dots -->
+          @if(isset($investmentPackages) && $investmentPackages->count() > 1)
+          <div class="flex gap-1.5 mb-2 sm:mb-3">
+            @foreach($investmentPackages as $index => $package)
+              <button
+                onclick="showPackage({{ $index }})"
+                class="package-dot w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-all duration-300 {{ $index === 0 ? 'bg-blue-900 w-4 sm:w-6' : 'bg-blue-900/30' }}"
+                data-dot-index="{{ $index }}">
+              </button>
+            @endforeach
+          </div>
+          @endif
+
+          <!-- CTA Button -->
+          <a href="{{ route('dashboard.packages') }}" class="inline-flex items-center gap-2 bg-blue-900 text-eni-yellow px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg font-semibold text-xs sm:text-sm hover:bg-blue-800 hover:shadow-lg active:scale-95 transition-all">
+            Browse Packages
+          </a>
+        </div>
+
+        <!-- Gradient Divider -->
+        <div class="w-8 sm:w-12 h-full bg-gradient-to-r from-yellow-400/0 via-yellow-600/30 to-transparent"></div>
+
+        <!-- Video Package Card (Right) -->
+        <div class="relative w-32 sm:w-48 h-[120px] sm:h-[140px] flex-shrink-0 pr-3 sm:pr-4 group">
+          @if(isset($investmentPackages) && $investmentPackages->count() > 0)
+            @foreach($investmentPackages as $index => $package)
+              @php
+                $videoFile = match($index) {
+                  0 => 'Energy.mp4',
+                  1 => 'Growth.mp4',
+                  2 => 'Capital.mp4',
+                  default => 'Energy.mp4'
+                };
+              @endphp
+              <div class="package-carousel-item absolute inset-0 transition-all duration-500 {{ $index === 0 ? 'opacity-100' : 'opacity-0' }}" data-index="{{ $index }}">
+                <div class="relative w-full h-full transform transition-all duration-300 group-hover:scale-105 group-hover:-translate-y-1">
+                  <video
+                    class="w-full h-full object-cover rounded-lg sm:rounded-xl shadow-lg group-hover:shadow-2xl transition-shadow duration-300"
+                    autoplay
+                    loop
+                    muted
+                  playsinline
+                  webkit-playsinline
+                  preload="{{ $index === 0 ? 'auto' : 'metadata' }}">
+                  <source src="{{ asset($videoFile) }}" type="video/mp4">
+                </video>
+
+                  <!-- Hover Overlay -->
+                  <div class="absolute inset-0 bg-blue-900/0 group-hover:bg-blue-900/10 rounded-lg sm:rounded-xl transition-colors duration-300 pointer-events-none"></div>
+
+                  <!-- Shine Effect on Hover -->
+                  <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none overflow-hidden rounded-lg sm:rounded-xl">
+                    <div class="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+                  </div>
+                </div>
+              </div>
+            @endforeach
+          @endif
+        </div>
       </div>
     </div>
-  </section>
+  </section>  @if(isset($investmentPackages) && $investmentPackages->count() > 1)
+  <script>
+    let currentPackageIndex = 0;
+    const totalPackages = {{ $investmentPackages->count() }};
 
-  <!-- Franchise Opportunity -->
-  <section class="px-6 mt-6">
-    <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-gray-800 to-eni-dark border border-eni-yellow/20 text-white shadow-md">
-      <div class="p-6">
-        <div class="flex items-center mb-2">
-          <i class="fas fa-gas-pump text-2xl mr-3 text-eni-yellow"></i>
-          <h3 class="font-bold text-lg">ENI Fuel Station Franchise</h3>
+    function showPackage(index) {
+      // Hide all packages
+      document.querySelectorAll('.package-carousel-item').forEach((item, i) => {
+        item.classList.toggle('opacity-100', i === index);
+        item.classList.toggle('opacity-0', i !== index);
+      });
+
+      // Update dots
+      document.querySelectorAll('.package-dot').forEach((dot, i) => {
+        if (i === index) {
+          dot.classList.remove('bg-blue-900/30', 'w-2');
+          dot.classList.add('bg-blue-900', 'w-6');
+        } else {
+          dot.classList.remove('bg-blue-900', 'w-6');
+          dot.classList.add('bg-blue-900/30', 'w-2');
+        }
+      });
+
+      currentPackageIndex = index;
+    }
+
+    // Auto-rotate every 3 seconds
+    setInterval(() => {
+      currentPackageIndex = (currentPackageIndex + 1) % totalPackages;
+      showPackage(currentPackageIndex);
+    }, 3000);
+  </script>
+  @endif
+
+  <!-- Franchise Opportunity - Compact Design -->
+  <section class="px-4 sm:px-6 mt-6">
+    <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-gray-800 to-eni-dark border border-eni-yellow/20 text-white">
+      <div class="p-4 sm:p-5">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-eni-yellow/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <i class="fas fa-gas-pump text-xl sm:text-2xl text-eni-yellow"></i>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-lg sm:text-xl font-bold text-eni-yellow leading-tight">ENI Fuel Station Franchise</h3>
+          </div>
         </div>
-        <p class="text-sm mt-1 text-white/80">Open your own ENI fuel station. Join our network of service stations with proven business model and ongoing support.</p>
-        <div class="mt-4">
-          <button onclick="window.location.href='{{ route('dashboard.franchise') }}'" class="bg-eni-yellow text-eni-dark px-4 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">Learn More</button>
-        </div>
+        <p class="text-xs sm:text-sm text-white/80 leading-snug mb-3 pl-1">Open your own ENI fuel station. Join our network of service stations with proven business model and ongoing support.</p>
+        <button onclick="window.location.href='{{ route('dashboard.franchise') }}'" class="inline-flex items-center gap-2 bg-eni-yellow text-eni-dark px-5 sm:px-6 py-2.5 rounded-full font-semibold text-xs sm:text-sm hover:bg-yellow-400 hover:shadow-lg active:scale-95 transition-all">
+          <i class="fas fa-arrow-right text-xs"></i>
+          Learn More
+        </button>
       </div>
     </div>
   </section>
@@ -237,30 +350,36 @@
 
   <!-- Floating Navigation -->
   <nav id="floatingNav" class="fixed bottom-4 sm:bottom-6 inset-x-4 sm:inset-x-0 flex justify-center z-40 transform transition-transform duration-300 ease-in-out" style="padding-bottom: env(safe-area-inset-bottom, 0px);">
-    <div class="bg-eni-dark/95 backdrop-blur border border-eni-yellow/20 shadow-lg shadow-black/25 px-3 sm:px-6 py-3 rounded-2xl flex gap-2 sm:gap-6 text-xs sm:text-sm font-medium overflow-x-auto max-w-full">
-      <a href="{{ route('dashboard') }}" class="text-eni-yellow flex items-center gap-1 hover:text-yellow-300 hover:bg-white/10 active:bg-white/20 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-home text-xs"></i>
-        <span class="text-xs font-medium">Home</span>
+    <div class="bg-eni-dark/95 backdrop-blur border border-eni-yellow/20 shadow-lg shadow-black/25 px-3 sm:px-6 py-3 rounded-2xl flex gap-2 sm:gap-4 text-xs sm:text-sm font-medium overflow-x-auto max-w-full">
+      <!-- Home -->
+      <a href="{{ route('dashboard') }}" class="text-eni-yellow flex flex-col items-center gap-1.5 hover:text-yellow-300 hover:bg-white/10 active:bg-white/20 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-home text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">Home</span>
       </a>
-      <a href="{{ route('dashboard.packages') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-chart-line text-xs"></i>
-        <span class="text-xs font-medium">Invest</span>
+      <!-- Invest -->
+      <a href="{{ route('dashboard.packages') }}" class="text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 flex flex-col items-center gap-1.5 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-chart-line text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">Invest</span>
       </a>
-      <a href="{{ route('dashboard.referrals') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-users text-xs"></i>
-        <span class="text-xs font-medium">Refer</span>
+      <!-- Refer -->
+      <a href="{{ route('dashboard.referrals') }}" class="text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 flex flex-col items-center gap-1.5 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-users text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">Refer</span>
       </a>
-      <a href="{{ route('dashboard.franchise') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-gas-pump text-xs"></i>
-        <span class="text-xs font-medium">Fuel</span>
+      <!-- Fuel -->
+      <a href="{{ route('dashboard.franchise') }}" class="text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 flex flex-col items-center gap-1.5 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-gas-pump text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">Fuel</span>
       </a>
-      <a href="{{ route('dashboard.transfer') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-exchange-alt text-xs"></i>
-        <span class="text-xs font-medium">Send</span>
+      <!-- Send -->
+      <a href="{{ route('dashboard.transfer') }}" class="text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 flex flex-col items-center gap-1.5 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-exchange-alt text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">Send</span>
       </a>
-      <a href="{{ route('dashboard.transactions') }}" class="text-white/70 hover:text-white hover:bg-white/10 active:bg-white/20 flex items-center gap-1 transition-all duration-200 whitespace-nowrap py-2 px-3 rounded-lg min-w-0 touch-manipulation">
-        <i class="fas fa-history text-xs"></i>
-        <span class="text-xs font-medium">History</span>
+      <!-- History -->
+      <a href="{{ route('dashboard.transactions') }}" class="text-white/50 hover:text-white hover:bg-white/10 active:bg-white/20 flex flex-col items-center gap-1.5 transition-all duration-200 py-2 px-2.5 sm:px-3 rounded-lg touch-manipulation min-w-[50px]">
+        <i class="fas fa-history text-base sm:text-lg"></i>
+        <span class="text-[10px] sm:text-xs font-medium">History</span>
       </a>
     </div>
   </nav>

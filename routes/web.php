@@ -56,6 +56,40 @@ if (config('app.env') !== 'production') {
         ]);
     });
 
+    // Debug transactions and investments
+    Route::middleware(['auth', 'admin'])->get('/debug/all-data', function () {
+        $html = '<h1>All Transactions</h1>';
+        $transactions = \App\Models\Transaction::with('user')->orderBy('created_at', 'desc')->get();
+        foreach ($transactions as $txn) {
+            $html .= "<div style='border:1px solid #ccc; padding:10px; margin:5px 0;'>";
+            $html .= "<strong>ID: {$txn->id}</strong> | User: {$txn->user->name} | Type: {$txn->type} | Amount: \${$txn->amount}<br>";
+            $html .= "Status: {$txn->status} | Description: {$txn->description}<br>";
+            $html .= "Created: {$txn->created_at} | Processed: {$txn->processed_at}</div>";
+        }
+
+        $html .= '<h1>All Investments</h1>';
+        $investments = \App\Models\Investment::with(['user', 'investmentPackage'])->orderBy('created_at', 'desc')->get();
+        foreach ($investments as $inv) {
+            $bg = $inv->active ? '#e0ffe0' : '#ffe0e0';
+            $html .= "<div style='border:1px solid #ccc; padding:10px; margin:5px 0; background:{$bg}'>";
+            $html .= "<strong>ID: {$inv->id}</strong> | User: {$inv->user->name} | Package: {$inv->investmentPackage->name}<br>";
+            $html .= "Amount: \${$inv->amount} | Active: " . ($inv->active ? 'YES' : 'NO') . "<br>";
+            $html .= "Created: {$inv->created_at} | Started: {$inv->started_at}</div>";
+        }
+
+        $html .= '<h1>User Balances</h1>';
+        $users = \App\Models\User::all();
+        foreach ($users as $user) {
+            $html .= "<div style='border:1px solid #ccc; padding:10px; margin:5px 0;'>";
+            $html .= "<strong>{$user->name}</strong> (ID: {$user->id}) | {$user->email}<br>";
+            $html .= "Account Balance: \${$user->account_balance} | Total Invested: \${$user->totalInvestedAmount()}<br>";
+            $html .= "Active Investments: " . $user->investments()->where('active', true)->count();
+            $html .= " | Inactive: " . $user->investments()->where('active', false)->count() . "</div>";
+        }
+
+        return $html;
+    });
+
     // Debug route for investment issues
     Route::get('/debug-investment', function () {
         $user = auth()->user();

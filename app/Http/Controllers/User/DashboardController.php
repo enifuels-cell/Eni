@@ -60,6 +60,11 @@ class DashboardController extends Controller
             return $date->toDateString();
         })->toArray();
 
+        // Get investment packages for rotating banner
+        $investmentPackages = InvestmentPackage::active()
+            ->orderBy('min_amount')
+            ->get();
+
         return view('dashboard', compact(
             'total_invested',
             'total_interest',
@@ -73,7 +78,8 @@ class DashboardController extends Controller
             'currentMonthTickets',
             'currentMonthAttendance',
             'currentMonthDays',
-            'attendanceDates'
+            'attendanceDates',
+            'investmentPackages'
         ));
     }
 
