@@ -112,13 +112,11 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             transform-origin: center;
-            min-height: 320px; /* Reduced from 400px */
             max-width: 100%;
         }
 
-        /* Energy Saver card - maintains GIF aspect ratio */
+        /* Energy Saver card - Remove fixed height to match video content */
         .package-card.energy-saver-card {
-            min-height: 420px; /* Reduced from 550px */
             height: auto;
             max-width: 100%;
         }
