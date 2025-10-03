@@ -149,7 +149,9 @@ class DashboardController extends Controller
             ->paginate(10);
 
         // Get available investment packages
-        $investmentPackages = InvestmentPackage::active()->get();
+        $investmentPackages = InvestmentPackage::active()
+            ->orderBy('min_amount', 'asc') // Order by min_amount to ensure correct display order
+            ->get();
         \Log::info('Investment packages loaded for user.investments view: ' . $investmentPackages->count());
 
         return view('user.investments', compact('investments', 'investmentPackages'));
@@ -230,7 +232,9 @@ class DashboardController extends Controller
 
     public function packages()
     {
-        $investmentPackages = InvestmentPackage::active()->get();
+        $investmentPackages = InvestmentPackage::active()
+            ->orderBy('min_amount', 'asc') // Order by min_amount to ensure correct display order
+            ->get();
         $accountBalance = Auth::user()->accountBalance(); // Use calculated balance that excludes locked investments
 
         // Get user's investments for the "Your Active Investments" section

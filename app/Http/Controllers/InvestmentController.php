@@ -19,12 +19,16 @@ class InvestmentController extends Controller
         \Log::info('InvestmentController index called');
         
         // Try using active() instead of available() for debugging
-        $packages = InvestmentPackage::active()->get();
+        $packages = InvestmentPackage::active()
+            ->orderBy('min_amount', 'asc') // Order by min_amount to ensure correct display order
+            ->get();
         \Log::info('Active packages count: ' . $packages->count());
         \Log::info('All packages count: ' . InvestmentPackage::count());
         
         // Also get available packages separately for comparison
-        $availablePackages = InvestmentPackage::available()->get();
+        $availablePackages = InvestmentPackage::available()
+            ->orderBy('min_amount', 'asc') // Order by min_amount to ensure correct display order
+            ->get();
         \Log::info('Available packages count: ' . $availablePackages->count());
         
         $userInvestments = Auth::user()->investments()->with('investmentPackage')->latest()->get();
