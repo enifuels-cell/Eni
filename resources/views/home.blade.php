@@ -1884,7 +1884,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (video) {
             // Try to play the video
             const playPromise = video.play();
-            
+
             if (playPromise !== undefined) {
                 playPromise.catch(error => {
                     console.log('Auto-play prevented, trying to enable on user interaction:', error);
