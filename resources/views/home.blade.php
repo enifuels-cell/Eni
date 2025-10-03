@@ -588,16 +588,19 @@
         <!-- Coral South Project Video Showcase -->
         <div class="mt-20 animate-on-scroll">
             <div class="relative rounded-2xl overflow-hidden border-2 border-eni-yellow/30 shadow-2xl">
-                <!-- Video Container with 16:9 Aspect Ratio -->
-                <div class="relative w-full" style="aspect-ratio: 16/9;">
+                <!-- Video Container with 16:9 Aspect Ratio - Mobile Optimized -->
+                <div class="relative w-full pb-[56.25%]">
                     <video
-                        class="absolute inset-0 w-full h-full object-cover"
+                        class="absolute top-0 left-0 w-full h-full object-cover"
                         autoplay
                         muted
                         loop
                         playsinline
+                        webkit-playsinline
+                        x5-playsinline
                         poster="https://images.unsplash.com/photo-1565567934436-d7aca2346c34?w=1200&q=80"
-                        preload="auto">
+                        preload="metadata"
+                        onloadedmetadata="this.play()">
                         <source src="{{ asset('The Coral South Project.mp4') }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -1874,6 +1877,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    // Mobile video autoplay fix
+    document.addEventListener('DOMContentLoaded', function() {
+        const video = document.querySelector('video');
+        if (video) {
+            // Try to play the video
+            const playPromise = video.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log('Auto-play prevented, trying to enable on user interaction:', error);
+                    // On mobile, sometimes autoplay is blocked until user interaction
+                    document.addEventListener('touchstart', function playOnTouch() {
+                        video.play();
+                        document.removeEventListener('touchstart', playOnTouch);
+                    }, { once: true });
+                });
+            }
+
+            // Ensure video plays when it comes into viewport on mobile
+            const videoObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.play().catch(e => console.log('Play error:', e));
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            videoObserver.observe(video);
+        }
+    });
 });
 </script>
 @endsection
