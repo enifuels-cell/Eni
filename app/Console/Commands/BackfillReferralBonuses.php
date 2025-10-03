@@ -28,7 +28,7 @@ class BackfillReferralBonuses extends Command
         foreach ($investments as $investment) {
             // Check if this investment already has a referral bonus
             $existingBonus = ReferralBonus::where('investment_id', $investment->id)->first();
-            
+
             if ($existingBonus) {
                 $skipped++;
                 continue;
@@ -36,7 +36,7 @@ class BackfillReferralBonuses extends Command
 
             // Check if the investor was referred by someone
             $referral = $investment->user->referralReceived;
-            
+
             if (!$referral) {
                 $skipped++;
                 continue;
