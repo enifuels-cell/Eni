@@ -440,10 +440,15 @@
         </div>
 
         @forelse($recent_notifications as $notification)
-        <div class="bg-white/5 border border-white/10 rounded-lg p-4 cursor-pointer hover:bg-white/10 transition-all duration-200" onclick="window.location.href='{{ route('user.notifications') }}'">
+        @php
+          $notificationData = is_string($notification->data) ? json_decode($notification->data, true) : $notification->data;
+          $isSignupBonus = isset($notificationData['type']) && $notificationData['type'] === 'signup_bonus';
+        @endphp
+
+        <div class="bg-white/5 border border-white/10 rounded-lg p-4 {{ $isSignupBonus ? '' : 'cursor-pointer hover:bg-white/10' }} transition-all duration-200" {{ $isSignupBonus ? '' : "onclick=window.location.href='" . route('user.notifications') . "'" }}>
           <div class="flex items-start gap-3">
-            <div class="w-8 h-8 bg-white/10 border border-white/20 rounded-full flex items-center justify-center">
-              <i class="{{ $notification->icon }} text-eni-yellow text-xs"></i>
+            <div class="w-8 h-8 {{ $isSignupBonus ? 'bg-eni-yellow/20 border-eni-yellow/40' : 'bg-white/10 border-white/20' }} border rounded-full flex items-center justify-center">
+              <i class="{{ $notification->icon }} {{ $isSignupBonus ? 'text-eni-yellow' : 'text-eni-yellow' }} text-xs"></i>
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between">
@@ -453,10 +458,22 @@
                 @endif
               </div>
               <p class="text-white/70 text-xs mt-1">{!! \Illuminate\Support\Str::limit($notification->message, 80) !!}</p>
-              <div class="flex items-center justify-between mt-2">
-                <span class="text-white/50 text-xs">{{ $notification->created_at->diffForHumans() }}</span>
-                <span class="text-white/40 text-xs capitalize">{{ $notification->category }}</span>
-              </div>
+
+              @if($isSignupBonus && !Auth::user()->signup_bonus_claimed)
+                <!-- Signup Bonus Claim Button -->
+                <div class="mt-3">
+                  <button onclick="event.stopPropagation(); claimSignupBonus(this, event)"
+                          class="w-full px-4 py-2 bg-eni-yellow text-eni-dark font-bold rounded-lg hover:bg-yellow-400 transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="fas fa-gift"></i>
+                    <span>Claim $10 Bonus</span>
+                  </button>
+                </div>
+              @else
+                <div class="flex items-center justify-between mt-2">
+                  <span class="text-white/50 text-xs">{{ $notification->created_at->diffForHumans() }}</span>
+                  <span class="text-white/40 text-xs capitalize">{{ $notification->category }}</span>
+                </div>
+              @endif
             </div>
           </div>
         </div>
@@ -503,6 +520,51 @@
         });
       } catch (error) {
         console.error('Error marking notification as read:', error);
+      }
+    }
+
+    // Claim Signup Bonus Function
+    async function claimSignupBonus(button, event) {
+      event.stopPropagation();
+      event.preventDefault();
+
+      const originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Claiming...</span>';
+
+      try {
+        const response = await fetch('{{ route("user.claim-signup-bonus") }}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show success state
+          button.innerHTML = '<i class="fas fa-check"></i> <span>Claimed!</span>';
+          button.classList.remove('bg-eni-yellow', 'hover:bg-yellow-400');
+          button.classList.add('bg-green-500');
+
+          // Show alert
+          alert('🎉 ' + data.message);
+
+          // Reload page to update balance and notifications
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
+        } else {
+          throw new Error(data.message || 'Failed to claim bonus');
+        }
+      } catch (error) {
+        console.error('Error claiming bonus:', error);
+        alert('❌ ' + error.message);
+        button.disabled = false;
+        button.innerHTML = originalText;
       }
     }
 

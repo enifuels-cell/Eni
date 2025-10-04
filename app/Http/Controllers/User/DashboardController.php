@@ -954,6 +954,9 @@ class DashboardController extends Controller
                 'processed_at' => now(),
             ]);
 
+            // Increment account balance
+            $user->increment('account_balance', $bonusAmount);
+
             // Update user record
             $user->update([
                 'signup_bonus_claimed' => true,
