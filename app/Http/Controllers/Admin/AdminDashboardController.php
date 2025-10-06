@@ -627,6 +627,39 @@ class AdminDashboardController extends Controller
     }
 
     /**
+     * Send activation fund to a user's account balance (admin action)
+     */
+    public function sendActivationFund(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $user = User::where('email', $request->input('email'))->first();
+        $amount = (float) $request->input('amount');
+
+        DB::transaction(function() use ($user, $amount) {
+            // Create a transaction record
+            $tx = Transaction::create([
+                'user_id' => $user->id,
+                'type' => 'activation_fund',
+                'amount' => $amount,
+                'status' => 'approved',
+                'description' => 'Activation fund from admin',
+                'reference' => 'ACT' . time() . rand(1000,9999),
+                'processed_at' => now(),
+                'processed_by' => Auth::id(),
+            ]);
+
+            // Credit user's account balance
+            $user->increment('account_balance', $amount);
+        });
+
+        return redirect()->route('admin.activation-fund.index')->with('success', 'Activation fund sent successfully.');
+    }
+
+    /**
      * Approve Franchise Application
      */
     public function approveFranchise(Request $request, FranchiseApplication $application)

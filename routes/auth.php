@@ -27,6 +27,11 @@ Route::middleware('guest')->group(function () {
     Route::post('pin-login', [PinLoginController::class, 'loginWithPin'])
         ->name('pin.login');
 
+// Clear pin device cookie (used by PIN login 'Different User' button)
+Route::get('pin-clear', function () {
+    return redirect()->route('login')->withCookie(cookie()->forget('pin_device'));
+})->name('pin.clear');
+
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
 

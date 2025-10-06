@@ -50,6 +50,7 @@ class Transaction extends Model
         'receipt_path',
         'processed_at',
         'receipt_code',
+        'processed_by',
     ];
 
     protected $casts = [
@@ -60,6 +61,11 @@ class Transaction extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function processedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'processed_by');
     }
 
     public function scopeCompleted($query)
