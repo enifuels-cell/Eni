@@ -126,9 +126,13 @@ class AdminDashboardController extends Controller
                 // Get the amount as a decimal number
                 $amountValue = (float)$transaction->amount;
 
-                // Check if this is a package investment deposit
-                $isInvestmentDeposit = str_contains($transaction->description, 'Investment in') &&
-                                      str_contains($transaction->description, 'package');
+                // Check if this is a package investment deposit (match by description or reference)
+                // Description created during investment uses: "Investment in {PackageName}"
+                // Reference created during investment uses: "Investment #{id}"
+                $isInvestmentDeposit = (
+                    str_contains($transaction->description ?? '', 'Investment in') ||
+                    str_contains((string)($transaction->reference ?? ''), 'Investment #')
+                );
 
                 // Only add to account balance if this is NOT an investment deposit
                 // Investment deposits go directly to locked investment
@@ -184,6 +188,27 @@ class AdminDashboardController extends Controller
                             'active' => true,
                             'started_at' => now()
                         ]);
+
+                        // Fire InvestmentCreated event to reuse existing listeners (e.g., analytics, notifications)
+                        try {
+                            event(new \App\Events\InvestmentCreated($investment));
+                        } catch (\Throwable $e) {
+                            \Log::warning('Failed to dispatch InvestmentCreated event on admin approval: ' . $e->getMessage(), ['investment_id' => $investment->id]);
+                        }
+
+                        // Ensure there's an initial daily interest log row for today's cycle if the system expects it
+                        if ($investment->dailyInterestLogs()->whereDate('created_at', today())->doesntExist()) {
+                            try {
+                                \App\Models\DailyInterestLog::create([
+                                    'user_id' => $transaction->user_id,
+                                    'investment_id' => $investment->id,
+                                    'interest_amount' => $investment->calculateDailyInterest(),
+                                    'interest_date' => today()
+                                ]);
+                            } catch (\Throwable $e) {
+                                \Log::warning('Failed to create initial DailyInterestLog on admin approval: ' . $e->getMessage(), ['investment_id' => $investment->id]);
+                            }
+                        }
 
                         // Deduct available slots from the package if applicable
                         $package = $investment->investmentPackage;

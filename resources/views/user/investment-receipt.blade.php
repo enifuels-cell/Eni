@@ -204,7 +204,13 @@
                             </div>
                             <div class="bg-white rounded-lg p-4 shadow-sm">
                                 <span class="text-gray-600 text-sm font-medium block mb-1">Expected Maturity Date</span>
-                                <span class="font-bold text-lg text-eni-dark">{{ $investment->started_at->addDays($investment->investmentPackage->effective_days)->format('M d, Y') }}</span>
+                                @php
+                                    $maturityDate = 'TBD';
+                                    if (!empty($investment->started_at)) {
+                                        $maturityDate = $investment->started_at->copy()->addDays($investment->investmentPackage->effective_days)->format('M d, Y');
+                                    }
+                                @endphp
+                                <span class="font-bold text-lg text-eni-dark">{{ $maturityDate }}</span>
                             </div>
                             <div class="bg-green-50 rounded-lg p-4 shadow-sm border-2 border-green-200">
                                 <span class="text-green-700 text-sm font-semibold block mb-1">Total Expected Return</span>
