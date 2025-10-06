@@ -27,12 +27,12 @@ class CleanupPackages extends Command
     public function handle()
     {
         $this->info('Cleaning up investment packages...');
-        
+
         // First, delete all existing packages
         $deletedCount = InvestmentPackage::count();
         InvestmentPackage::truncate();
         $this->info("Deleted {$deletedCount} existing packages");
-        
+
         // Create the correct packages
         $packages = [
             [
@@ -74,16 +74,16 @@ class CleanupPackages extends Command
             $created = InvestmentPackage::create($package);
             $this->info("✓ Created: {$created->name} (ID: {$created->id})");
         }
-        
+
         $this->info('Package cleanup completed successfully!');
         $this->newLine();
-        
+
         // Show final state
         $this->info('Current packages:');
         InvestmentPackage::all()->each(function($p) {
-            $this->info("  {$p->name}: \${$p->min_amount} - \${$p->max_amount}, {$p->daily_shares_rate}% daily, {$p->effective_days} days");
+            $this->info('  ' . $p->name . ': $' . $p->min_amount . ' - $' . $p->max_amount . ', ' . $p->daily_shares_rate . "% daily, " . $p->effective_days . ' days');
         });
-        
+
         return 0;
     }
 }

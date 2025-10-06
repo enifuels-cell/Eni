@@ -31,14 +31,14 @@ class ActivateInvestments extends Command
                     $transaction->update(['status' => 'completed', 'processed_at' => now()]);
                     $this->info("Transaction #{$transactionId} marked as completed");
                 }
-                
+
                 // Find related investment
                 $investment = Investment::where('user_id', $transaction->user_id)
                     ->where('amount', $transaction->amount)
                     ->where('active', false)
                     ->orderBy('created_at', 'desc')
                     ->first();
-                    
+
                 if ($investment) {
                     $query = Investment::where('id', $investment->id);
                 } else {
@@ -65,7 +65,7 @@ class ActivateInvestments extends Command
 
         $this->info("Found {$investments->count()} inactive investment(s):");
         foreach ($investments as $investment) {
-            $this->line("- Investment #{$investment->id}: {$investment->user->name} - \${$investment->amount} ({$investment->investmentPackage->name})");
+            $this->line('- Investment #' . $investment->id . ': ' . $investment->user->name . ' - $' . $investment->amount . ' (' . $investment->investmentPackage->name . ')');
         }
 
         if (!$this->confirm('Activate these investments?')) {
@@ -83,21 +83,21 @@ class ActivateInvestments extends Command
                     'active' => true,
                     'started_at' => now()
                 ]);
-                
+
                 // Create referral bonus if applicable
                 $investment->createReferralBonus();
-                
+
                 $activatedCount++;
-                
+
                 // Check if referral bonus was created
                 $referralBonus = $investment->referralBonuses()->latest()->first();
                 if ($referralBonus) {
                     $bonusesCreated++;
-                    $this->info("✓ Investment #{$investment->id} activated with referral bonus: \${$referralBonus->bonus_amount}");
+                    $this->info('✓ Investment #' . $investment->id . ' activated with referral bonus: $' . $referralBonus->bonus_amount);
                 } else {
                     $this->info("✓ Investment #{$investment->id} activated (no referral)");
                 }
-                
+
             } catch (\Exception $e) {
                 $this->error("✗ Failed to activate investment #{$investment->id}: {$e->getMessage()}");
             }

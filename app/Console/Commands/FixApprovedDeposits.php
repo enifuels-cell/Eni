@@ -27,7 +27,7 @@ class FixApprovedDeposits extends Command
         foreach ($allApprovedDeposits as $txn) {
             $this->info("Transaction ID: {$txn->id}");
             $this->info("  User: {$txn->user->name} (ID: {$txn->user_id})");
-            $this->info("  Amount: \${$txn->amount}");
+            $this->info('  Amount: $' . $txn->amount);
             $this->info("  Description: {$txn->description}");
             $this->info("  Payment Method: {$txn->payment_method}");
             $this->info("  Created: {$txn->created_at}");
@@ -49,14 +49,14 @@ class FixApprovedDeposits extends Command
             foreach ($investments as $inv) {
                 $this->info("    - Investment ID: {$inv->id}");
                 $this->info("      Package: {$inv->investmentPackage->name}");
-                $this->info("      Amount: \${$inv->amount}");
+                    $this->info('      Amount: $' . $inv->amount);
                 $this->info("      Active: " . ($inv->active ? 'YES' : 'NO'));
                 $this->info("      Created: {$inv->created_at}");
             }
 
             $this->info("  User Stats:");
-            $this->info("    Total Invested: \${$user->totalInvestedAmount()}");
-            $this->info("    Account Balance: \${$user->accountBalance()}");
+                $this->info('    Total Invested: $' . $user->totalInvestedAmount());
+                $this->info('    Account Balance: $' . $user->accountBalance());
             $this->info("    Active Investments: " . $user->investments()->where('active', true)->count());
             $this->info("");
         }
@@ -88,7 +88,7 @@ class FixApprovedDeposits extends Command
 
             if ($investments->isNotEmpty()) {
                 foreach ($investments as $investment) {
-                    $this->line("  Activating investment #{$investment->id} for user {$transaction->user->name} (${$transactionAmountValue})");
+                    $this->line('  Activating investment #' . $investment->id . ' for user ' . $transaction->user->name . ' ($' . $transactionAmountValue . ')');
 
                     $investment->update([
                         'active' => true,
@@ -137,7 +137,7 @@ class FixApprovedDeposits extends Command
                                     'processed_at' => now()
                                 ]);
 
-                                $this->line("    + Created referral bonus of ${$bonusAmount} for referrer {$referrer->name}");
+                                $this->line('    + Created referral bonus of $' . $bonusAmount . ' for referrer ' . $referrer->name);
                             }
                         }
                     }

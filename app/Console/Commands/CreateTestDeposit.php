@@ -54,7 +54,7 @@ class CreateTestDeposit extends Command
         $this->info("✅ Test deposit created successfully!");
         $this->info("Deposit ID: {$deposit->id}");
         $this->info("User: {$user->name} ({$user->email})");
-        $this->info("Amount: \${$deposit->amount}");
+    $this->info('Amount: $' . $deposit->amount);
         $this->info("Reference: {$deposit->reference}");
         $this->info("Status: {$deposit->status}");
         $this->info("");

@@ -28,18 +28,18 @@ class CheckPackages extends Command
     {
         $this->info('Current Investment Packages:');
         $this->info('===========================');
-        
+
         $packages = InvestmentPackage::all();
-        
+
         foreach ($packages as $package) {
             $this->info("Package: {$package->name}");
-            $this->info("  Amount Range: \${$package->min_amount} - \${$package->max_amount}");
+            $this->info('  Amount Range: $' . $package->min_amount . ' - $' . $package->max_amount);
             $this->info("  Daily Interest: {$package->daily_shares_rate}%");
             $this->info("  Maturity: {$package->effective_days} days");
             $this->info("  Active: " . ($package->active ? 'Yes' : 'No'));
             $this->info('---');
         }
-        
+
         return 0;
     }
 }

@@ -30,7 +30,7 @@ class CreateActiveInvestment extends Command
     {
         $user = User::first();
         $package = InvestmentPackage::first();
-        
+
         if (!$user || !$package) {
             $this->error('Need at least one user and one investment package');
             return Command::FAILURE;
@@ -49,9 +49,9 @@ class CreateActiveInvestment extends Command
         $this->info("✅ Active investment created!");
         $this->info("Investment ID: {$investment->id}");
         $this->info("User: {$user->name}");
-        $this->info("Amount: \${$investment->amount}");
+    $this->info('Amount: $' . $investment->amount);
         $this->info("Status: " . ($investment->active ? 'Active' : 'Inactive'));
-        
+
         $this->info("Now the dashboard should show \$1000 as Total Invested");
 
         return Command::SUCCESS;
