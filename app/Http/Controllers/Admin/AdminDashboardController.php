@@ -159,20 +159,54 @@ class AdminDashboardController extends Controller
                         });
 
                     if ($investments->isEmpty()) {
-                        \Log::warning('No matching investment found for deposit approval', [
+                        // Log the initial failure to find a matching investment
+                        \Log::warning('No matching investment found for deposit approval (initial search)', [
                             'transaction_id' => $transaction->id,
                             'user_id' => $transaction->user_id,
                             'amount' => $transactionAmountValue,
                             'description' => $transaction->description,
                             'created_at' => $transaction->created_at,
-                            'all_inactive_investments' => $transaction->user->investments()->where('active', false)->get()->map(function($inv) {
-                                return [
-                                    'id' => $inv->id,
-                                    'amount' => (float)$inv->amount,
-                                    'created_at' => $inv->created_at
-                                ];
-                            })
                         ]);
+
+                        // Fallback: try to find the most recent inactive investment for the user with the same amount
+                        // This helps when timestamps differ (e.g., bank transfer receipts, manual edits)
+                        $fallbackInvestment = $transaction->user->investments()
+                            ->where('active', false)
+                            ->whereRaw('CAST(amount AS DECIMAL(10,2)) = ?', [$transactionAmountValue])
+                            ->orderBy('created_at', 'desc')
+                            ->first();
+
+                        if ($fallbackInvestment) {
+                            \Log::info('Fallback matched investment for deposit approval', [
+                                'transaction_id' => $transaction->id,
+                                'investment_id' => $fallbackInvestment->id,
+                                'user_id' => $transaction->user_id,
+                            ]);
+                            $investments = collect([$fallbackInvestment]);
+                        } else {
+                            // As a last resort, include all inactive investments with similar amount tolerance (±0.01)
+                            $candidateInvestments = $transaction->user->investments()
+                                ->where('active', false)
+                                ->get()
+                                ->filter(function($inv) use ($transactionAmountValue) {
+                                    $invAmount = (float)$inv->amount;
+                                    return abs($invAmount - $transactionAmountValue) < 0.02;
+                                });
+
+                            if ($candidateInvestments->isNotEmpty()) {
+                                \Log::info('Fallback candidate investments found for deposit approval', [
+                                    'transaction_id' => $transaction->id,
+                                    'candidates' => $candidateInvestments->pluck('id')
+                                ]);
+                                $investments = $candidateInvestments;
+                            } else {
+                                \Log::warning('No matching investment found for deposit approval (all fallbacks failed)', [
+                                    'transaction_id' => $transaction->id,
+                                    'user_id' => $transaction->user_id,
+                                    'amount' => $transactionAmountValue,
+                                ]);
+                            }
+                        }
                     }
 
                     foreach ($investments as $investment) {
@@ -197,7 +231,8 @@ class AdminDashboardController extends Controller
                         }
 
                         // Ensure there's an initial daily interest log row for today's cycle if the system expects it
-                        if ($investment->dailyInterestLogs()->whereDate('created_at', today())->doesntExist()) {
+                        // Ensure initial daily interest log exists (use interest_date to match the updater)
+                        if ($investment->dailyInterestLogs()->whereDate('interest_date', today())->doesntExist()) {
                             try {
                                 \App\Models\DailyInterestLog::create([
                                     'user_id' => $transaction->user_id,

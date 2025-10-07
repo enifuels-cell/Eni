@@ -22,136 +22,136 @@
         }
     </script>
     <style>
-        body { font-family: Inter, ui-sans-serif, system-ui; }
+        <!-- Customer Testimonials -->
+        <div class="mb-16 relative">
+            <!-- Testimonials background enhancement -->
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-eni-yellow/5 to-transparent rounded-3xl blur-3xl"></div>
 
-        /* Payment Modal Animations */
-        #paymentNotAvailableModal {
-            transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
-        }
+            <div class="text-center mb-12 relative z-10">
+                <h3 class="text-3xl font-bold text-white mb-4 text-glow">Trusted by Thousands</h3>
+                <p class="text-white/70 max-w-2xl mx-auto">See what our investors are saying about their ENI experience</p>
+            </div>
 
-        #paymentNotAvailableModal.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+            <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto relative z-10">
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"ENI has completely transformed my investment strategy. The daily returns are consistent and the platform is incredibly reliable. I started with the Growth Power package and I'm already seeing excellent results!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-eni-yellow to-yellow-500 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-eni-dark font-bold text-sm">SM</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">Sarah Martinez</div>
+                            <div class="text-white/60 text-sm">Growth Power Investor</div>
+                        </div>
+                    </div>
+                </div>
 
-        #paymentNotAvailableModal > div {
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"As a newcomer to investing, ENI made everything simple and secure. The Energy Saver package was perfect to start with, and the customer support team is always available to help. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-sm">EC</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">Emily Chen</div>
+                            <div class="text-white/60 text-sm">Energy Saver Investor</div>
+                        </div>
+                    </div>
+                </div>
 
-        #paymentNotAvailableModal.hidden > div {
-            transform: scale(0.95) translateY(-10px);
-            opacity: 0;
-        }
+                <div class="bg-gradient-to-br from-white/10 to-white/5 rounded-2xl p-6 border border-white/10 backdrop-blur-sm hover:from-white/15 hover:to-white/10 transition-all duration-300">
+                    <div class="flex items-center mb-4">
+                        <div class="flex text-eni-yellow">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-white/80 mb-4 italic">"The Capital Prime package has exceeded all my expectations. ENI's transparency and professional approach to investment management is unmatched. The referral system is also fantastic!"</p>
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-sm">DJ</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-white">David Johnson</div>
+                            <div class="text-white/60 text-sm">Capital Prime Investor</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        /* Pulse animation for unavailable options */
-        .payment-unavailable {
-            animation: pulse-eni 0.6s ease-in-out;
-        }
-
-        /* Enhanced animations for modern SaaS feel */
-        .float-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .float-delayed {
-            animation: float 6s ease-in-out infinite;
-            animation-delay: -2s;
-        }
-
-        .gradient-shift {
-            background: linear-gradient(-45deg, #0B2241, #1e3a8a, #0B2241, #374151);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
-
-        .card-hover-lift {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .card-hover-lift:hover {
-            transform: translateY(-12px) scale(1.02);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 205, 0, 0.1);
-        }
-
-        .glass-effect {
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            33% { transform: translateY(-20px) rotate(1deg); }
-            66% { transform: translateY(-10px) rotate(-1deg); }
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .text-glow {
-            text-shadow: 0 0 20px rgba(255, 205, 0, 0.5);
-        }
-
-        .border-glow {
-            box-shadow: 0 0 20px rgba(255, 205, 0, 0.3);
-        }
-
-        @keyframes pulse-eni {
-            0%, 100% {
-                box-shadow: 0 0 0 0 rgba(255, 205, 0, 0.7);
-            }
-            50% {
-                box-shadow: 0 0 0 10px rgba(255, 205, 0, 0);
-            }
-        }
-
-        .package-card {
-            position: relative; /* Required for absolute positioning of slots badge */
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            transform-origin: center;
-            max-width: 100%;
-        }
-
-        /* Energy Saver card - Remove fixed height to match video content */
-        .package-card.energy-saver-card {
-            height: auto;
-            max-width: 100%;
-        }
-
-        .package-card:hover {
-            transform: translateY(-12px) scale(1.02); /* Slightly less movement */
-            box-shadow: 0 20px 40px rgba(255, 205, 0, 0.3), 0 0 25px rgba(255, 205, 0, 0.2);
-        }
-
-        .package-card.selected {
-            border: 2px solid #FFCD00;
-            box-shadow: 0 0 30px rgba(255, 205, 0, 0.4);
-            transform: scale(1.03);
-        }
-
-        /* Glass morphism effect */
-        .glass-morphism {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Enhanced button animations */
-        .btn-enhanced {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .btn-enhanced:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
+        <!-- Trust Indicators & Quick Stats -->
+        <div class="mb-16">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">50K+</div>
+                    <div class="text-white/70 text-sm">Active Investors</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">98.5%</div>
+                    <div class="text-white/70 text-sm">Success Rate</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">$2.5B+</div>
+                    <div class="text-white/70 text-sm">Total Returns</div>
+                </div>
+                <div class="text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <div class="text-3xl font-bold text-eni-yellow mb-2">24/7</div>
+                    <div class="text-white/70 text-sm">Support</div>
+                </div>
+            </div>
+        </div>
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
@@ -709,21 +709,10 @@
     </style>
 </head>
 <body class="text-white min-h-screen relative overflow-x-hidden">
-    <!-- Main Content Wrapper with Split Background Design -->
-    <div class="header-packages-section relative min-h-screen">
-        <!-- Background Enhancement Layers -->
-        <div class="geometric-pattern"></div>
-        <div class="texture-overlay"></div>
-        <div class="metallic-texture"></div>
-        <div class="ambient-glow"></div>
-
-        <!-- Floating Orbs for Depth -->
-        <div class="floating-orb orb-1"></div>
-        <div class="floating-orb orb-2"></div>
-        <div class="floating-orb orb-3"></div>
-
-        <!-- Header -->
-        <header class="relative z-10 bg-black/20 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center justify-between depth-shadow">
+    <!-- Main Content Wrapper (ENI theme) -->
+    <div class="main-gradient-bg relative min-h-screen">
+        <!-- ENI header with subtle glass effect -->
+        <header class="relative z-10 bg-black/20 backdrop-blur-sm border-b border-white/10 px-6 py-4 flex items-center justify-between depth-shadow glass-morphism">
             <div class="flex items-center gap-4">
                 <img src="{{ asset('images/eni-logo.svg') }}" alt="ENI Logo" class="h-8 w-auto" />
                 <div>
@@ -761,6 +750,93 @@
         <div class="text-center mb-16">
             <h2 class="text-5xl font-bold text-eni-yellow mb-6 text-glow">Investment Packages</h2>
             <p class="text-white/80 text-xl max-w-3xl mx-auto leading-relaxed">Choose the perfect investment strategy for your financial goals. Start earning daily interest with our secure and proven packages.</p>
+        </div>
+
+        <!-- Investment Packages Grid (visible below intro) -->
+        <div class="mb-16 relative px-4">
+            <!-- Subtle gradient background -->
+            <div class="absolute inset-0 bg-gradient-to-br from-eni-yellow/5 via-transparent to-eni-dark/20 rounded-3xl -mx-4 -my-8"></div>
+
+            <!-- Responsive Grid: Stacked on mobile, side-by-side on tablet/desktop -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 max-w-7xl mx-auto relative z-10 items-start justify-items-center">
+
+                @foreach($investmentPackages as $index => $package)
+                <div class="package-card {{ $index === 0 ? 'energy-saver-card' : '' }} card-spotlight group relative transition-all duration-500">
+
+                    @php
+                        // Visual hierarchy based on package tier with media backgrounds
+                        $cardClasses = match($index) {
+                            0 => 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-slate-600/50',
+                            1 => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30',
+                            2 => 'bg-gradient-to-br from-eni-dark/95 to-black/90 border-eni-yellow/80',
+                            default => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30'
+                        };
+
+                        $shadowClasses = match($index) {
+                            1 => 'shadow-xl hover:shadow-eni-yellow/30',
+                            2 => 'shadow-2xl hover:shadow-eni-yellow/40',
+                            default => 'shadow-lg hover:shadow-eni-yellow/20'
+                        };
+
+                        // Media backgrounds for packages
+                        $mediaBackground = match($index) {
+                            0 => 'Energy.mp4',
+                            1 => 'Growth.mp4',
+                            2 => 'Capital.mp4',
+                            default => 'crypto.jpg'
+                        };
+
+                        $isVideo = in_array($mediaBackground, ['Energy.mp4', 'Growth.mp4', 'Capital.mp4']);
+                        $isGif = false;
+
+                        $gifCardClass = match($index) {
+                            0 => 'energy-gif-card',
+                            1 => 'growth-gif-card',
+                            2 => 'capital-gif-card',
+                            default => 'energy-gif-card'
+                        };
+
+                        $slotsClass = '';
+                        if ($package->available_slots === null) {
+                            $slotsClass = 'unlimited-slots';
+                        } elseif ($package->available_slots <= 10 && $package->available_slots > 0) {
+                            $slotsClass = 'low-slots';
+                        }
+                    @endphp
+
+                    <!-- Available Slots Badge Overlay -->
+                    <div class="slots-badge {{ $slotsClass }}">
+                        @if($package->available_slots === null)
+                            <span class="slots-badge-number">∞</span>
+                            <span class="slots-badge-label">Unlimited</span>
+                        @else
+                            <span class="slots-badge-number">{{ $package->available_slots }}</span>
+                            <span class="slots-badge-label">{{ $package->available_slots === 1 ? 'Slot Left' : 'Slots Left' }}</span>
+                        @endif
+                    </div>
+
+                    @if($isVideo)
+                        <video
+                            class="w-full h-auto rounded-3xl cursor-pointer {{ $gifCardClass }}-img"
+                            autoplay
+                            loop
+                            muted
+                            playsinline
+                            preload="{{ $index === 0 ? 'auto' : 'metadata' }}"
+                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
+                            <source src="{{ asset($mediaBackground) }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    @else
+                        <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500">
+                            <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ asset($mediaBackground) }}');"></div>
+                            <div class="absolute inset-0 z-10 cursor-pointer"></div>
+                        </div>
+                    @endif
+                </div>
+                @endforeach
+
+            </div>
         </div>
 
         <!-- Trust Indicators & Quick Stats -->
@@ -894,101 +970,7 @@
             </div>
         </div>
 
-        <!-- Investment Packages Grid -->
-        <div class="mb-16 relative px-4">
-            <!-- Subtle gradient background -->
-            <div class="absolute inset-0 bg-gradient-to-br from-eni-yellow/5 via-transparent to-eni-dark/20 rounded-3xl -mx-4 -my-8"></div>
-
-            <!-- Responsive Grid: Stacked on mobile, side-by-side on tablet/desktop -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 max-w-7xl mx-auto relative z-10 items-start justify-items-center">
-
-                @foreach($investmentPackages as $index => $package)
-                <div class="package-card {{ $index === 0 ? 'energy-saver-card' : '' }} card-spotlight group relative transition-all duration-500">
-
-                    @php
-                        // Visual hierarchy based on package tier with media backgrounds
-                        $cardClasses = match($index) {
-                            0 => 'bg-gradient-to-br from-slate-800/90 to-slate-900/90 border-slate-600/50', // Starter - Light navy
-                            1 => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30', // Mid - Deeper navy
-                            2 => 'bg-gradient-to-br from-eni-dark/95 to-black/90 border-eni-yellow/80', // Premium - Dark navy with gold
-                            default => 'bg-gradient-to-br from-eni-dark/90 to-slate-800/90 border-eni-yellow/30'
-                        };
-
-                        $shadowClasses = match($index) {
-                            1 => 'shadow-xl hover:shadow-eni-yellow/30', // Most popular gets extra glow
-                            2 => 'shadow-2xl hover:shadow-eni-yellow/40', // Premium gets strongest shadow
-                            default => 'shadow-lg hover:shadow-eni-yellow/20'
-                        };
-
-                        // Media backgrounds for packages
-                        $mediaBackground = match($index) {
-                            0 => 'Energy.mp4', // Energy Video for Energy Saver package
-                            1 => 'Growth.mp4', // Growth Video for Growth Power package
-                            2 => 'Capital.mp4', // Capital Video for Capital Prime package
-                            default => 'crypto.jpg'
-                        };
-
-                        $isVideo = in_array($mediaBackground, ['Energy.mp4', 'Growth.mp4', 'Capital.mp4']); // All packages now use MP4 videos
-                        $isGif = false;
-
-                        // Assign specific GIF card class based on package
-                        $gifCardClass = match($index) {
-                            0 => 'energy-gif-card',   // Energy Saver - Green glow
-                            1 => 'growth-gif-card',   // Growth Power - Blue glow
-                            2 => 'capital-gif-card',  // Capital Prime - Yellow glow
-                            default => 'energy-gif-card'
-                        };
-
-                        // Calculate slots badge class
-                        $slotsClass = '';
-                        if ($package->available_slots === null) {
-                            $slotsClass = 'unlimited-slots';
-                        } elseif ($package->available_slots <= 10 && $package->available_slots > 0) {
-                            $slotsClass = 'low-slots';
-                        }
-                    @endphp
-
-                    <!-- Available Slots Badge Overlay -->
-                    <div class="slots-badge {{ $slotsClass }}">
-                        @if($package->available_slots === null)
-                            <span class="slots-badge-number">∞</span>
-                            <span class="slots-badge-label">Unlimited</span>
-                        @else
-                            <span class="slots-badge-number">{{ $package->available_slots }}</span>
-                            <span class="slots-badge-label">{{ $package->available_slots === 1 ? 'Slot Left' : 'Slots Left' }}</span>
-                        @endif
-                    </div>
-
-                    <!-- Video as the card itself - no container background -->
-
-                    @if($isVideo)
-                        <!-- VIDEO IS the package card - Autoplay, loop, no controls -->
-                        <video
-                            class="w-full h-auto rounded-3xl cursor-pointer {{ $gifCardClass }}-img"
-                            autoplay
-                            loop
-                            muted
-                            playsinline
-                            preload="{{ $index === 0 ? 'auto' : 'metadata' }}"
-                            onclick='openPaymentForm({{ $package->id }}, {!! json_encode($package->name) !!}, {{ $package->min_amount }}, {{ $package->max_amount }}, {{ $package->daily_shares_rate }})'>
-                            <source src="{{ asset($mediaBackground) }}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    @else
-                        <!-- Fallback for non-video packages -->
-                        <div class="package-card-inner relative h-full rounded-2xl overflow-hidden transition-all duration-500">
-                            <div
-                                class="absolute inset-0 w-full h-full bg-cover bg-center"
-                                style="background-image: url('{{ asset($mediaBackground) }}');">
-                            </div>
-                            <div class="absolute inset-0 z-10 cursor-pointer"></div>
-                        </div>
-                    @endif
-                </div>
-                @endforeach
-
-            </div>
-        </div>        <!-- Investment Form -->
+        <!-- Removed extra packages grid; packages are shown only once (directly under the intro) -->
         <div id="investment-form" class="bg-white/5 rounded-2xl p-8 backdrop-blur" style="display: none;">
             <h3 class="text-2xl font-bold text-eni-yellow mb-6">Complete Your Investment</h3>
 
@@ -3133,10 +3115,11 @@
                 paymentSelect.classList.remove('payment-unavailable');
             }, 600);
 
-            // Show modal with animation
+            // Show modal by toggling Tailwind classes (use flex for centering)
             modal.classList.remove('hidden');
+            modal.classList.add('flex');
             // Force a reflow to ensure the initial state is rendered
-            modal.offsetHeight;
+            void modal.offsetHeight;
 
             // Prevent body scroll
             document.body.style.overflow = 'hidden';
@@ -3145,7 +3128,8 @@
         function closePaymentModal() {
             const modal = document.getElementById('paymentNotAvailableModal');
 
-            // Add hidden class to trigger animation
+            // Hide modal by toggling Tailwind classes
+            modal.classList.remove('flex');
             modal.classList.add('hidden');
 
             // Restore body scroll
@@ -3164,7 +3148,7 @@
     </script>
 
     <!-- Payment Method Not Available Modal -->
-    <div id="paymentNotAvailableModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4" style="display: flex;">
+    <div id="paymentNotAvailableModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 transform transition-all">
             <!-- Modal Header -->
             <div class="bg-gradient-to-r from-eni-dark to-eni-charcoal text-white px-6 py-4 rounded-t-2xl">
