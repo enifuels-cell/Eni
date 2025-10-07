@@ -367,6 +367,21 @@ class DashboardController extends Controller
             $isAccountBalancePayment = $request->payment_method === 'account_balance';
 
             // Create transaction (approved if account balance, pending otherwise)
+            // compute checksum and mime/size if a receipt was stored
+            $receiptMime = null;
+            $receiptSize = null;
+            $receiptChecksum = null;
+            $receiptUploadedAt = null;
+            if ($receiptPath) {
+                $fullPath = storage_path('app/' . $receiptPath);
+                if (is_file($fullPath)) {
+                    $receiptMime = mime_content_type($fullPath) ?: null;
+                    $receiptSize = filesize($fullPath) ?: null;
+                    $receiptChecksum = hash_file('sha256', $fullPath);
+                    $receiptUploadedAt = now();
+                }
+            }
+
             $transaction = $user->transactions()->create([
                 'type' => 'deposit',
                 'amount' => $request->amount,
@@ -374,6 +389,11 @@ class DashboardController extends Controller
                 'status' => $isAccountBalancePayment ? 'approved' : 'pending',
                 'description' => $description,
                 'receipt_path' => $receiptPath, // stored in local disk (private)
+                'receipt_mime' => $receiptMime,
+                'receipt_size' => $receiptSize,
+                'receipt_checksum' => $receiptChecksum,
+                'receipt_scan_status' => $receiptPath ? 'pending' : null,
+                'receipt_uploaded_at' => $receiptUploadedAt,
                 'processed_at' => $isAccountBalancePayment ? now() : null,
             ]);
 
@@ -382,6 +402,15 @@ class DashboardController extends Controller
                 'has_receipt' => (bool)$receiptPath,
                 'receipt_path' => $receiptPath,
             ]);
+
+            // Dispatch asynchronous ClamAV scan for the uploaded receipt
+            if ($receiptPath) {
+                try {
+                    \App\Jobs\ScanReceipt::dispatch($transaction);
+                } catch (\Throwable $jobErr) {
+                    \Log::warning('Failed to dispatch ScanReceipt job', ['error' => $jobErr->getMessage()]);
+                }
+            }
 
             // If this is a package investment, create the investment record
             if ($request->package_id) {
