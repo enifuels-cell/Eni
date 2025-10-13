@@ -348,6 +348,24 @@ class DashboardController extends Controller
                 }
             }
 
+            // Determine payment method early
+            $isAccountBalancePayment = $request->payment_method === 'account_balance';
+
+            // If paying from account balance, check available balance BEFORE creating any transaction
+            if ($isAccountBalancePayment) {
+                $availableBalance = $user->account_balance;
+                if ($availableBalance < $request->amount) {
+                    if ($request->ajax() || $request->wantsJson()) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Insufficient account balance. Available: ₱' . number_format($availableBalance, 2)
+                        ], 422);
+                    }
+
+                    return back()->withErrors(['amount' => 'Insufficient account balance']);
+                }
+            }
+
             // Build reference string with bank info if bank transfer
             $reference = 'Deposit via ' . $request->payment_method;
             if ($request->payment_method === 'bank_transfer' && $request->selected_bank) {
@@ -363,11 +381,8 @@ class DashboardController extends Controller
                 ? 'Investment in ' . InvestmentPackage::find($request->package_id)->name . ' package'
                 : 'Deposit request - awaiting approval';
 
-            // Check if this is an account balance payment (auto-approved)
-            $isAccountBalancePayment = $request->payment_method === 'account_balance';
 
-            // Create transaction (approved if account balance, pending otherwise)
-            // compute checksum and mime/size if a receipt was stored
+            // Compute checksum and mime/size if a receipt was stored
             $receiptMime = null;
             $receiptSize = null;
             $receiptChecksum = null;
@@ -382,20 +397,115 @@ class DashboardController extends Controller
                 }
             }
 
-            $transaction = $user->transactions()->create([
-                'type' => 'deposit',
-                'amount' => $request->amount,
-                'reference' => $reference,
-                'status' => $isAccountBalancePayment ? 'approved' : 'pending',
-                'description' => $description,
-                'receipt_path' => $receiptPath, // stored in local disk (private)
-                'receipt_mime' => $receiptMime,
-                'receipt_size' => $receiptSize,
-                'receipt_checksum' => $receiptChecksum,
-                'receipt_scan_status' => $receiptPath ? 'pending' : null,
-                'receipt_uploaded_at' => $receiptUploadedAt,
-                'processed_at' => $isAccountBalancePayment ? now() : null,
-            ]);
+            // Wrap critical operations in a DB transaction to keep state consistent
+            $result = DB::transaction(function () use ($user, $request, $reference, $description, $isAccountBalancePayment, $receiptPath, $receiptMime, $receiptSize, $receiptChecksum, $receiptUploadedAt) {
+                // If paying from account balance, deduct before creating transaction to avoid approved transactions on insufficient funds
+                if ($isAccountBalancePayment) {
+                    // Use an atomic conditional decrement to avoid race conditions where
+                    // two concurrent requests could both see enough balance and both decrement.
+                    $updated = \App\Models\User::where('id', $user->id)
+                        ->where('account_balance', '>=', $request->amount)
+                        ->decrement('account_balance', $request->amount);
+
+                    if ($updated === 0) {
+                        // Could not decrement (insufficient funds or concurrent depletion)
+                        throw new \Exception('Insufficient account balance');
+                    }
+                    // Refresh user model to reflect new balance
+                    $user->refresh();
+                }
+
+                $transaction = $user->transactions()->create([
+                    'type' => 'deposit',
+                    'amount' => $request->amount,
+                    'reference' => $reference,
+                    'status' => $isAccountBalancePayment ? 'approved' : 'pending',
+                    'description' => $description,
+                    'receipt_path' => $receiptPath,
+                    'receipt_mime' => $receiptMime,
+                    'receipt_size' => $receiptSize,
+                    'receipt_checksum' => $receiptChecksum,
+                    'receipt_scan_status' => $receiptPath ? 'pending' : null,
+                    'receipt_uploaded_at' => $receiptUploadedAt,
+                    'processed_at' => $isAccountBalancePayment ? now() : null,
+                ]);
+
+                // Dispatch scan job
+                if ($receiptPath) {
+                    try {
+                        \App\Jobs\ScanReceipt::dispatch($transaction);
+                    } catch (\Throwable $jobErr) {
+                        \Log::warning('Failed to dispatch ScanReceipt job', ['error' => $jobErr->getMessage()]);
+                    }
+                }
+
+                // If this is a package investment, create the investment record (auto-approved if account balance)
+                if ($request->package_id) {
+                    $package = InvestmentPackage::find($request->package_id);
+                    $isAutoApproved = $isAccountBalancePayment ? true : false;
+
+                    $investment = $user->investments()->create([
+                        'investment_package_id' => $request->package_id,
+                        'amount' => $request->amount,
+                        'daily_shares_rate' => $package->daily_shares_rate,
+                        'remaining_days' => $package->effective_days,
+                        'total_interest_earned' => 0,
+                        'active' => $isAutoApproved,
+                        'started_at' => $isAutoApproved ? now() : null,
+                        'ended_at' => null,
+                    ]);
+
+                    // If auto-approved, handle slots and referral bonus
+                    if ($isAutoApproved) {
+                        if ($package) {
+                            \App\Models\InvestmentPackage::where('id', $package->id)
+                                ->where('available_slots', '>', 0)
+                                ->decrement('available_slots');
+                            $package->refresh();
+                        }
+
+                        $referral = $user->referralReceived;
+                        if ($referral && $package) {
+                            $investmentAmountValue = $investment->amount instanceof \App\Support\Money
+                                ? $investment->amount->toFloat()
+                                : (float) $investment->amount;
+
+                            $bonusRate = $package->referral_bonus_rate / 100;
+                            $bonusAmount = $investmentAmountValue * $bonusRate;
+
+                            $referralBonus = \App\Models\ReferralBonus::create([
+                                'referral_id' => $referral->id,
+                                'investment_id' => $investment->id,
+                                'bonus_amount' => $bonusAmount,
+                                'paid' => true,
+                                'paid_at' => now()
+                            ]);
+
+                            $referrer = $referral->referrer;
+                            if ($referrer) {
+                                $referrer->increment('account_balance', $bonusAmount);
+                                $referrer->transactions()->create([
+                                    'type' => 'referral_bonus',
+                                    'amount' => $bonusAmount,
+                                    'status' => 'completed',
+                                    'description' => 'Referral bonus from ' . $user->name . ' - ' . $package->name . ' investment',
+                                    'reference' => 'REF' . time() . rand(1000, 9999),
+                                    'processed_at' => now()
+                                ]);
+                            }
+                        }
+                    }
+
+                    return ['transaction' => $transaction, 'investment' => $investment ?? null, 'auto_approved' => $isAutoApproved];
+                }
+
+                return ['transaction' => $transaction, 'investment' => null];
+            });
+
+            // Extract results
+            $transaction = $result['transaction'];
+            $investment = $result['investment'] ?? null;
+            $isAutoApproved = $result['auto_approved'] ?? false;
 
             \Log::info('Transaction created', [
                 'transaction_id' => $transaction->id,
@@ -403,107 +513,8 @@ class DashboardController extends Controller
                 'receipt_path' => $receiptPath,
             ]);
 
-            // Dispatch asynchronous ClamAV scan for the uploaded receipt
-            if ($receiptPath) {
-                try {
-                    \App\Jobs\ScanReceipt::dispatch($transaction);
-                } catch (\Throwable $jobErr) {
-                    \Log::warning('Failed to dispatch ScanReceipt job', ['error' => $jobErr->getMessage()]);
-                }
-            }
-
-            // If this is a package investment, create the investment record
+            // If this is a package investment, handle response/redirect
             if ($request->package_id) {
-                $package = InvestmentPackage::find($request->package_id);
-
-                // Check if payment method is account_balance - if so, auto-approve
-                $isAccountBalancePayment = $request->payment_method === 'account_balance';
-                $isAutoApproved = false;
-
-                // For account balance payments, verify user has sufficient balance
-                if ($isAccountBalancePayment) {
-                    $availableBalance = $user->account_balance;
-                    if ($availableBalance < $request->amount) {
-                        if ($request->ajax() || $request->wantsJson()) {
-                            return response()->json([
-                                'success' => false,
-                                'message' => 'Insufficient account balance. Available: ₱' . number_format($availableBalance, 2)
-                            ], 422);
-                        }
-                        return back()->withErrors(['amount' => 'Insufficient account balance']);
-                    }
-
-                    // Deduct from account balance immediately
-                    $user->decrement('account_balance', $request->amount);
-                    $isAutoApproved = true;
-                }
-
-                $investment = $user->investments()->create([
-                    'investment_package_id' => $request->package_id,
-                    'amount' => $request->amount,
-                    'daily_shares_rate' => $package->daily_shares_rate,
-                    'remaining_days' => $package->effective_days,
-                    'total_interest_earned' => 0,
-                    'active' => $isAutoApproved, // Auto-approve if account balance payment
-                    'started_at' => $isAutoApproved ? now() : null,
-                    'ended_at' => null,
-                ]);
-
-                \Log::info('Investment created', [
-                    'investment_id' => $investment->id,
-                    'payment_method' => $request->payment_method,
-                    'auto_approved' => $isAutoApproved
-                ]);
-
-                // If auto-approved (account balance payment), handle slots and referral bonus immediately
-                if ($isAutoApproved) {
-                    // Decrement package slots
-                    if ($package) {
-                        \App\Models\InvestmentPackage::where('id', $package->id)
-                            ->where('available_slots', '>', 0)
-                            ->decrement('available_slots');
-                        $package->refresh();
-                    }
-
-                    // Process referral bonus if user was referred
-                    $referral = $user->referralReceived;
-                    if ($referral && $package) {
-                        // Calculate bonus amount
-                        $investmentAmountValue = $investment->amount instanceof \App\Support\Money
-                            ? $investment->amount->toFloat()
-                            : (float) $investment->amount;
-
-                        $bonusRate = $package->referral_bonus_rate / 100;
-                        $bonusAmount = $investmentAmountValue * $bonusRate;
-
-                        // Create referral bonus record
-                        $referralBonus = \App\Models\ReferralBonus::create([
-                            'referral_id' => $referral->id,
-                            'investment_id' => $investment->id,
-                            'bonus_amount' => $bonusAmount,
-                            'paid' => true,
-                            'paid_at' => now()
-                        ]);
-
-                        // Add bonus to referrer's account balance
-                        $referrer = $referral->referrer;
-                        if ($referrer) {
-                            $referrer->increment('account_balance', $bonusAmount);
-
-                            // Create transaction record for the referral bonus
-                            $referrer->transactions()->create([
-                                'type' => 'referral_bonus',
-                                'amount' => $bonusAmount,
-                                'status' => 'completed',
-                                'description' => 'Referral bonus from ' . $user->name . ' - ' . $package->name . ' investment',
-                                'reference' => 'REF' . time() . rand(1000, 9999),
-                                'processed_at' => now()
-                            ]);
-                        }
-                    }
-                }
-
-                // Check if this is an AJAX request
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => true,
@@ -512,7 +523,6 @@ class DashboardController extends Controller
                     ]);
                 }
 
-                // Redirect to investment receipt for regular requests
                 \Log::info('Redirecting to investment receipt', ['transaction_id' => $transaction->id]);
 
                 return redirect()->route('user.investment.receipt', $transaction->id)
