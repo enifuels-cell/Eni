@@ -19,10 +19,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified', 'admin',
     Route::get('/daily-interest-log', [AdminDashboardController::class, 'dailyInterestLog'])->name('interest.daily');
 
     // Withdrawal Management
-    Route::get('/pending-withdrawals', [AdminDashboardController::class, 'pendingWithdrawals'])->name('withdrawals.pending');
-    Route::patch('/withdrawals/{transaction}/approve', [AdminDashboardController::class, 'approveWithdrawal'])->name('withdrawals.approve');
-    Route::patch('/withdrawals/{transaction}/deny', [AdminDashboardController::class, 'denyWithdrawal'])->name('withdrawals.deny');
-    Route::get('/approved-withdrawals', [AdminDashboardController::class, 'approvedWithdrawals'])->name('withdrawals.approved');
+Route::get('/pending-withdrawals', [AdminDashboardController::class, 'pendingWithdrawals'])->name('withdrawals.pending');
+Route::patch('/withdrawals/{transaction}/approve', [AdminDashboardController::class, 'approveWithdrawal'])->name('withdrawals.approve');
+Route::patch('/withdrawals/{transaction}/deny', [AdminDashboardController::class, 'denyWithdrawal'])->name('withdrawals.deny');
+Route::patch('/withdrawals/{transaction}/reject', [AdminDashboardController::class, 'denyWithdrawal'])->name('withdrawals.reject'); // ✅ added alias
+Route::get('/approved-withdrawals', [AdminDashboardController::class, 'approvedWithdrawals'])->name('withdrawals.approved');
 
     // Request Fund Management
     Route::get('/pending-request-funds', [AdminDashboardController::class, 'pendingRequestFunds'])->name('request-funds.pending');
