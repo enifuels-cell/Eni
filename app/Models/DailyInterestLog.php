@@ -4,27 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
-/**
- * @property int $id
- * @property int $investment_id
- * @property numeric $interest_amount
- * @property \Illuminate\Support\Carbon $interest_date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \App\Models\Investment $investment
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog forDate($date)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog query()
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereInterestAmount($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereInterestDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereInvestmentId($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|DailyInterestLog whereUpdatedAt($value)
- * @mixin \Eloquent
- */
 class DailyInterestLog extends Model
 {
     protected $fillable = [
@@ -38,11 +19,32 @@ class DailyInterestLog extends Model
         'interest_date' => 'date'
     ];
 
+    /**
+     * Relationship to the Investment model.
+     */
     public function investment(): BelongsTo
     {
         return $this->belongsTo(Investment::class);
     }
 
+    /**
+     * Relationship to the User model through Investment.
+     */
+    public function user(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            User::class,        // Final related model
+            Investment::class,  // Intermediate model
+            'id',               // Foreign key on Investment table
+            'id',               // Foreign key on User table
+            'investment_id',    // Local key on DailyInterestLog table
+            'user_id'           // Local key on Investment table
+        );
+    }
+
+    /**
+     * Scope to filter logs by date.
+     */
     public function scopeForDate($query, $date)
     {
         return $query->whereDate('interest_date', $date);

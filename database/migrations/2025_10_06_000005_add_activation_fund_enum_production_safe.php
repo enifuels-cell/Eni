@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 return new class extends Migration
 {
@@ -13,31 +14,30 @@ return new class extends Migration
         $driver = DB::getDriverName();
 
         if ($driver === 'sqlite') {
-            // Local sqlite handled by other migration; nothing to do here for production-safe file.
-            logger()->info('Skipping enum update for sqlite in production-safe migration.');
+            // Local sqlite handled by other migration; nothing to do here.
+            Log::info('Skipping enum update for sqlite.');
             return;
         }
 
         if ($driver === 'mysql' || $driver === 'mariadb') {
-            // Fetch current enum definition
             $database = DB::getDatabaseName();
-            $row = DB::selectOne(
-                "SELECT COLUMN_TYPE as column_type, IS_NULLABLE as is_nullable, COLUMN_DEFAULT as column_default FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'transactions' AND COLUMN_NAME = 'type'",
-                [$database]
-            );
+            $row = DB::selectOne("
+                SELECT COLUMN_TYPE as column_type, IS_NULLABLE as is_nullable, COLUMN_DEFAULT as column_default
+                FROM information_schema.COLUMNS
+                WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'transactions' AND COLUMN_NAME = 'type'
+            ", [$database]);
 
             if (!$row) {
-                logger()->warning('Could not find transactions.type column info for MySQL.');
+                Log::warning('Could not find transactions.type column info for MySQL.');
                 return;
             }
 
-            $columnType = $row->column_type; // e.g. enum('deposit','withdrawal',...)
+            $columnType = $row->column_type;
             if (strpos($columnType, "'activation_fund'") !== false) {
-                // already present
+                Log::info('activation_fund already exists in enum.');
                 return;
             }
 
-            // strip leading enum( and trailing )
             if (preg_match("/^enum\((.*)\)$/", $columnType, $m)) {
                 $vals = $m[1];
                 $newVals = $vals . ", 'activation_fund'";
@@ -45,49 +45,37 @@ return new class extends Migration
                 $nullable = ($row->is_nullable === 'YES') ? 'NULL' : 'NOT NULL';
                 $default = $row->column_default !== null ? "DEFAULT '" . $row->column_default . "'" : '';
 
-                // Alter the column to include the new enum value
                 $sql = "ALTER TABLE `transactions` MODIFY COLUMN `type` ENUM($newVals) $nullable $default";
                 DB::statement($sql);
+                Log::info('activation_fund added to enum for MySQL.');
             } else {
-                logger()->warning('transactions.type column_type not recognized: ' . $columnType);
+                Log::warning('transactions.type column_type not recognized: ' . $columnType);
             }
 
             return;
         }
 
         if ($driver === 'pgsql') {
-            // Determine enum type name for the column
-            $typeRow = DB::selectOne(
-                "SELECT t.typname AS enum_type FROM pg_type t JOIN pg_attribute a ON a.atttypid = t.oid JOIN pg_class c ON a.attrelid = c.oid WHERE c.relname = 'transactions' AND a.attname = 'type' AND t.typtype = 'e'"
-            );
+            // For PostgreSQL: Use a check constraint for safety
+            DB::statement("ALTER TABLE transactions DROP CONSTRAINT IF EXISTS transactions_type_check");
 
-            if (!$typeRow || empty($typeRow->enum_type)) {
-                logger()->warning('Could not determine enum type name for transactions.type');
-                return;
-            }
+            DB::statement("
+                ALTER TABLE transactions ADD CONSTRAINT transactions_type_check
+                CHECK (type IN (
+                    'deposit',
+                    'withdrawal',
+                    'transfer',
+                    'interest',
+                    'bonus',
+                    'activation_fund'
+                ))
+            ");
 
-            $enumType = $typeRow->enum_type;
-
-            // Use a DO block to add value only if it doesn't exist
-            $safeSql = <<<'SQL'
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_enum e JOIN pg_type t ON e.enumtypid = t.oid
-        WHERE e.enumlabel = 'activation_fund' AND t.typname = '%s'
-    ) THEN
-        EXECUTE format('ALTER TYPE "%s" ADD VALUE %L', '%s', 'activation_fund');
-    END IF;
-END$$;
-SQL;
-
-            // Inject the enum type name safely
-            $safeSql = sprintf($safeSql, $enumType, $enumType, $enumType);
-            DB::statement($safeSql);
+            Log::info('activation_fund added to PostgreSQL check constraint.');
             return;
         }
 
-        logger()->warning('Unsupported DB driver for adding activation_fund enum: ' . $driver);
+        Log::warning('Unsupported DB driver: ' . $driver);
     }
 
     /**
@@ -95,7 +83,7 @@ SQL;
      */
     public function down(): void
     {
-        // Removing enum values is dangerous and DB-specific; do not attempt to remove in down migration.
-        logger()->info('Down migration skipped for add_activation_fund_enum_production_safe (enum removal not performed).');
+        // Do not remove enum values in down() to prevent production issues
+        Log::info('Down migration skipped for activation_fund enum update.');
     }
 };
