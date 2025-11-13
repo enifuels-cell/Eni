@@ -474,6 +474,14 @@ class AdminDashboardController extends Controller
             ->with(['referralReceived.referrer'])
             ->withSum('transactions as total_deposits', 'amount')
             ->withCount(['referrals as referrals_count'])
+
+            // --- THE ENHANCEMENT IS HERE ---
+            ->withSum(['investments as total_active_deposit' => function ($query) {
+                // Sums the 'amount' column only for investments where 'active' is true
+                $query->where('active', true);
+            }], 'amount')
+            // ---------------------------------
+
             ->latest()
             ->paginate(20);
 

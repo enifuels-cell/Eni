@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property int $id
@@ -44,8 +45,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Investment whereUserId($value)
  * @mixin \Eloquent
  */
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
 class Investment extends Model
 {
     use HasFactory;
@@ -157,69 +156,6 @@ class Investment extends Model
         return 'active';
     }
 
-    /**
-     * Create referral bonus when investment is activated
-     */
-    public function createReferralBonus(): void
-    {
-        // Check if the user was referred by someone
-        $referral = $this->user->referralReceived;
-
-        if (!$referral) {
-            \Log::info('No referral found for user', ['user_id' => $this->user_id]);
-            return;
-        }
-
-        // Check if referral bonus already exists for this investment
-        $existingBonus = ReferralBonus::where('referral_id', $referral->id)
-            ->where('investment_id', $this->id)
-            ->first();
-
-        if ($existingBonus) {
-            \Log::info('Referral bonus already exists', ['investment_id' => $this->id]);
-            return;
-        }
-
-        // Get the referral bonus rate from the investment package
-        $package = $this->investmentPackage;
-        $bonusRate = $package->referral_bonus_rate ?? 5; // Default 5% if not set
-        $bonusAmount = (float)$this->amount * ($bonusRate / 100);
-
-        // Create the referral bonus record
-        $referralBonus = ReferralBonus::create([
-            'referral_id' => $referral->id,
-            'investment_id' => $this->id,
-            'bonus_amount' => $bonusAmount,
-            'paid' => true,
-            'paid_at' => now(),
-        ]);
-
-        // Credit the referrer's account
-        $referrer = $referral->referrer;
-        $referrer->increment('account_balance', $bonusAmount);
-
-        // Create transaction record for the referrer
-        try {
-            \App\Models\Transaction::create([
-                'user_id' => $referrer->id,
-                'type' => 'referral_bonus',
-                'amount' => $bonusAmount,
-                'reference' => "Referral bonus for investment #{$this->id}",
-                'status' => 'completed',
-                'description' => "Referral bonus from {$this->user->name} ({$package->name} package)",
-                'processed_at' => now(),
-            ]);
-            \Log::info('Referral bonus transaction created', ['referrer_id' => $referrer->id, 'amount' => $bonusAmount]);
-        } catch (\Exception $e) {
-            \Log::error('Failed to create referral bonus transaction', ['error' => $e->getMessage()]);
-        }
-
-        \Log::info('Referral bonus created', [
-            'referrer_id' => $referrer->id,
-            'referee_id' => $this->user_id,
-            'investment_id' => $this->id,
-            'bonus_amount' => $bonusAmount,
-            'bonus_rate' => $bonusRate
-        ]);
-    }
+    // The createReferralBonus() method was removed here as the logic is handled
+    // correctly within the InvestmentService.php.
 }

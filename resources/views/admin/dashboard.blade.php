@@ -4,15 +4,12 @@
 
 @section('content')
 <div class="px-4 py-6 sm:px-0">
-    <!-- Page Header -->
     <div class="border-b border-eni-yellow/30 pb-4 mb-6">
         <h1 class="text-3xl font-bold leading-tight text-white">Admin Dashboard</h1>
         <p class="mt-2 text-sm text-gray-300">Real-time platform overview and management</p>
     </div>
 
-    <!-- Key Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- Total Users -->
         <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
@@ -37,7 +34,6 @@
             </div>
         </div>
 
-        <!-- Total Funds -->
         <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
@@ -62,7 +58,30 @@
             </div>
         </div>
 
-        <!-- Pending Reviews -->
+        <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
+            <div class="p-5">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-8 h-8 bg-blue-500/20 border border-blue-500/40 rounded-md flex items-center justify-center">
+                            <i class="fas fa-hand-holding-usd text-blue-400 text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="ml-5 w-0 flex-1">
+                        <dl>
+                            <dt class="text-sm font-medium text-gray-400 truncate">Active Deposit Total</dt>
+                            <dd class="text-lg font-medium text-white">${{ number_format($totalActiveDeposit ?? 0, 2) }}</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-eni-yellow/5 border-t border-eni-yellow/20 px-5 py-3">
+                <div class="text-sm">
+                    <span class="text-blue-400 font-medium">${{ number_format($totalActiveWithdrawal ?? 0, 2) }}</span>
+                    <span class="text-gray-400">active withdrawal value</span>
+                </div>
+            </div>
+        </div>
+
         <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
             <div class="p-5">
                 <div class="flex items-center">
@@ -89,36 +108,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- Daily Interest -->
-        <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
-            <div class="p-5">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <div class="w-8 h-8 bg-purple-500/20 border border-purple-500/40 rounded-md flex items-center justify-center">
-                            <i class="fas fa-chart-line text-purple-400 text-sm"></i>
-                        </div>
-                    </div>
-                    <div class="ml-5 w-0 flex-1">
-                        <dl>
-                            <dt class="text-sm font-medium text-gray-400 truncate">Interest Today</dt>
-                            <dd class="text-lg font-medium text-white">${{ number_format($dailyInterestToday ?? 0, 2) }}</dd>
-                        </dl>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-eni-yellow/5 border-t border-eni-yellow/20 px-5 py-3">
-                <div class="text-sm">
-                    <span class="text-purple-400 font-medium">{{ $activeUsersToday ?? 0 }}</span>
-                    <span class="text-gray-400">active users</span>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <!-- Action Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Quick Actions -->
         <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-white mb-4">
@@ -154,7 +145,6 @@
             </div>
         </div>
 
-        <!-- System Alerts -->
         <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
             <div class="px-4 py-5 sm:p-6">
                 <h3 class="text-lg leading-6 font-medium text-white mb-4">
@@ -179,7 +169,6 @@
         </div>
     </div>
 
-    <!-- Recent Transactions -->
     <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg mb-8">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg leading-6 font-medium text-white mb-4">
@@ -248,7 +237,6 @@
         </div>
     </div>
 
-    <!-- System Status -->
     <div class="bg-eni-dark border border-eni-yellow/20 overflow-hidden shadow-lg rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg leading-6 font-medium text-white mb-4">
@@ -289,9 +277,6 @@
                             <p class="text-xs text-gray-400">All systems secure</p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
                 </div>
             </div>
         </div>
