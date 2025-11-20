@@ -15,28 +15,18 @@ class InvestmentController extends Controller
 {
     use AuthorizesRequests;
 
-    /**
-     * Display a listing of investment packages and user investments.
-     */
+    // Display packages and user investments
     public function index()
     {
         Log::info('InvestmentController@index called');
 
-        // Fetch all active packages (fallback if scope doesn't exist)
-        if (method_exists(InvestmentPackage::class, 'scopeActive')) {
-            $packages = InvestmentPackage::active()
-                ->orderBy('min_amount', 'asc')
-                ->get();
-        } else {
-            $packages = InvestmentPackage::where('active', 1)
-                ->orderBy('min_amount', 'asc')
-                ->get();
-        }
+        // Fetch active packages
+        $packages = InvestmentPackage::active()
+            ->orderBy('min_amount', 'asc')
+            ->get();
 
         Log::info('Active packages count: ' . $packages->count());
-        Log::info('All packages count: ' . InvestmentPackage::count());
 
-        // Get user investments with package relation
         $userInvestments = Auth::user()
             ->investments()
             ->with('investmentPackage')
@@ -48,15 +38,12 @@ class InvestmentController extends Controller
         return view('investments.index', compact('packages', 'userInvestments'));
     }
 
-    /**
-     * Store a new investment.
-     */
+    // Store a new investment
     public function store(StoreInvestmentRequest $request)
     {
         $data = $request->validated();
         $user = Auth::user();
 
-        // Find the package safely
         $package = InvestmentPackage::find($data['investment_package_id']);
         if (!$package) {
             return back()->withErrors(['investment_package_id' => 'Selected package not found']);
@@ -83,9 +70,7 @@ class InvestmentController extends Controller
         }
     }
 
-    /**
-     * Show a single investment.
-     */
+    // Show single investment
     public function show(Investment $investment)
     {
         $this->authorize('view', $investment);
