@@ -56,7 +56,7 @@
                         </div>
                         <div>
                             <h1 class="text-2xl md:text-3xl font-bold text-white mb-1">ENI Fuel Station Franchise</h1>
-                            <p class="text-eni-yellow font-semibold">Premium Mini-Station Package — ₱5,000,000</p>
+                            <p class="text-eni-yellow font-semibold">Premium Mini-Station Package — ₱2,000,000</p>
                         </div>
                     </div>
                     <p class="text-slate-300 leading-relaxed">
@@ -103,7 +103,7 @@
                         </div>
                         <div class="text-xs uppercase tracking-wide text-slate-400 font-medium">Investment</div>
                     </div>
-                    <div class="text-2xl font-bold text-white mb-1">₱5.0M</div>
+                    <div class="text-2xl font-bold text-white mb-1">₱2.0M</div>
                     <div class="text-xs text-slate-500">Complete turnkey solution</div>
                 </div>
                 
@@ -125,7 +125,7 @@
                         </div>
                         <div class="text-xs uppercase tracking-wide text-slate-400 font-medium">Contract</div>
                     </div>
-                    <div class="text-2xl font-bold text-white mb-1">10 Years</div>
+                    <div class="text-2xl font-bold text-white mb-1">2 Years</div>
                     <div class="text-xs text-slate-500">Renewable terms</div>
                 </div>
                 
@@ -422,19 +422,19 @@
                         </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-700/50">
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Franchise Fee</td><td class="px-4 py-4 text-right font-semibold text-white">500,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Land Lease / Lot Development</td><td class="px-4 py-4 text-right font-semibold text-white">1,500,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Construction (canopy, forecourt)</td><td class="px-4 py-4 text-right font-semibold text-white">1,000,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Fuel Dispensers (2–3 hoses)</td><td class="px-4 py-4 text-right font-semibold text-white">1,000,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Underground Tank & Safety</td><td class="px-4 py-4 text-right font-semibold text-white">800,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Branding & Signage</td><td class="px-4 py-4 text-right font-semibold text-white">200,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Initial Fuel Stock</td><td class="px-4 py-4 text-right font-semibold text-white">500,000</td></tr>
-                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Misc (POS, kiosk setup, utilities)</td><td class="px-4 py-4 text-right font-semibold text-white">500,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Franchise Fee</td><td class="px-4 py-4 text-right font-semibold text-white">250,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Land Lease / Lot Development</td><td class="px-4 py-4 text-right font-semibold text-white">600,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Construction (canopy, forecourt)</td><td class="px-4 py-4 text-right font-semibold text-white">400,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Fuel Dispensers (2–3 hoses)</td><td class="px-4 py-4 text-right font-semibold text-white">400,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Underground Tank & Safety</td><td class="px-4 py-4 text-right font-semibold text-white">300,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Branding & Signage</td><td class="px-4 py-4 text-right font-semibold text-white">100,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Initial Fuel Stock</td><td class="px-4 py-4 text-right font-semibold text-white">200,000</td></tr>
+                        <tr class="hover:bg-white/5 transition-colors"><td class="px-4 py-4 text-slate-300">Misc (POS, kiosk setup, utilities)</td><td class="px-4 py-4 text-right font-semibold text-white">150,000</td></tr>
                         </tbody>
                         <tfoot class="bg-slate-800/50">
                         <tr>
                             <td class="px-4 py-4 font-bold text-right text-slate-300">Total Investment</td>
-                            <td class="px-4 py-4 font-bold text-right text-eni-yellow text-lg">₱5,000,000</td>
+                            <td class="px-4 py-4 font-bold text-right text-eni-yellow text-lg">₱2,000,000</td>
                         </tr>
                         </tfoot>
                     </table>
@@ -575,8 +575,8 @@
                         </div>
                         <div>
                             <p class="text-sm text-slate-300 leading-relaxed">
-                                This application is for the <span class="font-semibold text-white">ENI Mini-Franchise Package (₱5M)</span> with a
-                                <span class="font-semibold text-white">₱500K franchise fee</span> and <span class="font-semibold text-white">10-year renewable term</span>.
+                                This application is for the <span class="font-semibold text-white">ENI Mini-Franchise Package (₱2M)</span> with a
+                                <span class="font-semibold text-white">₱250K franchise fee</span> and <span class="font-semibold text-white">2-year renewable term</span>.
                             </p>
                         </div>
                     </div>
