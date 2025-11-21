@@ -542,11 +542,12 @@ class DashboardController extends Controller
                 ->with('success', 'Deposit request submitted successfully! Transaction ID: ' . $transaction->id);
 
         } catch (\Exception $e) {
+            $currentUser = Auth::user();
             \Log::error('Deposit processing error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString(),
-                'user_id' => $user->id,
-                'request_data' => $request->all(),
+                'user_id' => $currentUser ? $currentUser->id : null,
+                'request_data' => $request->except(['receipt']),
                 'file' => $e->getFile(),
                 'line' => $e->getLine()
             ]);

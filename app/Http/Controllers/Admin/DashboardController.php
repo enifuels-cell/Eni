@@ -40,7 +40,9 @@ class AdminDashboardController extends Controller
 
         // *** NEW ACTIVE DEPOSIT METRICS ***
         // Total Active Deposit (Sum of all currently active investments)
+        // Only include investments that are active AND have a started_at date (approved)
         $totalActiveDeposit = Investment::where('active', true)
+            ->whereNotNull('started_at')
             ->sum('amount');
 
         // Total Active Withdrawal Value (Sum of all approved/pending withdrawals)
@@ -336,16 +338,44 @@ class AdminDashboardController extends Controller
             'reason' => 'required|string|max:500'
         ]);
 
-        $transaction->update([
-            'status' => 'denied',
-            'processed_at' => now(),
-            'processed_by' => Auth::id(),
-            'admin_notes' => $request->reason
-        ]);
+        // Start a transaction to ensure consistency
+        DB::transaction(function () use ($request, $transaction) {
+            $transaction->update([
+                'status' => 'denied',
+                'processed_at' => now(),
+                'processed_by' => Auth::id(),
+                'admin_notes' => $request->reason
+            ]);
 
-        $this->logAdminAction('deny_deposit', $transaction, $request->reason);
+            // Find and deactivate any related investments that were created from this deposit
+            // Investments created around the same time with matching amounts for this user
+            $investmentAmountValue = (float)$transaction->amount;
+            $relatedInvestments = $transaction->user->investments()
+                ->where('created_at', '>=', $transaction->created_at->subMinutes(5))
+                ->where('created_at', '<=', $transaction->created_at->addMinutes(5))
+                ->get()
+                ->filter(function($inv) use ($investmentAmountValue) {
+                    return abs((float)$inv->amount - $investmentAmountValue) < 0.02;
+                });
 
-        return back()->with('success', 'Deposit denied.');
+            // Deactivate related investments
+            foreach ($relatedInvestments as $investment) {
+                if ($investment->active && !$investment->started_at) {
+                    // Only deactivate pending investments (not yet started)
+                    $investment->update(['active' => false]);
+
+                    \Log::info('Investment deactivated due to deposit denial', [
+                        'investment_id' => $investment->id,
+                        'transaction_id' => $transaction->id,
+                        'user_id' => $transaction->user_id
+                    ]);
+                }
+            }
+
+            $this->logAdminAction('deny_deposit', $transaction, $request->reason);
+        });
+
+        return back()->with('success', 'Deposit denied and related investments deactivated.');
     }
 
     /**
