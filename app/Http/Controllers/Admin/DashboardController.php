@@ -515,12 +515,28 @@ class AdminDashboardController extends Controller
      */
     public function manageUsers()
     {
+        // Fetch all users without pagination
         $users = User::where('role', '!=', 'admin')
-            ->with(['referralReceived.referrer'])
+            ->with(['referralReceived.referrer', 'investments'])
             ->withSum('transactions as total_deposits', 'amount')
             ->withCount(['referrals as referrals_count'])
             ->latest()
-            ->paginate(20);
+            ->get();
+
+        // Add active deposit data and investment status to each user
+        $users = $users->map(function($user) {
+            // Calculate total active deposit (active investments with started_at)
+            $activeDeposits = $user->investments()
+                ->where('active', true)
+                ->whereNotNull('started_at')
+                ->sum('amount');
+
+            $user->total_active_deposit = $activeDeposits;
+            $user->has_investments = $user->investments()->exists();
+            $user->is_new_user = $user->investments()->doesntExist() && $user->created_at->diffInDays(now()) <= 7;
+
+            return $user;
+        });
 
         // Calculate referral statistics
         $totalUsers = User::where('role', '!=', 'admin')->count();
