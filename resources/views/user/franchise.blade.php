@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Franchise Opportunity - ENI Platform</title>
     <meta name="theme-color" content="#FFCD00">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
@@ -46,7 +46,7 @@
                 Back to Dashboard
             </a>
         </div>
-        
+
         <div class="bg-gradient-to-r from-eni-dark to-eni-darker rounded-2xl p-8 border border-slate-700/50">
             <div class="grid md:grid-cols-2 gap-8 items-center">
                 <div>
@@ -106,7 +106,7 @@
                     <div class="text-2xl font-bold text-white mb-1">₱2.0M</div>
                     <div class="text-xs text-slate-500">Complete turnkey solution</div>
                 </div>
-                
+
                 <div class="bg-white/5 backdrop-blur-sm border border-slate-700/50 rounded-xl p-5 hover:bg-white/10 transition-all duration-300">
                     <div class="flex items-center mb-3">
                         <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
@@ -117,7 +117,7 @@
                     <div class="text-2xl font-bold text-white mb-1">₱500K</div>
                     <div class="text-xs text-slate-500">One-time licensing</div>
                 </div>
-                
+
                 <div class="bg-white/5 backdrop-blur-sm border border-slate-700/50 rounded-xl p-5 hover:bg-white/10 transition-all duration-300">
                     <div class="flex items-center mb-3">
                         <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">
@@ -128,7 +128,7 @@
                     <div class="text-2xl font-bold text-white mb-1">2 Years</div>
                     <div class="text-xs text-slate-500">Renewable terms</div>
                 </div>
-                
+
                 <div class="bg-white/5 backdrop-blur-sm border border-slate-700/50 rounded-xl p-5 hover:bg-white/10 transition-all duration-300">
                     <div class="flex items-center mb-3">
                         <div class="w-8 h-8 bg-slate-700/50 rounded-lg flex items-center justify-center mr-3">

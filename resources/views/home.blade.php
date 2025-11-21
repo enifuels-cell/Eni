@@ -1202,7 +1202,7 @@
             <div class="nav-grid">
                 <a href="{{ route('user.packages') }}" class="nav-item">
                     <i class="fas fa-box-open nav-icon"></i>
-                    <div class="nav-title">Investment Packages</div>
+                    <div class="nav-title">Investments</div>
                     <div class="nav-desc">Browse available investment opportunities</div>
                 </a>
 
